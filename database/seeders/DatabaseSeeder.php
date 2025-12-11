@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             MasterMerekSeeder::class,
             MasterParameterSeeder::class,
             MasterPerusahaanSeeder::class,
+            CountriesTableSeeder::class,
         ]);
     }
 }

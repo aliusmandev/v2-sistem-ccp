@@ -170,15 +170,16 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::prefix('rekomendasi')->group(function () {
         Route::get('/', [RekomendasiController::class, 'index'])->name('rekomendasi.index');
-        Route::get('/rekomendasi-pembelian/{id}', [RekomendasiController::class, 'create'])->name('rekomendasi.create');
+        Route::get('/rekomendasi-pembelian/{idPengajuan}/{idPengajuanItem}', [RekomendasiController::class, 'create'])->name('rekomendasi.create');
         Route::get('/review-pembelian/{IdPengajuan}/{barang}', [RekomendasiController::class, 'Review'])->name('rekomendasi.review');
         Route::get('/simpan-draft/{id}', [RekomendasiController::class, 'SimpanDraft'])->name('rekomendasi.buat-draft');
         Route::post('/store', [RekomendasiController::class, 'store'])->name('rekomendasi.store');
         Route::get('/edit/{id}', [RekomendasiController::class, 'edit'])->name('rekomendasi.edit');
         Route::get('/show/{id}', [RekomendasiController::class, 'show'])->name('rekomendasi.show');
         Route::delete('/delete/{id}', [RekomendasiController::class, 'destroy'])->name('rekomendasi.destroy');
-        Route::get('/cetak-review/{IdPengajuan}/{barang}', [RekomendasiController::class, 'Cetak'])->name('rekomendasi.cetak');
-
+        Route::get('/cetak-review/{IdPengajuan}/{barang}', [RekomendasiController::class, 'Cetak'])->name('rekomendasi.detail-print');
+        Route::get('/lihat-review/{IdPengajuan}/{barang}', [RekomendasiController::class, 'detail'])->name('rekomendasi.detail-view');
+        Route::post('/setujui-rekomendasi', [RekomendasiController::class, 'Approval'])->name('rekomendasi.setujui-rekomendasi');
         Route::POST('/update-rekomendasi/{id}/{vendor}', [RekomendasiController::class, 'UpdateRekomendasi'])->name('rekomendasi.update-rekomendasi');
     });
     // Route::prefix('usulan-investasi')->group(function () {
@@ -194,5 +195,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('form-hta-atau-gpa')->group(function () {
         Route::get('/hta/{idPengajuan}/{idPengajuanItem}', [HtaDanGpaController::class, 'index'])->name('htagpa.form-hta');
         Route::post('/simpan', [HtaDanGpaController::class, 'store'])->name('htagpa.store');
+        Route::post('/ajukan-hta', [HtaDanGpaController::class, 'ajukan'])->name('htagpa.ajukan');
+        Route::get('/show/{idPengajuan}/{idPengajuanItem}', [HtaDanGpaController::class, 'show'])->name('htagpa.show');
     });
 });

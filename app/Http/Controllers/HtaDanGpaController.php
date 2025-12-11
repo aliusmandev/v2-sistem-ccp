@@ -17,10 +17,12 @@ class HtaDanGpaController extends Controller
     {
         $data = PengajuanPembelian::with([
             'getVendor.getVendorDetail',
-            'getVendor.getHtaGpa',
+            'getVendor.getHtaGpa' => function ($query) use ($idPengajuanItem) {
+                $query->where('PengajuanItemId', $idPengajuanItem);
+            },
             'getJenisPermintaan.getForm',
             'getPengajuanItem' => function ($query) use ($idPengajuanItem) {
-                $query->where('IdBarang', $idPengajuanItem)->with('getBarang.getMerk', 'getHtaGpa');
+                $query->where('id', $idPengajuanItem)->with('getBarang.getMerk');
             }
         ])->find($idPengajuan);
         // dd($data);
@@ -35,20 +37,54 @@ class HtaDanGpaController extends Controller
     {
         //
     }
+    public function ajukan(Request $request)
+    {
+        $htaDanGpa = HtaDanGpa::where('IdPengajuan', $request->IdPengajuan)
+            ->where('PengajuanItemId', $request->PengajuanItemId)
+            ->where('IdBarang', $request->IdBarang)
+            ->first();
+        if ($htaDanGpa) {
+            $htaDanGpa->Status = 'Final';
+            $htaDanGpa->save();
+        }
+
+        return redirect()->back()->with('success', 'Hai ' . auth()->user()->name . ', HTA Berhasil Diajukan');
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // dd($request->vendor);
+        // dd($request->vendor[0]['IdPengajuan']);
+        $header = HtaDanGpa::updateOrCreate(
+            [
+                'JenisForm' => $request->JenisForm ?? null,
+                'IdPengajuan' => $request->vendor[0]['IdPengajuan'],
+                'PengajuanItemId' => $request->vendor[0]['PengajuanItemId'],
+                'IdVendor' => $request->vendor[0]['IdVendor'],
+                'IdBarang' => $request->vendor[0]['IdBarang'],
+            ],
+            [
+                'JenisForm' => $request->JenisForm ?? null,
+                'IdPengajuan' => $request->vendor[0]['IdPengajuan'],
+                'PengajuanItemId' => $request->vendor[0]['PengajuanItemId'],
+                'IdVendor' => $request->vendor[0]['IdVendor'],
+                'IdBarang' => $request->vendor[0]['IdBarang'],
+                'UserCreate' => auth()->user()->name,
+                'DiajukanOleh' => auth()->user()->id,
+                'DiajukanPada' => now(),
+            ]
+        );
+
         foreach ($request->vendor as $key => $value) {
-            $Header = HtaDanGpa::updateOrCreate(
+            $Isi = HtaDanGpaDetail::updateOrCreate(
                 [
                     'IdPengajuan' => $value['IdPengajuan'],
                     'PengajuanItemId' => $value['PengajuanItemId'],
                     'IdVendor' => $value['IdVendor'] ?? null,
                     'IdBarang' => $value['IdBarang'] ?? null,
+                    'IdHtaGpa' => $header->id,
                 ],
                 [
                     'IdParameter' => $value['IdParameter'] ?? null,
@@ -74,9 +110,21 @@ class HtaDanGpaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(HtaDanGpa $htaDanGpa)
+    public function show($idPengajuan, $idPengajuanItem)
     {
-        //
+        $data = PengajuanPembelian::with([
+            'getVendor.getVendorDetail',
+            'getVendor.getHtaGpa' => function ($query) use ($idPengajuanItem) {
+                $query->where('PengajuanItemId', $idPengajuanItem);
+            },
+            'getJenisPermintaan.getForm',
+            'getPengajuanItem' => function ($query) use ($idPengajuanItem) {
+                $query->where('id', $idPengajuanItem)->with('getBarang.getMerk');
+            }
+        ])->find($idPengajuan);
+        // dd($data);
+        $parameter = MasterParameter::get();
+        return view('hta-gpa.show', compact('data', 'parameter'));
     }
 
     /**

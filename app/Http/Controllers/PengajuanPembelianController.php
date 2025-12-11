@@ -95,7 +95,9 @@ class PengajuanPembelianController extends Controller
         return view('form.pengajuan-pembelian.create', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'CekHta'));
     }
 
-    public function SimpanDraft($id) {}
+    public function SimpanDraft($id)
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -227,6 +229,7 @@ class PengajuanPembelianController extends Controller
     public function show($id)
     {
         $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang')->find($id);
+        // dd($data);
         $vendor = MasterVendor::orderBy('Nama', 'asc')->get();
         $masterbarang = MasterBarang::get();
         return view('form.pengajuan-pembelian.show', compact('data', 'vendor', 'masterbarang'));

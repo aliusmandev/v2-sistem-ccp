@@ -4,10 +4,10 @@
     <div class="page-header">
         <div class="row">
             <div class="col">
-                <h3 class="page-title">Pengajuan Pembelian</h3>
+                <h3 class="page-title">Review Pengajuan Pembelian</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('ajukan.index') }}">Pengajuan Pembelian</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('ajukan.index') }}">Review Pengajuan Pembelian</a></li>
                     <li class="breadcrumb-item active">Detail Pengajuan Pembelian</li>
                 </ul>
             </div>
@@ -94,12 +94,15 @@
                                                 })
                                                 ->values()
                                             : collect();
+                                        // dd($vendorList);
                                         $vendorData = $vendorList[$vnIdx] ?? null;
                                         $selectedVendor = null;
                                         if ($vendorData && isset($vendorData->NamaVendor)) {
+                                            // Cari nama vendor dengan membandingkan id
                                             $selectedVendor = $vendor->firstWhere('id', $vendorData->NamaVendor);
                                         }
 
+                                        // Hitung total berdasarkan detail barang vendor (urutan tidak diubah)
                                         $totalHargaSebelumDiskonAll = 0;
                                         $totalDiskonAll = 0;
                                         $totalHargaSetelahDiskonAll = 0;
@@ -130,6 +133,7 @@
                                                 $totalHargaSetelahDiskonAll += $totalBarangHarga - $nominalDiskon;
                                             }
                                         }
+                                        // PPN
                                         $ppn = isset($vendorData->Ppn) ? floatval($vendorData->Ppn) : 0;
                                         $totalPpn = $ppn ? ($totalHargaSetelahDiskonAll * $ppn) / 100 : 0;
                                         $grandTotal = $totalHargaSetelahDiskonAll + $totalPpn;
@@ -142,60 +146,12 @@
                                                     <div class="row g-0">
                                                         <div class="col-md-8">
                                                             <div class="card-header">
-                                                                <div
-                                                                    class="card-title d-flex justify-content-between align-items-center">
-                                                                    <div>
-                                                                        <label
-                                                                            class="form-label mb-0"><strong>Vendor</strong></label>
-                                                                        <div class="form-control-plaintext fw-bold">
-                                                                            {{ $selectedVendor ? $selectedVendor->Nama : '-' }}
-                                                                        </div>
+                                                                <div class="card-title">
+                                                                    <label
+                                                                        class="form-label mb-0"><strong>Vendor</strong></label>
+                                                                    <div class="form-control-plaintext fw-bold">
+                                                                        {{ $selectedVendor ? $selectedVendor->Nama : '-' }}
                                                                     </div>
-                                                                    {{-- Button rekomendasikan vendor --}}
-                                                                    @if ($selectedVendor)
-                                                                        @php
-                                                                            $accVendor = null;
-                                                                            if (
-                                                                                isset($data->getVendor) &&
-                                                                                is_iterable($data->getVendor)
-                                                                            ) {
-                                                                                foreach ($data->getVendor as $gv) {
-                                                                                    if (
-                                                                                        (isset($gv->id) &&
-                                                                                            $gv->id ==
-                                                                                                $selectedVendor->id) ||
-                                                                                        (isset($gv->IdVendor) &&
-                                                                                            $gv->IdVendor ==
-                                                                                                $selectedVendor->id)
-                                                                                    ) {
-                                                                                        $accVendor =
-                                                                                            $gv->AccVendor ?? null;
-                                                                                        break;
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        @endphp
-
-                                                                        @if ($accVendor === 'Y')
-                                                                            <span class="badge bg-success"
-                                                                                style="margin-left: 10px;">
-                                                                                <i class="fa fa-check"></i> Anda telah
-                                                                                merekomendasikan vendor ini
-                                                                            </span>
-                                                                        @elseif (is_null($accVendor))
-                                                                            <form
-                                                                                action="{{ route('rekomendasi.update-rekomendasi', ['id' => $data->id, 'vendor' => $selectedVendor->id ?? '']) }}"
-                                                                                method="POST" style="margin-left: 10px;">
-                                                                                @csrf
-                                                                                <button type="submit"
-                                                                                    class="btn btn-success btn-sm"
-                                                                                    title="Rekomendasikan Vendor Ini">
-                                                                                    <i class="fa fa-thumbs-up"></i>
-                                                                                    Rekomendasikan Vendor Ini
-                                                                                </button>
-                                                                            </form>
-                                                                        @endif
-                                                                    @endif
                                                                 </div>
                                                             </div>
                                                             <div class="card-body">
@@ -263,8 +219,8 @@
                                                         <th>Merek</th>
                                                         <th>Jumlah</th>
                                                         <th>Harga Satuan</th>
-                                                        <th>Diskon</th>
                                                         <th>Jenis Diskon</th>
+                                                        <th>Diskon</th>
                                                         <th>Total Diskon</th>
                                                         <th>Total Harga</th>
                                                     </tr>
@@ -293,6 +249,7 @@
                                                                 }
                                                                 $totalSetelahDiskon =
                                                                     $totalBarangHarga - $nominalDiskon;
+                                                                // dd($barang->id);
                                                             @endphp
                                                             <tr>
                                                                 <td width="5">{{ $key + 1 }}</td>
@@ -310,13 +267,14 @@
                                                                         {{ number_format($hargaSatuan, 0, ',', '.') }}</span>
                                                                 </td>
                                                                 <td>
+                                                                    <span>{{ $jenisDiskon ?? '-' }}</span>
+                                                                </td>
+                                                                <td>
                                                                     <span>
                                                                         {{ $diskon !== null ? number_format($diskon, 0, ',', '.') : '-' }}
                                                                     </span>
                                                                 </td>
-                                                                <td>
-                                                                    <span>{{ $jenisDiskon ?? '-' }}</span>
-                                                                </td>
+
                                                                 <td>
                                                                     <span>
                                                                         {{ $nominalDiskon ? number_format($nominalDiskon, 0, ',', '.') : '-' }}
@@ -393,194 +351,141 @@
                                                     </tr> --}}
                                                 </tbody>
                                             </table>
+
                                         </div>
                                     </div>
                                 @endfor
                             </div>
-
                         </div>
                     </div>
-                </div>
+                    {{-- END PERBANDINGAN VENDOR --}}
+                    {{-- DAFTAR ITEM YANG DIAJUKAN --}}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Daftar Item yang Diajukan</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center" style="width:40px;">No</th>
+                                            <th>Nama Barang</th>
+                                            <th class="text-center">HTA / GPA</th>
+                                            <th class="text-center">FUI</th>
+                                            <th class="text-center">Rekomendasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($data->getPengajuanItem && count($data->getPengajuanItem))
+                                            @foreach ($data->getPengajuanItem as $i => $item)
+                                                <tr>
+                                                    <td class="text-center">{{ $i + 1 }}</td>
+                                                    <td>
+                                                        {{ $item->getBarang->Nama ?? '-' }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @php
+                                                            $hasHta = $item->getHtaGpa ? true : false;
+                                                        @endphp
+                                                        @if (!$hasHta)
+                                                            <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
+                                                                class="btn btn-warning">
+                                                                <i class="fa fa-exclamation-circle"></i>
+                                                                Lengkapi HTA
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('htagpa.show', [$data->id, $item->id]) }}"
+                                                                class="btn btn-success">
+                                                                <i class="fa fa-check-circle"></i>
+                                                                Lihat HTA
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">{{ $item->Satuan ?? '-' }}</td>
+                                                    <td class="text-center">
+                                                        <a href="{{ route('rekomendasi.create', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                            class="btn btn-primary">
+                                                            <i class="fa fa-pen"></i> Buat Rekomendasi
+                                                        </a>
+                                                        @php
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
+                                                        @endphp
+                                                        @if ($adaRekomendasi)
+                                                            <a href="{{ route('rekomendasi.detail-print', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                class="btn btn-info ms-2" target="_blank">
+                                                                <i class="fa fa-print"></i> Print
+                                                            </a>
+                                                            <a href="{{ route('rekomendasi.detail-view', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                class="btn btn-secondary ms-2" target="_blank">
+                                                                <i class="fa fa-eye"></i> Lihat
+                                                            </a>
+                                                        @endif
+                                                    </td>
 
-            </div>
-        </div>
-    </div>
-    {{-- END PERBANDINGAN VENDOR --}}
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">
-                HTA (Health Technology Assesment)
-            </div>
-        </div>
-        <div class="card-body">
-            @php
-                // AmgetHtabil data HTA dari $data->
-                $listHta = $data->getHta ?? [];
-                // dd($listHta);
-            @endphp
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="5%">No</th>
-                            <th>Nama Barang</th>
-                            <th>Merek</th>
-                            <th width="10%" class="text-center">HTA / GPA</th>
-                            <th width="10%" class="text-center">HTA / GPA</th>
-                            <th width="10%" class="text-center">Review</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($listHta as $key => $hta)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $hta->getNamaBarang->Nama ?? '-' }}</td>
-                                <td>{{ $hta->getNamaBarang->getMerk->Nama ?? '-' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="6" class="text-center">Tidak ada data item.</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
-                                @php
-                                    $lastSegment = collect(request()->segments())->last();
-                                    $idBarang = $hta->getNamaBarang->id ?? null;
-                                @endphp
+                    <div class="co2 text-end mt-3">
+                        <a href="{{ route('ajukan.index') }}" class="btn btn-secondary me-2">
+                            <i class="fa fa-arrow-left"></i> Kembali
+                        </a>
 
-                                <td class="text-center">
-                                    @if (empty($hta->getListVendorHta) || (is_countable($hta->getListVendorHta) && count($hta->getListVendorHta) == 0))
-                                        <span class="badge bg-warning text-white ms-2" title="Tidak dapat mengisi HTA">
-                                            <i class="fa fa-ban"></i> Belum Di Isi
-                                        </span>
-                                    @else
-                                        <a href="{{ route($data->Jenis == '1' ? 'hta.show' : 'gpa.show', ['IdPengajuan' => $lastSegment, 'barang' => $idBarang]) }}"
-                                            class="badge bg-info text-white ms-2" title="Lihat detail">
-                                            <i class="fa fa-eye"></i> Lihat HTA
-                                        </a>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @php
-                                        $hasReview = false;
-                                        if ($data->getReview && count($data->getReview) > 0) {
-                                            foreach ($data->getReview as $review) {
-                                                if ($review->NamaPermintaan == ($hta->IdBarang ?? null)) {
-                                                    $hasReview = true;
-                                                    break;
-                                                }
+                        @if ($data->Status == 'Diajukan')
+                            <button type="button" class="btn btn-danger" id="btn-batalkan">
+                                <i class="fa fa-times"></i> Batalkan Pengajuan
+                            </button>
+                            <form id="form-batalkan" action="{{ route('ajukan.update-status', $data->id) }}"
+                                method="POST" style="display: none;">
+                                @csrf
+                                <input type="hidden" name="Status" value="Draft">
+                            </form>
+                        @elseif($data->Status == 'Draft')
+                            <button type="button" class="btn btn-success" id="btn-ajukan">
+                                <i class="fa fa-paper-plane"></i> Ajukan Ke CCP
+                            </button>
+                            <form id="form-ajukan" action="{{ route('ajukan.update-status', $data->id) }}"
+                                method="POST" style="display: none;">
+                                @csrf
+                                <input type="hidden" name="Status" value="Diajukan">
+                            </form>
+                            @push('js')
+                                <script>
+                                    document.getElementById('btn-ajukan').addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        Swal.fire({
+                                            title: 'Konfirmasi Pengajuan',
+                                            text: 'Apakah Anda yakin ingin mengajukan permohonan ini? Pastikan semua dokumen tambahan telah lengkap.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#28a745',
+                                            cancelButtonColor: '#d33',
+                                            confirmButtonText: 'Ya, ajukan!',
+                                            cancelButtonText: 'Batal'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                document.getElementById('form-ajukan').submit();
                                             }
-                                        }
-                                    @endphp
-                                    @if (!$hasReview)
-                                        <a href="{{ route('rekomendasi.review', ['IdPengajuan' => $lastSegment, 'barang' => $idBarang]) }}"
-                                            class="btn btn-primary btn-sm" title="Review">
-                                            <i class="fa fa-eye"></i> Review
-                                        </a>
-                                    @else
-                                        <a href="{{ route('rekomendasi.review', ['IdPengajuan' => $lastSegment, 'barang' => $idBarang]) }}"
-                                            class="badge bg-success text-white ms-2" title="Lihat/Edit Review">
-                                            <i class="fa fa-eye"></i> Lihat/Edit Review
-                                        </a>
-                                        <a href="{{ route('rekomendasi.cetak', ['IdPengajuan' => $lastSegment, 'barang' => $idBarang]) }}"
-                                            class="badge bg-primary text-white ms-2" title="Cetak Review"
-                                            target="_blank">
-                                            <i class="fa fa-print"></i> Cetak
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">Tidak ada data HTA/GPA.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="card-title">
-                Form Usulan Investasi
-            </div>
-            <a href="{{ route('usulan-investasi.create', ['id' => $data->id]) }}" class="btn btn-primary btn-sm">
-                <i class="fa fa-plus"></i> Buat Form Usulan Investasi
-            </a>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="5%">No</th>
-                            <th>Departemen yang meminta/usulan investasi</th>
-                            <th>Kategori usulan investasi (Pembelian)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ $data->getFui->id ?? '-' }}</td>
-                            <td>{{ $data->getFui->DepartemenMemintaId ?? '-' }}</td>
-                            <td>{{ $data->getFui->KategoriUsulanPembelian ?? '-' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="mt-2">
-                    <a href="{{ route('usulan-investasi.cetak', $data->id) }}" class="btn btn-info btn-sm"
-                        target="_blank">
-                        <i class="fa fa-print"></i> Cetak Usulan Investasi
-                    </a>
+                                        });
+                                    });
+                                </script>
+                            @endpush
+                        @endif
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="co2 text-end mt-3">
-        <a href="{{ route('ajukan.index') }}" class="btn btn-secondary me-2">
-            <i class="fa fa-arrow-left"></i> Kembali
-        </a>
-
-        @if ($data->Status == 'Diajukan')
-            <button type="button" class="btn btn-danger" id="btn-batalkan">
-                <i class="fa fa-times"></i> Batalkan Pengajuan
-            </button>
-            <form id="form-batalkan" action="{{ route('ajukan.update-status', $data->id) }}" method="POST"
-                style="display: none;">
-                @csrf
-                <input type="hidden" name="Status" value="Draft">
-            </form>
-        @elseif($data->Status == 'Draft')
-            <button type="button" class="btn btn-success" id="btn-ajukan">
-                <i class="fa fa-paper-plane"></i> Ajukan Ke CCP
-            </button>
-            <form id="form-ajukan" action="{{ route('ajukan.update-status', $data->id) }}" method="POST"
-                style="display: none;">
-                @csrf
-                <input type="hidden" name="Status" value="Diajukan">
-            </form>
-            @push('js')
-                <script>
-                    document.getElementById('btn-ajukan').addEventListener('click', function(e) {
-                        e.preventDefault();
-                        Swal.fire({
-                            title: 'Konfirmasi Pengajuan',
-                            text: 'Apakah Anda yakin ingin mengajukan permohonan ini? Pastikan semua dokumen tambahan telah lengkap.',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#28a745',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Ya, ajukan!',
-                            cancelButtonText: 'Batal'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                document.getElementById('form-ajukan').submit();
-                            }
-                        });
-                    });
-                </script>
-            @endpush
-        @endif
-
-    </div>
-    </div>
-    </div>
-    </div>
     </div>
 @endsection
 @push('js')
@@ -613,20 +518,6 @@
                     iconColor: '#4BCC1F',
                     confirmButtonText: 'Oke',
                     confirmButtonColor: '#4BCC1F',
-                });
-            }, 500);
-        </script>
-    @endif
-    @if (Session::get('error'))
-        <script>
-            setTimeout(function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: '{{ Session::get('error') }}',
-                    iconColor: '#d33',
-                    confirmButtonText: 'Oke',
-                    confirmButtonColor: '#d33',
                 });
             }, 500);
         </script>

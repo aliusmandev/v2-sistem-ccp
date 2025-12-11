@@ -12,8 +12,9 @@ return new class extends Migration {
     {
         Schema::create('hta_dan_gpa_details', function (Blueprint $table) {
             $table->id();
-            $table->string('IdPengajuan')->nullable();
             $table->string('IdHtaGpa')->nullable();
+            $table->string('IdPengajuan')->nullable();
+            $table->string('PengajuanItemId')->nullable();
             $table->string('IdVendor')->nullable();
             $table->string('IdBarang')->nullable();
             $table->json('IdParameter')->nullable();
@@ -25,6 +26,12 @@ return new class extends Migration {
             $table->json('Nilai4')->nullable();
             $table->json('Nilai5')->nullable();
             $table->json('SubTotal')->nullable();
+            $table->string('UmurEkonomis')->nullable();
+            $table->string('BuybackPeriod')->nullable();
+            $table->string('TarifDiusulkan')->nullable();
+            $table->string('TargetPemakaianBulanan')->nullable();
+            $table->text('Keterangan')->nullable();
+            $table->string('KodePerusahaan')->nullable();
             $table->string('UserCreate')->nullable();
             $table->string('UserUpdate')->nullable();
             $table->string('UserDelete')->nullable();

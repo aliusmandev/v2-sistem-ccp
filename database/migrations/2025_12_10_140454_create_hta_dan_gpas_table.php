@@ -12,29 +12,13 @@ return new class extends Migration {
     {
         Schema::create('hta_dan_gpas', function (Blueprint $table) {
             $table->id();
-            // $table->string('IdPengajuan')->nullable();
-            // $table->string('IdVendor')->nullable();
-            // $table->string('PengajuanItemId')->nullable();
-            // $table->string('IdBarang')->nullable();
+            $table->string('JenisForm')->nullable();
             $table->string('IdPengajuan')->nullable();
             $table->string('PengajuanItemId')->nullable();
             $table->string('IdVendor')->nullable();
             $table->string('IdBarang')->nullable();
-            $table->json('IdParameter')->nullable();
-            $table->json('Parameter')->nullable();
-            $table->json('Deskripsi')->nullable();
-            $table->json('Nilai1')->nullable();
-            $table->json('Nilai2')->nullable();
-            $table->json('Nilai3')->nullable();
-            $table->json('Nilai4')->nullable();
-            $table->json('Nilai5')->nullable();
-            $table->json('SubTotal')->nullable();
-            $table->string('UmurEkonomis')->nullable();
-            $table->string('BuybackPeriod')->nullable();
-            $table->string('TarifDiusulkan')->nullable();
-            $table->string('TargetPemakaianBulanan')->nullable();
-            $table->text('Keterangan')->nullable();
-
+            $table->string('DiajukanOleh')->nullable();
+            $table->dateTime('DiajukanPada')->nullable();
             $table->string('Penilai1_Oleh')->nullable();
             $table->enum('Penilai1_Status', ['P', 'Y', 'N']);
             $table->dateTime('Penilai1_Pada')->nullable();
@@ -55,7 +39,7 @@ return new class extends Migration {
             $table->enum('Penilai5_Status', ['P', 'Y', 'N']);
             $table->dateTime('Penilai5_Pada')->nullable();
             $table->enum('Status', ['Draft', 'Diajukan', 'Final', 'Disetujui'])->default('Draft');
-
+            $table->string('KodePerusahaan')->nullable();
             $table->string('UserCreate')->nullable();
             $table->string('UserUpdate')->nullable();
             $table->string('UserDelete')->nullable();

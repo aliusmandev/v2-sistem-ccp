@@ -12,11 +12,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
@@ -35,7 +30,7 @@
                                     <th>Kode Pengajuan</th>
                                     <th>Jenis</th>
                                     <th>Perusahaan</th>
-                                    <th>DiAjukan Oleh</th>
+                                    <th>Dibuat Oleh</th>
                                     <th>Status</th>
                                     <th width="15%">Aksi</th>
                                 </tr>

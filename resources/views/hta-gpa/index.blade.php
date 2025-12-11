@@ -39,16 +39,36 @@
                         </table>
                     </div>
 
+                    <div class="alert alert-warning d-flex align-items-center" role="alert" style="min-height: 70px;">
+                        <i class="fa fa-exclamation-circle me-2" style="align-self: center; font-size: 1.6rem;"></i>
+                        <div class="d-flex align-items-center" style="min-height: 50px;">
+                            <ol class="mb-0 ps-2">
+                                <li>Isi HTA secara lengkap untuk setiap Vendor terlebih dahulu. Setelah HTA Vendor ini
+                                    diisi, baru bisa melanjutkan ke Vendor berikutnya.</li>
+                                <li>Semua kolom HTA wajib diisi.</li>
+                                <li>Jika {{ auth()->user()->name }} sedang sibuk, Anda dapat menyimpan data sebagai draft
+                                    terlebih dahulu dan melanjutkan pengisian di lain waktu.</li>
+                            </ol>
+                        </div>
+                    </div>
                     <form id="formHtaGpa" action="{{ route('htagpa.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <ul class="nav nav-tabs tab-style-1 d-sm-flex d-block" role="tablist" id="vendorTabs">
                             @foreach ($data->getVendor as $vIdx => $Vendor)
+                                @php
+                                    // Jangan biarkan tab vendor berikutnya aktif jika tab sebelumnya belum diisi (berdasarkan Nilai1)
+                                    $disableTab = false;
+                                    if ($vIdx >= 1) {
+                                        $prevVendor = $data->getVendor[$vIdx - 1] ?? null;
+                                        $prevNilai1 = $prevVendor->getHtaGpa->Nilai1[0] ?? null;
+                                        $disableTab = is_null($prevNilai1);
+                                    }
+                                @endphp
                                 <li class="nav-item">
-                                    <a class="nav-link {{ $vIdx === 0 ? 'active' : '' }}"
-                                        id="vendor-tab-{{ $vIdx }}" data-bs-toggle="tab"
-                                        href="#vendor-pane-{{ $vIdx }}" role="tab"
-                                        aria-controls="vendor-pane-{{ $vIdx }}"
-                                        aria-selected="{{ $vIdx === 0 ? 'true' : 'false' }}">
+                                    <a class="nav-link {{ $vIdx === 0 ? 'active' : '' }} {{ $disableTab ? 'disabled' : '' }}"
+                                        id="vendor-tab-{{ $vIdx }}"
+                                        @if (!$disableTab) data-bs-toggle="tab" href="#vendor-pane-{{ $vIdx }}" role="tab" aria-controls="vendor-pane-{{ $vIdx }}" aria-selected="{{ $vIdx === 0 ? 'true' : 'false' }}" @else tabindex="-1" aria-disabled="true" @endif
+                                        style="{{ $disableTab ? 'pointer-events: none; opacity: 0.5;' : '' }}">
                                         {{ $Vendor->getNamaVendor->Nama ?? 'Vendor' }}
                                     </a>
                                 </li>
@@ -98,39 +118,39 @@
                                                     </td>
                                                     <td>
                                                         <textarea class="form-control" name="vendor[{{ $vIdx }}][Deskripsi][]" rows="4"
-                                                            placeholder="Masukkan deskripsi">{!! $Vendor->getHtaGpa[0]->Deskripsi[0] ?? '' !!}</textarea>
+                                                            placeholder="Masukkan deskripsi">{!! $Vendor->getHtaGpa->Deskripsi[0] ?? '' !!}</textarea>
                                                     </td>
                                                     <td>
                                                         {{-- @php
-                                                            dd($Vendor->getHtaGpa[0]->Nilai1);
+                                                            dd($Vendor->getHtaGpa->Nilai1);
                                                         @endphp --}}
                                                         <div class="d-flex gap-1">
                                                             <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa[0]->Nilai1[$key] ?? '' }}"
+                                                                value="{{ $Vendor->getHtaGpa->Nilai1[$key] ?? '' }}"
                                                                 class="form-control nilai-input"
                                                                 name="vendor[{{ $vIdx }}][Nilai1][]"
                                                                 style="max-width: 100px;"
                                                                 oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
                                                             <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa[0]->Nilai2[$key] ?? '' }}"
+                                                                value="{{ $Vendor->getHtaGpa->Nilai2[$key] ?? '' }}"
                                                                 class="form-control nilai-input"
                                                                 name="vendor[{{ $vIdx }}][Nilai2][]"
                                                                 style="max-width: 100px;"
                                                                 oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
                                                             <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa[0]->Nilai3[$key] ?? '' }}"
+                                                                value="{{ $Vendor->getHtaGpa->Nilai3[$key] ?? '' }}"
                                                                 class="form-control nilai-input"
                                                                 name="vendor[{{ $vIdx }}][Nilai3][]"
                                                                 style="max-width: 100px;"
                                                                 oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
                                                             <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa[0]->Nilai4[$key] ?? '' }}"
+                                                                value="{{ $Vendor->getHtaGpa->Nilai4[$key] ?? '' }}"
                                                                 class="form-control nilai-input"
                                                                 name="vendor[{{ $vIdx }}][Nilai4][]"
                                                                 style="max-width: 100px;"
                                                                 oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
                                                             <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa[0]->Nilai5[$key] ?? '' }}"
+                                                                value="{{ $Vendor->getHtaGpa->Nilai5[$key] ?? '' }}"
                                                                 class="form-control nilai-input"
                                                                 name="vendor[{{ $vIdx }}][Nilai5][]"
                                                                 style="max-width: 100px;"
@@ -139,7 +159,7 @@
                                                     </td>
                                                     <td>
                                                         <input type="text"
-                                                            value="{{ $Vendor->getHtaGpa[0]->SubTotal[$key] ?? '' }}"
+                                                            value="{{ $Vendor->getHtaGpa->SubTotal[$key] ?? '' }}"
                                                             class="form-control subtotal-input"
                                                             name="vendor[{{ $vIdx }}][SubTotal][]" readonly>
                                                     </td>
@@ -163,13 +183,15 @@
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control"
                                                     name="vendor[{{ $vIdx }}][UmurEkonomis]"
-                                                    placeholder="Masukkan Umur Ekonomis">
+                                                    placeholder="Masukkan Umur Ekonomis"
+                                                    value="{{ $Vendor->getHtaGpa->UmurEkonomis ?? '' }}">
                                             </div>
                                             <label class="col-md-3 col-form-label fw-bold">Tarif Diusulkan</label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control"
                                                     name="vendor[{{ $vIdx }}][TarifDiusulkan]"
-                                                    placeholder="Masukkan Tarif Diusulkan">
+                                                    placeholder="Masukkan Tarif Diusulkan"
+                                                    value="{{ $Vendor->getHtaGpa->TarifDiusulkan ?? '' }}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -177,35 +199,47 @@
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control"
                                                     name="vendor[{{ $vIdx }}][BuybackPeriod]"
-                                                    placeholder="Masukkan Buyback Period">
+                                                    placeholder="Masukkan Buyback Period"
+                                                    value="{{ $Vendor->getHtaGpa->BuybackPeriod ?? '' }}">
                                             </div>
                                             <label class="col-md-3 col-form-label fw-bold">Target Pemakaian Bulanan</label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control"
                                                     name="vendor[{{ $vIdx }}][TargetPemakaianBulanan]"
-                                                    placeholder="Masukkan Target Pemakaian Bulanan">
+                                                    placeholder="Masukkan Target Pemakaian Bulanan"
+                                                    value="{{ $Vendor->getHtaGpa->TargetPemakaianBulanan ?? '' }}">
                                             </div>
                                         </div>
                                         <label class="col-md-3 col-form-label fw-bold">Keterangan</label>
                                         <div class="col-md-12">
                                             <textarea class="form-control" name="vendor[{{ $vIdx }}][Keterangan]" rows="3"
-                                                placeholder="Masukkan Keterangan"></textarea>
+                                                placeholder="Masukkan Keterangan">{!! $Vendor->getHtaGpa->Keterangan ?? '' !!}</textarea>
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-success">Simpan Penilaian HTA</button>
-                            <a href="#" class="btn btn-secondary">Kembali</a>
+                        <div class="mt-3 d-flex justify-content-end">
+                            <button type="submit" name="action" value="draft" class="btn btn-warning me-2">Simpan
+                                Sebagai Draft</button>
+                            <button type="button" id="btnAjukan" class="btn btn-success me-2">Ajukan</button>
+                            <a href="{{ route('pp.show', $data->id) }}" class="btn btn-secondary">Kembali</a>
                         </div>
+
+
+
+
                     </form>
                 </div>
             </div>
 
-            {{--
-            ... existing commented older form ...
-            --}}
+            <form id="formAjukanHtaGpa" action="{{ route('htagpa.ajukan') }}" method="POST" style="display:none;">
+                @csrf
+                <input type="hidden" name="IdPengajuan" value="{{ $data->id }}">
+                <input type="hidden" name="PengajuanItemId" value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+                <input type="hidden" name="IdBarang" value="{{ $data->getPengajuanItem[0]->IdBarang ?? '' }}">
+                <input type="hidden" name="Status" value="Diajukan">
+            </form>
 
         </div>
     </div>
@@ -226,7 +260,28 @@
         </script>
     @endif
     <script>
-        // Hitung subtotal dan grand total untuk setiap tabel vendor secara dinamis
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnAjukan').addEventListener('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Ajukan Penilaian?',
+                    text: "Apakah Anda yakin ingin mengajukan data penilaian ini?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Ajukan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('formAjukanHtaGpa').submit();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
         function updateSubtotalsAndGrandTotal(vendorTable) {
             let grandTotal = 0;
             vendorTable.find("tbody tr").each(function() {
@@ -253,6 +308,8 @@
         $(document).ready(function() {
             $('.nilai-table').each(function() {
                 let vendorTable = $(this);
+                updateSubtotalsAndGrandTotal(vendorTable);
+
                 vendorTable.on('input', '.nilai-input', function() {
                     updateSubtotalsAndGrandTotal(vendorTable);
                 });

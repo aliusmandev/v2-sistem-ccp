@@ -218,9 +218,9 @@
                                                         <th>Barang</th>
                                                         <th>Merek</th>
                                                         <th>Jumlah</th>
-                                                        <th>Diskon</th>
-                                                        <th>Jenis Diskon</th>
                                                         <th>Harga Satuan</th>
+                                                        <th>Jenis Diskon</th>
+                                                        <th>Diskon</th>
                                                         <th>Total Diskon</th>
                                                         <th>Total Harga</th>
                                                     </tr>
@@ -385,10 +385,22 @@
                                                         {{ $item->getBarang->Nama ?? '-' }}
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
-                                                            class="btn btn-success">
-                                                            Isi HTA
-                                                        </a>
+                                                        @php
+                                                            $hasHta = $item->getHtaGpa ? true : false;
+                                                        @endphp
+                                                        @if (!$hasHta)
+                                                            <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
+                                                                class="btn btn-warning">
+                                                                <i class="fa fa-exclamation-circle"></i>
+                                                                Lengkapi HTA
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('htagpa.show', [$data->id, $item->id]) }}"
+                                                                class="btn btn-success">
+                                                                <i class="fa fa-check-circle"></i>
+                                                                Lihat HTA
+                                                            </a>
+                                                        @endif
                                                     </td>
                                                     <td class="text-center">{{ $item->Satuan ?? '-' }}</td>
                                                     <td class="text-center">{{ $item->Satuan ?? '-' }}</td>

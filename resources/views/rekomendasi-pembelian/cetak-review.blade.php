@@ -50,43 +50,37 @@
     </div>
 
     <table class="main-table" style="margin-bottom: 45px;">
-        <td style="width: 100px;">RS yang Meminta</td>
-        <td colspan="3">
-            <strong>
-                {{ $data[0]->getPengajuan && $data[0]->getPengajuan->getPerusahaan ? $data[0]->getPengajuan->getPerusahaan->Nama : '-' }}
-            </strong>
-        </td>
+        <tr>
+            <td style="width: 100px;">RS yang Meminta</td>
+            <td colspan="{{ max(1, $rekomendasi->getRekomedasiDetail->count()) }}">
+                <strong>
+                    {{ $rekomendasi->getRekomedasiDetail[0]->getPerusahaan->Nama ?? '-' }}
+                </strong>
+            </td>
         </tr>
         <tr>
             <td>Nama Vendor</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
-                    @if ($item->getVendor->Nama)
-                        {{ $item->getVendor->Nama }}
-                    @else
-                        -
-                    @endif
+                    {{ $item->getNamaVendor->Nama ?? '-' }}
                 </td>
             @endforeach
         </tr>
         <tr>
             <td>Nama Barang</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
-                    @if ($item->getBarang && count($item->getBarang) && $item->getBarang[0]->Nama)
-                        {{ $item->getBarang[0]->Nama }}
-                    @else
-                        {{ $item->NamaPermintaan ?? '-' }}
-                    @endif
+                    {{ $item->NamaPermintaan ?? '-' }}
                 </td>
             @endforeach
         </tr>
         <tr>
             <td>Harga Awal</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td style="text-align: right;">
                     @if ($item->HargaAwal)
-                        Rp {{ number_format($item->HargaAwal, 0, ',', '.') }}
+                        Rp
+                        {{ is_numeric($item->HargaAwal) ? number_format($item->HargaAwal, 0, ',', '.') : $item->HargaAwal }}
                     @else
                         -
                     @endif
@@ -95,10 +89,11 @@
         </tr>
         <tr>
             <td>Harga Nego</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td style="text-align: right;">
                     @if ($item->HargaNego)
-                        Rp {{ number_format($item->HargaNego, 0, ',', '.') }}
+                        Rp
+                        {{ is_numeric($item->HargaNego) ? number_format($item->HargaNego, 0, ',', '.') : $item->HargaNego }}
                     @else
                         -
                     @endif
@@ -107,19 +102,15 @@
         </tr>
         <tr>
             <td>Spesifikasi</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
-                    @if ($item->Spesifikasi)
-                        {!! $item->Spesifikasi !!}
-                    @else
-                        -
-                    @endif
+                    {!! $item->Spesifikasi ?? '-' !!}
                 </td>
             @endforeach
         </tr>
         <tr>
             <td>Negara Produksi</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->NegaraProduksi ?? '-' }}
                 </td>
@@ -127,7 +118,7 @@
         </tr>
         <tr>
             <td>Garansi</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Garansi ?? '-' }}
                 </td>
@@ -135,7 +126,7 @@
         </tr>
         <tr>
             <td>Teknisi</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Teknisi ?? '-' }}
                 </td>
@@ -143,7 +134,7 @@
         </tr>
         <tr>
             <td>Bmhp</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Bmhp ?? '-' }}
                 </td>
@@ -151,7 +142,7 @@
         </tr>
         <tr>
             <td>SparePart</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->SparePart ?? '-' }}
                 </td>
@@ -159,7 +150,7 @@
         </tr>
         <tr>
             <td>BackupUnit</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->BackupUnit ?? '-' }}
                 </td>
@@ -167,7 +158,7 @@
         </tr>
         <tr>
             <td>Top</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Top ?? '-' }}
                 </td>
@@ -175,7 +166,7 @@
         </tr>
         <tr>
             <td>Rekomendasi</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Rekomendasi ?? '-' }}
                 </td>
@@ -183,7 +174,7 @@
         </tr>
         <tr>
             <td>Keterangan</td>
-            @foreach ($data as $key => $item)
+            @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
                     {{ $item->Keterangan ?? '-' }}
                 </td>
@@ -194,8 +185,8 @@
     <div class="signature">
         <div style="text-align: right; margin-bottom: 10px;">
             <span>
-                {{ $data[0]->getPengajuan && $data[0]->getPengajuan->getPerusahaan && $data[0]->getPengajuan->getPerusahaan->Kota ? $data[0]->getPengajuan->getPerusahaan->Kota : '.............' }},
-                {{ $data[0]->created_at ? \Carbon\Carbon::parse($data[0]->created_at)->format('d-m-Y') : date('d-m-Y') }}
+                {{ $rekomendasi->getRekomedasiDetail[0]->getPengajuan->getPerusahaan->Kota ?? '.............' }},
+                {{ isset($rekomendasi->getRekomedasiDetail[0]->created_at) ? \Carbon\Carbon::parse($rekomendasi->getRekomedasiDetail[0]->created_at)->format('d-m-Y') : date('d-m-Y') }}
             </span>
         </div>
 
@@ -216,8 +207,6 @@
             </tr>
         </table>
     </div>
-
-
 </body>
 
 </html>

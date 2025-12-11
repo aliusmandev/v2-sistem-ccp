@@ -10,18 +10,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('pengajuan_items', function (Blueprint $table) {
+        Schema::create('rekomendasis', function (Blueprint $table) {
             $table->id();
             $table->string('IdPengajuan')->nullable();
-            $table->string('IdBarang')->nullable();
-            $table->string('Jumlah')->nullable();
-            $table->string('Satuan')->nullable();
-            $table->string('HargaSatuan')->nullable();
-            $table->string('HargaNego')->nullable();
+            $table->string('PengajuanItemId')->nullable();
+            $table->date('TanggalPresentasi')->nullable();
+            $table->string('VendorAcc')->nullable();
+            $table->string('UserNego')->nullable();
+            $table->string('DisetujuiOleh')->nullable();
+            $table->timestamp('DisetujuiPada')->nullable();
+            $table->enum('Status', ['Draft', 'Disetujui'])->nullable();
             $table->string('KodePerusahaan')->nullable();
-            $table->string('UserCreate')->nullable();
-            $table->string('UserUpdate')->nullable();
-            $table->string('UserDelete')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -32,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengajuan_items');
+        Schema::dropIfExists('rekomendasis');
     }
 };
