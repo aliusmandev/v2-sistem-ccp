@@ -7,6 +7,7 @@ use App\Models\PengajuanItem;
 use App\Models\PengajuanPembelian;
 use App\Models\User;
 use App\Models\UsulanInvestasi;
+use App\Models\UsulanInvestasiDetail;
 use Illuminate\Http\Request;
 
 class UsulanInvestasiController extends Controller
@@ -47,6 +48,7 @@ class UsulanInvestasiController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validatedData = $request->validate([
             'IdPengajuan' => 'required|integer',
             'PengjuanItemId' => 'required|integer',
@@ -95,15 +97,36 @@ class UsulanInvestasiController extends Controller
             'DiajukanPada' => now(),
         ]);
 
+        if (is_array($request->items)) {
+            foreach ($request->items as $item) {
+                UsulanInvestasiDetail::create([
+                    'IdUsulan' => $usulan->id,
+                    'NamaBarang' => $item['NamaPermintaan'] ?? null,
+                    'IdVendor' => $item['IdVendor'] ?? null,
+                    'Merek' => $item['Merek'] ?? null,
+                    'HargaAwal' => $item['HargaAwal'] ?? null,
+                    'HargaNego' => $item['HargaNego'] ?? null,
+                    'UserCreate' => auth()->user()->id ?? null,
+                    'UserUpdate' => null,
+                ]);
+            }
+        }
         return redirect()->back()->with('success', 'Usulan Investasi berhasil disimpan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(UsulanInvestasi $UsulanInvestasi)
+    public function show($IdPengajuan, $barang)
     {
-        //
+        $usulan = UsulanInvestasi::with('getFuiDetail')->where('IdPengajuan', $IdPengajuan)
+            ->where('PengajuanItemId', $barang)
+            ->firstOrFail();
+
+        $pdf = \PDF::loadView('form-usulan-investari.show', ['data' => $usulan]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'Usulan_Investasi_' . $IdPengajuan . '_' . $barang . '.pdf');
     }
 
     /**

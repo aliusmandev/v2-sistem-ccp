@@ -189,7 +189,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', [UsulanInvestasiController::class, 'store'])->name('usulan-investasi.store');
         Route::get('/edit/{id}', [UsulanInvestasiController::class, 'edit'])->name('usulan-investasi.edit');
         Route::put('/update/{id}', [UsulanInvestasiController::class, 'update'])->name('usulan-investasi.update');
-        Route::get('/show/{id}', [UsulanInvestasiController::class, 'show'])->name('usulan-investasi.show');
+        Route::get('/show/{IdPengajuan}/{barang}', [UsulanInvestasiController::class, 'show'])->name('usulan-investasi.show');
         Route::delete('/delete/{id}', [UsulanInvestasiController::class, 'destroy'])->name('usulan-investasi.destroy');
         Route::get('/cetak/{id}', [UsulanInvestasiController::class, 'cetak'])->name('usulan-investasi.cetak');
     });

@@ -38,6 +38,10 @@ class PengajuanItem extends Model
     {
         return $this->hasOne(HtaDanGpa::class, 'PengajuanItemId', 'id');
     }
+    public function getFui()
+    {
+        return $this->hasOne(UsulanInvestasi::class, 'PengajuanItemId', 'id');
+    }
 
     public function getRekomendasi()
     {

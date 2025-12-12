@@ -23,4 +23,14 @@ class UsulanInvestasi extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * Get all of the comments for the UsulanInvestasi
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function getFuiDetail()
+    {
+        return $this->hasMany(UsulanInvestasi::class, 'id', 'IdUsulan');
+    }
 }
