@@ -31,6 +31,14 @@ class UsulanInvestasi extends Model
      */
     public function getFuiDetail()
     {
-        return $this->hasMany(UsulanInvestasi::class, 'id', 'IdUsulan');
+        return $this->hasMany(UsulanInvestasiDetail::class, 'IdUsulan', 'id');
+    }
+    public function getBarang()
+    {
+        return $this->hasOne(MasterBarang::class, 'id', 'IdBarang');
+    }
+    public function getVendor()
+    {
+        return $this->hasOne(MasterVendor::class, 'id', 'IdVendor');
     }
 }

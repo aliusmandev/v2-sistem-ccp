@@ -135,7 +135,7 @@
                                             </td>
                                             <td class="text-center align-bottom">
                                                 Diterima Oleh,<br>
-                                                Logistik / SMI
+                                                Logum / SMI
                                             </td>
                                         </tr>
                                         <tr>

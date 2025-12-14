@@ -22,8 +22,8 @@
                 </div>
                 <form action="{{ route('usulan-investasi.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" value="{{ $data->IdPengajuan }}" name="IdPengajuan">
-                    <input type="hidden" value="{{ $data->getRekomendasi->PengajuanItemId }}" name="PengjuanItemId">
+                    <input type="text" value="{{ $data->id }}" name="IdPengajuan">
+                    <input type="text" value="{{ $IdPePengajuan }}" name="PengjuanItemId">
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-6">
@@ -158,43 +158,122 @@
                                         <tr>
                                             <th style="width:5%">No</th>
                                             <th>Nama Barang</th>
-                                            <th>Merek</th>
+                                            <th width="10%">Jumlah</th>
                                             <th>Harga</th>
-                                            <th>Subtotal</th>
+                                            <th>Diskon</th>
+                                            <th>PPN</th>
+                                            <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($data->getRekomendasi->getRekomedasiDetail as $key => $rekom)
+                                        @php
+                                            $grandTotal = 0;
+
+                                            // Helper untuk format rupiah
+                                            function rupiah($angka)
+                                            {
+                                                return 'Rp ' . number_format($angka, 0, ',', '.');
+                                            }
+                                        @endphp
+                                        @forelse ($data->getVendor as $key => $rekom)
+                                            @php
+                                                $jumlah = old(
+                                                    'items.' . $key . '.Jumlah',
+                                                    $rekom->getVendorDetail[0]->Jumlah ?? 0,
+                                                );
+                                                $harga = old(
+                                                    'items.' . $key . '.Harga',
+                                                    $rekom->getVendorDetail[0]->HargaSatuan ?? 0,
+                                                );
+                                                $diskon = old(
+                                                    'items.' . $key . '.Diskon',
+                                                    $rekom->getVendorDetail[0]->TotalDiskon ?? 0,
+                                                );
+                                                $ppn = old('items.' . $key . '.Ppn', $rekom->Ppn ?? 0);
+
+                                                // Pastikan nilainya numerik
+                                                $jumlah = is_numeric($jumlah) ? $jumlah : 0;
+                                                $harga = is_numeric($harga) ? $harga : 0;
+                                                $diskon = is_numeric($diskon) ? $diskon : 0;
+                                                $ppn = is_numeric($ppn) ? $ppn : 0;
+
+                                                $subtotal = $jumlah * $harga - $diskon;
+                                                $totalPpn = $subtotal * ($ppn / 100);
+                                                $total = $subtotal + $totalPpn;
+                                                $grandTotal += $total;
+                                            @endphp
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>
-                                                    <b>{{ $rekom->NamaPermintaan }}</b>
-                                                    <br>{{ $rekom->getNamaVendor->Nama }}
-                                                    <input type="hidden"
-                                                        name="items[{{ $key }}][NamaPermintaan]"
-                                                        value="{{ $rekom->NamaPermintaan }}">
-                                                    <input type="hidden" name="items[{{ $key }}][IdVendor]"
-                                                        value="{{ $rekom->getNamaVendor->id }}">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="items[{{ $key }}][Merek]"
-                                                        class="form-control" placeholder="Masukkan merek..."
-                                                        value="{{ old('items.' . $key . '.Merek') }}">
-                                                    @error('items.' . $key . '.Merek')
+                                                    <select class="form-select select2"
+                                                        name="items[{{ $key }}][NamaBarang]"
+                                                        style="width: 100%;" data-placeholder="Pilih barang">
+                                                        @foreach ($barang as $b)
+                                                            <option value="{{ $b->Nama }}"
+                                                                {{ old('items.' . $key . '.NamaBarang', $rekom->getVendorDetail[0]->NamaBarang ?? '') == $b->Nama ? 'selected' : '' }}>
+                                                                {{ $b->Nama }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select><br>
+                                                    <label><b>{{ $rekom->getNamaVendor->Nama }}</b></label>
+                                                    @error('items.' . $key . '.NamaBarang')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="items[{{ $key }}][HargaAwal]"
-                                                        class="form-control" value="{{ $rekom->HargaAwal }}">
-                                                    @error('items.' . $key . '.HargaAwal')
+                                                    <input type="number" name="items[{{ $key }}][Jumlah]"
+                                                        class="form-control" placeholder="Masukkan jumlah..."
+                                                        value="{{ $jumlah }}">
+                                                    @error('items.' . $key . '.Jumlah')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="items[{{ $key }}][HargaNego]"
-                                                        class="form-control" value="{{ $rekom->HargaNego }}">
-                                                    @error('items.' . $key . '.HargaNego')
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Rp</span>
+                                                        <input type="number" step="0.01"
+                                                            name="items[{{ $key }}][Harga]" class="form-control"
+                                                            placeholder="Masukkan harga..." value="{{ $harga }}">
+                                                    </div>
+                                                    <small class="text-muted">{{ rupiah($harga) }}</small>
+                                                    @error('items.' . $key . '.Harga')
+                                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Rp</span>
+                                                        <input type="number" step="0.01"
+                                                            name="items[{{ $key }}][Diskon]"
+                                                            class="form-control" placeholder="Masukkan diskon..."
+                                                            value="{{ $diskon }}">
+                                                    </div>
+                                                    <small class="text-muted">{{ rupiah($diskon) }}</small>
+                                                    @error('items.' . $key . '.Diskon')
+                                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input type="number" step="0.01"
+                                                            name="items[{{ $key }}][Ppn]" class="form-control"
+                                                            placeholder="Masukkan PPN..." value="{{ $ppn }}">
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                    <small class="text-muted">{{ rupiah($totalPpn) }}</small>
+                                                    @error('items.' . $key . '.Ppn')
+                                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Rp</span>
+                                                        <input type="text" name="items[{{ $key }}][Total]"
+                                                            class="form-control" placeholder="Total otomatis"
+                                                            value="{{ number_format($total, 0, ',', '.') }}" readonly>
+                                                    </div>
+                                                    <small class="text-muted">{{ rupiah($total) }}</small>
+                                                    @error('items.' . $key . '.Total')
                                                         <div class="text-danger mt-1">{{ $message }}</div>
                                                     @enderror
                                                 </td>
@@ -204,6 +283,12 @@
                                                 <td colspan="7" class="text-center">Belum ada item.</td>
                                             </tr>
                                         @endforelse
+                                        <tr>
+                                            <td colspan="6" class="text-end fw-bold">Grand Total</td>
+                                            <td>
+                                                <strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 @if ($errors->has('items'))
@@ -228,33 +313,40 @@
                                         <tr>
                                             <td>1</td>
                                             <td>
-                                                {{-- @php
-                                                    dd($data2->getRekomendasi->getRekomedasiDetail[0]->HargaAwal);
-                                                @endphp --}}
-                                                <input type="text" name="BiayaAkhir" class="form-control"
-                                                    value="{{ $data2->getRekomendasi->getRekomedasiDetail[0]->HargaAwal ?? '-' }}">
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="text" name="BiayaAkhir" class="form-control rupiah"
+                                                        value="{{ old('BiayaAkhir', isset($data2->getVendor[0]->HargaTanpaDiskon) ? number_format($data2->getVendor[0]->HargaTanpaDiskon, 0, ',', '.') : '') }}">
+                                                </div>
                                                 @error('BiayaAkhir')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </td>
                                             <td>
                                                 <input type="hidden" name="VendorDipilih"
-                                                    value="{{ $data2->getRekomendasi->getRekomedasiDetail[0]->getNamaVendor->id ?? '-' }}">
-                                                <span>{{ $data2->getRekomendasi->getRekomedasiDetail[0]->getNamaVendor->Nama ?? '-' }}</span>
+                                                    value="{{ old('VendorDipilih', $data2->getVendor[0]->NamaVendor ?? '') }}">
+                                                <span>{{ $data2->getVendor[0]->NamaVendor ?? '' }}</span>
                                                 @error('VendorDipilih')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </td>
                                             <td>
-                                                <input type="text" name="HargaDiskonPpn" class="form-control"
-                                                    value="{{ $data2->getRekomendasi->getRekomedasiDetail[0]->HargaNego ?? '-' }}">
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="text" name="HargaDiskonPpn"
+                                                        class="form-control rupiah"
+                                                        value="{{ old('HargaDiskonPpn', isset($data2->getVendor[0]->TotalDiskon) ? number_format($data2->getVendor[0]->TotalDiskon, 0, ',', '.') : '') }}">
+                                                </div>
                                                 @error('HargaDiskonPpn')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </td>
                                             <td>
-                                                <input type="text" name="Total" class="form-control"
-                                                    value="{{ $data2->getRekomendasi->getRekomedasiDetail[0]->HargaNego ?? '-' }}">
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="text" name="Total" class="form-control rupiah"
+                                                        value="{{ old('Total', isset($data2->getVendor[0]->TotalHarga) ? number_format($data2->getVendor[0]->TotalHarga, 0, ',', '.') : '') }}">
+                                                </div>
                                                 @error('Total')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror

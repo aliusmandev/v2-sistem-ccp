@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterBarang;
 use App\Models\MasterDepartemen;
 use App\Models\PengajuanItem;
 use App\Models\PengajuanPembelian;
@@ -26,21 +27,34 @@ class UsulanInvestasiController extends Controller
     public function create($IdPengajuan, $barang)
     {
         $IdPengajuan = decrypt($IdPengajuan);
-        $barang = decrypt($barang);
-        $data = PengajuanItem::with('getRekomendasi.getRekomedasiDetail.getNamaVendor')->find($IdPengajuan);
-        $VendorAcc = PengajuanItem::with('getRekomendasi')->find($IdPengajuan);
-        // dd( $VendorAcc->VendorAcc);
-        $data2 = PengajuanItem::with([
-            'getRekomendasi.getRekomedasiDetail' => function ($query) use ($VendorAcc) {
-                $query->where('IdVendor', $VendorAcc->getRekomendasi->VendorAcc);
+        $IdPePengajuan = decrypt($barang);
+        $data = PengajuanPembelian::with([
+            'getVendor.getNamaVendor',
+            'getVendor.getVendorDetail' => function ($query) use ($barang) {
+                $query->where('NamaBarang', $barang);
+            }
+        ])->find($IdPengajuan);
+
+        $pengajuanItem = PengajuanItem::with('getRekomendasi')->find($barang);
+        $vendorAcc = optional(optional($pengajuanItem)->getRekomendasi)->VendorAcc;
+
+        $data2 = PengajuanPembelian::with([
+            'getVendor' => function ($query) use ($vendorAcc) {
+                if ($vendorAcc) {
+                    $query->where('NamaVendor', $vendorAcc);
+                }
             },
-            'getRekomendasi.getRekomedasiDetail.getNamaVendor'
+            'getVendor.getNamaVendor',
+            'getVendor.getVendorDetail' => function ($query) use ($barang) {
+                $query->where('NamaBarang', $barang);
+            }
         ])->find($IdPengajuan);
         // dd($data2);
         $departemen = MasterDepartemen::get();
         $user = User::get();
+        $barang = MasterBarang::get();
         // $dataPengajuan = PengajuanPembelian::with('getVendor.getVendorDetail')->find($data->IdPengajuan);
-        return view('form-usulan-investari.create', compact('user', 'departemen', 'data', 'data2'));
+        return view('form-usulan-investari.create', compact('barang', 'user', 'departemen', 'data', 'data2', 'IdPePengajuan'));
     }
 
     /**
@@ -51,7 +65,7 @@ class UsulanInvestasiController extends Controller
         // dd($request->all());
         $validatedData = $request->validate([
             'IdPengajuan' => 'required|integer',
-            'PengjuanItemId' => 'required|integer',
+            'PengajuanItemId' => 'required|integer',
             'Tanggal' => 'required|date',
             'Divisi' => 'required|integer',
             'NamaKadiv' => 'required|integer',
@@ -73,7 +87,7 @@ class UsulanInvestasiController extends Controller
 
         $usulan = UsulanInvestasi::create([
             'IdPengajuan' => $request->IdPengajuan,
-            'PengajuanItemId' => $request->PengjuanItemId,
+            'PengajuanItemId' => $request->PengajuanItemId,
             'IdVendor' => $request->VendorDipilih,
             'IdBarang' => $request->PengjuanItemId,
             'Tanggal' => $request->Tanggal,
@@ -85,10 +99,10 @@ class UsulanInvestasiController extends Controller
             'Divisi2' => $request->Divisi2,
             'Kategori2' => $request->Kategori2,
             'Alasan' => $request->Alasan,
-            'BiayaAkhir' => $request->BiayaAkhir,
+            'BiayaAkhir' => preg_replace('/[^0-9]/', '', $request->BiayaAkhir),
             'VendorDipilih' => $request->VendorDipilih,
             'HargaDiskonPpn' => $request->HargaDiskonPpn,
-            'Total' => $request->Total,
+            'Total' => preg_replace('/[^0-9]/', '', $request->Total),
             'SudahRkap' => $request->SudahRkap,
             'SisaBudget' => preg_replace('/[^0-9]/', '', $request->SisaBudget),
             'SudahRkap2' => $request->SudahRkap2,
@@ -103,9 +117,11 @@ class UsulanInvestasiController extends Controller
                     'IdUsulan' => $usulan->id,
                     'NamaBarang' => $item['NamaPermintaan'] ?? null,
                     'IdVendor' => $item['IdVendor'] ?? null,
-                    'Merek' => $item['Merek'] ?? null,
-                    'HargaAwal' => $item['HargaAwal'] ?? null,
-                    'HargaNego' => $item['HargaNego'] ?? null,
+                    'Jumlah' => $item['Jumlah'] ?? null,
+                    'Harga' => $item['Harga'] ?? null,
+                    'Diskon' => $item['Diskon'] ?? null,
+                    'Ppn' => $item['Ppn'] ?? null,
+                    'Total' => preg_replace('/[^0-9]/', '', $request->Total),
                     'UserCreate' => auth()->user()->id ?? null,
                     'UserUpdate' => null,
                 ]);
@@ -119,14 +135,22 @@ class UsulanInvestasiController extends Controller
      */
     public function show($IdPengajuan, $barang)
     {
-        $usulan = UsulanInvestasi::with('getFuiDetail')->where('IdPengajuan', $IdPengajuan)
-            ->where('PengajuanItemId', $barang)
-            ->firstOrFail();
 
-        $pdf = \PDF::loadView('form-usulan-investari.show', ['data' => $usulan]);
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'Usulan_Investasi_' . $IdPengajuan . '_' . $barang . '.pdf');
+        $usulan = UsulanInvestasi::with('getFuiDetail', 'getBarang', 'getVendor')
+            ->where('IdPengajuan', $IdPengajuan)
+            ->where('PengajuanItemId', $barang)
+            ->first();
+        // dd($usulan);
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('form-usulan-investari.show', ['data' => $usulan])
+            ->setPaper('a4', 'portrait');
+
+        // Optionally you can pass some options for better CSS/HTML rendering
+        $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+        $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
+
+        return $pdf->stream();
     }
 
     /**
