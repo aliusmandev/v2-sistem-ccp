@@ -29,7 +29,7 @@ class Rekomendasi extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function getRekomendasiDetail()
+    public function getRekomedasiDetail()
     {
         return $this->hasMany(RekomendasiDetail::class, 'IdRekomendasi', 'id');
     }
