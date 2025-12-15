@@ -46,13 +46,14 @@ class UsulanInvestasiController extends Controller
         $CariPengajuanItem = PengajuanItem::with('getRekomendasi')->find($PengajuanItemId);
         // $vendorAcc = $CariPengajuanItem->getRekomendasi;
         $vendorAcc = Rekomendasi::with([
-            'getRekomendasiDetail' => function ($query2) {
+            'getRekomedasiDetail' => function ($query2) {
                 $query2->where('Rekomendasi', 1);
-            }, 'getRekomendasiDetail.getNamaVendor'
+            },
+            'getRekomedasiDetail.getNamaVendor'
         ])
             ->where('PengajuanItemId', $PengajuanItemId)
             ->first();
-        $Acc = $vendorAcc->getRekomendasiDetail[0]->IdVendor;
+        $Acc = $vendorAcc->getRekomedasiDetail[0]->IdVendor;
         $data2 = PengajuanPembelian::with([
             'getVendor' => function ($query2) use ($Acc) {
                 $query2->where('NamaVendor', $Acc);
