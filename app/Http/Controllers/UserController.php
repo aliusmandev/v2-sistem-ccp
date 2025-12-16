@@ -36,6 +36,7 @@ class UserController extends Controller
     public function create(): View
     {
         $jabatan = MasterJabatan::get();
+        // dd($jabatan);
         $departemen = MasterDepartemen::get();
         $perusahaan = MasterPerusahaan::get();
         $roles = Role::pluck('name', 'name')->all();

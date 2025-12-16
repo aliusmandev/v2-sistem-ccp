@@ -190,51 +190,91 @@
                                     <tbody>
                                         <tr>
                                             <td class="text-center align-bottom">
-                                                <strong>Penilai 1</strong>
+                                                <strong>Disetujui 1</strong>
                                             </td>
                                             <td class="text-center align-bottom">
-                                                <strong>Penilai 2</strong>
+                                                <strong>Disetujui 2</strong>
                                             </td>
                                             <td class="text-center align-bottom">
-                                                <strong>Penilai 3</strong>
+                                                <strong>Disetujui 3</strong>
                                             </td>
                                             <td class="text-center align-bottom">
-                                                <strong>Penilai 4</strong>
+                                                <strong>Disetujui 4</strong>
                                             </td>
                                             <td class="text-center align-bottom">
-                                                <strong>Penilai 5</strong>
+                                                <strong>Disetujui 5</strong>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getHtaGpa->Penilai1_Oleh))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getHtaGpa->getPenilai1->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
+                                                @php
+                                                    $ttd1 =
+                                                        !empty($data->getHtaGpa->Penilai1_Oleh) &&
+                                                        !empty($data->getHtaGpa->getPenilai1->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $data->getHtaGpa->getPenilai1->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
+                                                <img src="{{ $ttd1 }}" alt="TTD"
+                                                    style="max-width:110px; max-height:60px;">
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getHtaGpa->Penilai2_Oleh))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getHtaGpa->getPenilai2->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
+                                                @php
+                                                    $ttd2 =
+                                                        !empty($data->getHtaGpa->Penilai2_Oleh) &&
+                                                        !empty($data->getHtaGpa->getPenilai2->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $data->getHtaGpa->getPenilai2->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
+                                                <img src="{{ $ttd2 }}" alt="TTD"
+                                                    style="max-width:110px; max-height:60px;">
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getHtaGpa->Penilai3_Oleh))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getHtaGpa->getPenilai3->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
+                                                @php
+                                                    $ttd3 =
+                                                        !empty($data->getHtaGpa->Penilai3_Oleh) &&
+                                                        !empty($data->getHtaGpa->getPenilai3->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $data->getHtaGpa->getPenilai3->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
+                                                <img src="{{ $ttd3 }}" alt="TTD"
+                                                    style="max-width:110px; max-height:60px;">
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getHtaGpa->Penilai4_Oleh))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getHtaGpa->getPenilai4->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
+                                                @php
+                                                    $ttd4 =
+                                                        !empty($data->getHtaGpa->Penilai4_Oleh) &&
+                                                        !empty($data->getHtaGpa->getPenilai4->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $data->getHtaGpa->getPenilai4->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
+                                                <img src="{{ $ttd4 }}" alt="TTD"
+                                                    style="max-width:110px; max-height:60px;">
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getHtaGpa->Penilai5_Oleh))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getHtaGpa->getPenilai5->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
+                                                @php
+                                                    $ttd5 =
+                                                        !empty($data->getHtaGpa->Penilai5_Oleh) &&
+                                                        !empty($data->getHtaGpa->getPenilai5->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $data->getHtaGpa->getPenilai5->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
+                                                <img src="{{ $ttd5 }}" alt="TTD"
+                                                    style="max-width:110px; max-height:60px;">
                                             </td>
                                         </tr>
                                         <tr>
@@ -263,7 +303,7 @@
                                                     {{ $data->getHtaGpa->getPenilai1->name ?? '-' }}
                                                 </span>
                                                 <br>
-                                                <small class="text-muted">Pada:
+                                                <small class="text-muted">
                                                     {{ $data->getHtaGpa->Penilai1_Pada ?? '-' }}
                                                 </small>
                                             </td>
@@ -272,7 +312,7 @@
                                                     {{ $data->getHtaGpa->getPenilai2->name ?? '-' }}
                                                 </span>
                                                 <br>
-                                                <small class="text-muted">Pada:
+                                                <small class="text-muted">
                                                     {{ $data->getHtaGpa->Penilai2_Pada ?? '-' }}
                                                 </small>
                                             </td>
@@ -281,7 +321,7 @@
                                                     {{ $data->getHtaGpa->getPenilai3->name ?? '-' }}
                                                 </span>
                                                 <br>
-                                                <small class="text-muted">Pada:
+                                                <small class="text-muted">
                                                     {{ $data->getHtaGpa->Penilai3_Pada ?? '-' }}
                                                 </small>
                                             </td>
@@ -290,7 +330,7 @@
                                                     {{ $data->getHtaGpa->getPenilai4->name ?? '-' }}
                                                 </span>
                                                 <br>
-                                                <small class="text-muted">Pada:
+                                                <small class="text-muted">
                                                     {{ $data->getHtaGpa->Penilai4_Pada ?? '-' }}
                                                 </small>
                                             </td>
@@ -299,7 +339,7 @@
                                                     {{ $data->getHtaGpa->getPenilai5->name ?? '-' }}
                                                 </span>
                                                 <br>
-                                                <small class="text-muted">Pada:
+                                                <small class="text-muted">
                                                     {{ $data->getHtaGpa->Penilai5_Pada ?? '-' }}
                                                 </small>
                                             </td>
@@ -407,6 +447,20 @@
                     iconColor: '#d33',
                     confirmButtonText: 'Oke',
                     confirmButtonColor: '#d33',
+                });
+            }, 500);
+        </script>
+    @endif
+    @if (Session::get('success'))
+        <script>
+            setTimeout(function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ Session::get('success') }}',
+                    iconColor: '#28a745',
+                    confirmButtonText: 'Oke',
+                    confirmButtonColor: '#28a745',
                 });
             }, 500);
         </script>

@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+    @push('css')
+        <style>
+            .custom-upload-area:hover,
+            .custom-upload-area:focus-within {
+                box-shadow: 0 0 8px #b8cdfa !important;
+                background: linear-gradient(135deg, #eef4fe 20%, #e9f3fc 100%);
+            }
+
+            .custom-upload-area img {
+                border: 2px solid #e3ebff;
+                background: #fff;
+            }
+        </style>
+    @endpush
     <div class="page-header">
         <div class="row">
             <div class="col">
@@ -209,49 +223,9 @@
                                 @enderror
                             </div>
 
-                            <style>
-                                .custom-upload-area:hover,
-                                .custom-upload-area:focus-within {
-                                    box-shadow: 0 0 8px #b8cdfa !important;
-                                    background: linear-gradient(135deg, #eef4fe 20%, #e9f3fc 100%);
-                                }
 
-                                .custom-upload-area img {
-                                    border: 2px solid #e3ebff;
-                                    background: #fff;
-                                }
-                            </style>
 
-                            <script>
-                                function previewFile(inputId) {
-                                    const input = document.getElementById(inputId);
-                                    const preview = document.getElementById(inputId + '-preview');
-                                    const previewText = document.getElementById(inputId + '-preview-text');
 
-                                    if (input.files && input.files[0]) {
-                                        const reader = new FileReader();
-                                        reader.onload = function(e) {
-                                            preview.src = e.target.result;
-                                            preview.style.display = 'block';
-                                            previewText.style.display = 'none';
-                                        }
-                                        reader.readAsDataURL(input.files[0]);
-                                    } else {
-                                        preview.src = "#";
-                                        preview.style.display = 'none';
-                                        previewText.style.display = 'block';
-                                    }
-                                }
-
-                                function handleDrop(event, inputId) {
-                                    event.preventDefault();
-                                    const input = document.getElementById(inputId);
-                                    if (event.dataTransfer.files.length > 0) {
-                                        input.files = event.dataTransfer.files;
-                                        previewFile(inputId);
-                                    }
-                                }
-                            </script>
 
                             <div class="col-12 text-end mt-3">
                                 <a href="{{ route('users.index') }}" class="btn btn-secondary me-2"><i
@@ -268,47 +242,33 @@
 @endsection
 @push('js')
     <script>
-        $(document).ready(function() {
-            $('#kodeperusahaan').on('change', function() {
-                var kode = $(this).val();
-                var $departemen = $('#departemen');
-                $departemen.empty().append('<option value="">Memuat data ...</option>');
-                if (kode) {
-                    $.ajax({
-                        url: '{{ url('master/departemen') }}',
-                        type: 'GET',
-                        data: {
-                            kodeperusahaan: kode
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            $departemen.empty();
-                            $departemen.append('<option value="">Pilih Departemen</option>');
-                            if (response && response.data && response.data.length > 0) {
-                                $.each(response.data, function(i, dep) {
-                                    var selected = '{{ old('departemen') }}' == dep
-                                        .id ? 'selected' : '';
-                                    $departemen.append('<option value="' + dep.id +
-                                        '" ' + selected + '>' + dep.KodeDepartemen +
-                                        ' - ' + dep.Nama + '</option>');
-                                });
-                            } else {
-                                $departemen.append(
-                                    '<option value="">Tidak ada departemen</option>');
-                            }
-                        },
-                        error: function() {
-                            $departemen.html(
-                                '<option value="">Gagal memuat departemen</option>');
-                        }
-                    });
-                } else {
-                    $departemen.empty().append('<option value="">Pilih Departemen</option>');
+        function previewFile(inputId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(inputId + '-preview');
+            const previewText = document.getElementById(inputId + '-preview-text');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    previewText.style.display = 'none';
                 }
-            });
-            @if (old('kodeperusahaan'))
-                $('#kodeperusahaan').trigger('change');
-            @endif
-        });
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "#";
+                preview.style.display = 'none';
+                previewText.style.display = 'block';
+            }
+        }
+
+        function handleDrop(event, inputId) {
+            event.preventDefault();
+            const input = document.getElementById(inputId);
+            if (event.dataTransfer.files.length > 0) {
+                input.files = event.dataTransfer.files;
+                previewFile(inputId);
+            }
+        }
     </script>
 @endpush

@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="{{ asset('') }}assets/css/style.css">
 
     {{-- //summernote --}}
-    <!-- include summernote css/js -->
+    @stack('css')
 
 </head>
 

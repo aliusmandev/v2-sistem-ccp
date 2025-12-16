@@ -87,21 +87,27 @@
                         </ul>
                         <div class="tab-content" id="vendorTabPanes">
                             @foreach ($data->getVendor as $vIdx => $Vendor)
+                                @php
+                                    $paramHarga = 11 - 1;
+                                    $paramSpek = 2 - 1;
+                                    $paramGaransi = 13 - 1;
+                                    $paramBmhp = 12 - 1;
+                                @endphp
                                 <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
                                     id="vendor-pane-{{ $vIdx }}" role="tabpanel"
                                     aria-labelledby="vendor-tab-{{ $vIdx }}">
 
+                                    {{-- {{ dd($Vendor->getHtaGpa->Deskripsi) }} --}}
                                     <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
                                         value="{{ $data->id }}">
                                     <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
                                         value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
-                                    {{-- Assuming IdRekomendasi will be filled in the backend or left empty for create --}}
                                     <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
                                         value="">
                                     <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
                                         value="{{ $Vendor->NamaVendor }}">
                                     <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
-                                        value="{{ $data->getPengajuanItem[0]->getBarang->Nama ?? '' }}">
+                                        value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
 
                                     <table class="table align-middle nilai-table" style="width:100%;"
                                         data-vidx="{{ $vIdx }}">
@@ -119,8 +125,9 @@
                                                 <td>
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][HargaAwal]"
-                                                        class="form-control" placeholder="Masukkan Harga Awal"
-                                                        value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : old("rekomendasi.$vIdx.HargaAwal") }}">
+                                                        class="form-control currency-input-global"
+                                                        placeholder="Masukkan Harga Awal"
+                                                        value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : (isset($Vendor->getHtaGpa->Deskripsi[$paramHarga]) ? $Vendor->getHtaGpa->Deskripsi[$paramHarga] : (old("rekomendasi.$vIdx.HargaAwal") ? preg_replace('/[^0-9]/', '', old("rekomendasi.$vIdx.HargaAwal")) : '')) }}">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -129,7 +136,8 @@
                                                 <td>
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][HargaNego]"
-                                                        class="form-control" placeholder="Masukkan Harga Nego"
+                                                        class="form-control currency-input-global"
+                                                        placeholder="Masukkan Harga Nego"
                                                         value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
                                                 </td>
                                             </tr>
@@ -138,7 +146,7 @@
                                                 <td class="fw-bold">Spesifikasi</td>
                                                 <td>
                                                     <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
-                                                        placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : old("rekomendasi.$vIdx.Spesifikasi") }}</textarea>
+                                                        placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : (isset($Vendor->getHtaGpa->Deskripsi[$paramSpek]) ? $Vendor->getHtaGpa->Deskripsi[$paramSpek] : old("rekomendasi.$vIdx.Spesifikasi")) }}</textarea>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -164,7 +172,7 @@
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][Garansi]"
                                                         class="form-control" placeholder="Garansi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : old("rekomendasi.$vIdx.Garansi") }}">
+                                                        value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : (isset($Vendor->getHtaGpa->Deskripsi[$paramGaransi]) ? $Vendor->getHtaGpa->Deskripsi[$paramGaransi] : old("rekomendasi.$vIdx.Garansi")) }}">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -184,11 +192,22 @@
                                                     <input type="text" class="form-control"
                                                         name="rekomendasi[{{ $vIdx }}][Bmhp]"
                                                         placeholder="Bahan Medis Habis Pakai (Bmhp)"
-                                                        value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : old("rekomendasi.$vIdx.Bmhp") }}">
+                                                        value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : (isset($Vendor->getHtaGpa->Deskripsi[$paramBmhp]) ? $Vendor->getHtaGpa->Deskripsi[$paramBmhp] : old("rekomendasi.$vIdx.Bmhp")) }}">
+                                                </td>
+                                            </tr>
+                                            <!-- POPULASI Setelah Bmhp -->
+                                            <tr>
+                                                <td class="text-center">8</td>
+                                                <td class="fw-bold">Populasi</td>
+                                                <td>
+                                                    <input type="text" class="form-control"
+                                                        name="rekomendasi[{{ $vIdx }}][Populasi]"
+                                                        placeholder="Populasi"
+                                                        value="{{ isset($Vendor->getRekomendasi->Populasi) ? $Vendor->getRekomendasi->Populasi : old("rekomendasi.$vIdx.Populasi") }}">
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">8</td>
+                                                <td class="text-center">9</td>
                                                 <td class="fw-bold">Spare Part</td>
                                                 <td>
                                                     <input type="text" class="form-control"
@@ -198,7 +217,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">9</td>
+                                                <td class="text-center">10</td>
                                                 <td class="fw-bold">Backup Unit</td>
                                                 <td>
                                                     <input type="text" class="form-control"
@@ -208,7 +227,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">10</td>
+                                                <td class="text-center">11</td>
                                                 <td class="fw-bold">TOP (Term of Payment)</td>
                                                 <td>
                                                     <input type="text" class="form-control"
@@ -218,7 +237,7 @@
                                                 </td>
                                             </tr>
                                             {{-- <tr>
-                                                <td class="text-center">11</td>
+                                                <td class="text-center">12</td>
                                                 <td class="fw-bold">Rekomendasi</td>
                                                 <td>
                                                     <input type="text" class="form-control"
@@ -228,7 +247,7 @@
                                                 </td>
                                             </tr> --}}
                                             <tr>
-                                                <td class="text-center">11</td>
+                                                <td class="text-center">12</td>
                                                 <td class="fw-bold">Keterangan</td>
                                                 <td>
                                                     <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
@@ -244,7 +263,8 @@
                             <button type="submit" name="action" value="draft" class="btn btn-warning me-2">Simpan
                                 Rekomendasi</button>
 
-                            <a href="{{ route('pp.show', $data->id) }}" class="btn btn-secondary">Kembali</a>
+                            <a href="{{ route('rekomendasi.show', encrypt($data->id)) }}"
+                                class="btn btn-secondary">Kembali</a>
                         </div>
                     </form>
                 </div>
@@ -330,6 +350,35 @@
                 vendorTable.on('input', '.nilai-input', function() {
                     updateSubtotalsAndGrandTotal(vendorTable);
                 });
+            });
+        });
+    </script>
+    <script>
+        // Fungsi format Rupiah
+        function formatRupiahInput(input) {
+            let angka = input.value.replace(/[^,\d]/g, '').toString();
+            let split = angka.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            input.value = rupiah;
+        }
+
+        $(document).ready(function() {
+            $('.currency-input-global, .harga-nego-input').each(function() {
+                formatRupiahInput(this);
+            });
+
+            // Event format otomatis saat mengetik atau blur (untuk perubahan manual)
+            $(document).on('keyup blur', '.currency-input-global, .harga-nego-input', function() {
+                formatRupiahInput(this);
             });
         });
     </script>

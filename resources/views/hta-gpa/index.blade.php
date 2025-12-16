@@ -100,7 +100,12 @@
                                                 <th class="text-center" style="width:10px;">No</th>
                                                 <th class="text-center" style="width:17%">Parameter Penilaian</th>
                                                 <th class="text-center" style="width:50%">Deskripsi</th>
-                                                <th class="text-center" style="width:25%">Penilaian</th>
+                                                <th class="text-center" style="width:25%">
+                                                    Penilaian
+                                                    <br>
+                                                    <small class="text-muted">(nilai paling baik = 5 dan nilai paling rendah
+                                                        = 1)</small>
+                                                </th>
                                                 <th class="text-center">Subtotal</th>
                                             </tr>
                                         </thead>
@@ -124,37 +129,62 @@
                                                         {{-- @php
                                                             dd($Vendor->getHtaGpa->Nilai1);
                                                         @endphp --}}
-                                                        <div class="d-flex gap-1">
-                                                            <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa->Nilai1[$key] ?? '' }}"
-                                                                class="form-control nilai-input"
-                                                                name="vendor[{{ $vIdx }}][Nilai1][]"
-                                                                style="max-width: 100px;"
-                                                                oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
-                                                            <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa->Nilai2[$key] ?? '' }}"
-                                                                class="form-control nilai-input"
-                                                                name="vendor[{{ $vIdx }}][Nilai2][]"
-                                                                style="max-width: 100px;"
-                                                                oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
-                                                            <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa->Nilai3[$key] ?? '' }}"
-                                                                class="form-control nilai-input"
-                                                                name="vendor[{{ $vIdx }}][Nilai3][]"
-                                                                style="max-width: 100px;"
-                                                                oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
-                                                            <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa->Nilai4[$key] ?? '' }}"
-                                                                class="form-control nilai-input"
-                                                                name="vendor[{{ $vIdx }}][Nilai4][]"
-                                                                style="max-width: 100px;"
-                                                                oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
-                                                            <input type="number" min="0" max="5"
-                                                                value="{{ $Vendor->getHtaGpa->Nilai5[$key] ?? '' }}"
-                                                                class="form-control nilai-input"
-                                                                name="vendor[{{ $vIdx }}][Nilai5][]"
-                                                                style="max-width: 100px;"
-                                                                oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                        <div class="d-flex gap-1 align-items-end">
+                                                            <div class="text-center">
+                                                                <label class="form-label mb-1"
+                                                                    style="font-size: 11px; font-weight: 600;">Penilai
+                                                                    1</label>
+                                                                <input type="number" min="0" max="5"
+                                                                    value="{{ $Vendor->getHtaGpa->Nilai1[$key] ?? '' }}"
+                                                                    class="form-control nilai-input"
+                                                                    name="vendor[{{ $vIdx }}][Nilai1][]"
+                                                                    style="max-width: 90px;"
+                                                                    oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <label class="form-label mb-1"
+                                                                    style="font-size: 11px; font-weight: 600;">Penilai
+                                                                    2</label>
+                                                                <input type="number" min="0" max="5"
+                                                                    value="{{ $Vendor->getHtaGpa->Nilai2[$key] ?? '' }}"
+                                                                    class="form-control nilai-input"
+                                                                    name="vendor[{{ $vIdx }}][Nilai2][]"
+                                                                    style="max-width: 90px;"
+                                                                    oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <label class="form-label mb-1"
+                                                                    style="font-size: 11px; font-weight: 600;">Penilai
+                                                                    3</label>
+                                                                <input type="number" min="0" max="5"
+                                                                    value="{{ $Vendor->getHtaGpa->Nilai3[$key] ?? '' }}"
+                                                                    class="form-control nilai-input"
+                                                                    name="vendor[{{ $vIdx }}][Nilai3][]"
+                                                                    style="max-width: 90px;"
+                                                                    oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <label class="form-label mb-1"
+                                                                    style="font-size: 11px; font-weight: 600;">Penilai
+                                                                    4</label>
+                                                                <input type="number" min="0" max="5"
+                                                                    value="{{ $Vendor->getHtaGpa->Nilai4[$key] ?? '' }}"
+                                                                    class="form-control nilai-input"
+                                                                    name="vendor[{{ $vIdx }}][Nilai4][]"
+                                                                    style="max-width: 90px;"
+                                                                    oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                            </div>
+                                                            <div class="text-center">
+                                                                <label class="form-label mb-1"
+                                                                    style="font-size: 11px; font-weight: 600;">Penilai
+                                                                    5</label>
+                                                                <input type="number" min="0" max="5"
+                                                                    value="{{ $Vendor->getHtaGpa->Nilai5[$key] ?? '' }}"
+                                                                    class="form-control nilai-input"
+                                                                    name="vendor[{{ $vIdx }}][Nilai5][]"
+                                                                    style="max-width: 90px;"
+                                                                    oninput="if(this.value>5)this.value=5;if(this.value<0)this.value=0;">
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td>

@@ -372,7 +372,7 @@
                                             <th class="text-center" style="width:40px;">No</th>
                                             <th>Nama Barang</th>
                                             <th class="text-center">HTA / GPA</th>
-                                            <th class="text-center">FUI</th>
+                                            <th class="text-center">Usulan Investasi</th>
                                             <th class="text-center">Rekomendasi</th>
                                         </tr>
                                     </thead>
@@ -389,16 +389,23 @@
                                                             $hasHta = $item->getHtaGpa ? true : false;
                                                         @endphp
                                                         @if (!$hasHta)
-                                                            <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
+                                                            <div class="mb-0 p-2 text-center"
+                                                                style="font-size: 0.95rem; border: 1px solid #ffc107; border-radius: 0.25rem;">
+                                                                <i class="fa fa-info-circle me-1"
+                                                                    style="color: #ffc107;"></i>
+                                                                <span class="fw-semibold">Dokumen HTA/GPA belum tersedia.
+                                                                    Dokumen akan diisi Logum atau SMI.</span>
+                                                            </div>
+                                                            {{-- <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
                                                                 class="btn btn-warning">
                                                                 <i class="fa fa-exclamation-circle"></i>
-                                                                Lengkapi HTA
-                                                            </a>
+                                                                Silakan Lengkapi Dokumen HTA
+                                                            </a> --}}
                                                         @else
                                                             <a href="{{ route('htagpa.show', [$data->id, $item->id]) }}"
                                                                 class="btn btn-success">
                                                                 <i class="fa fa-check-circle"></i>
-                                                                Lihat HTA
+                                                                Lihat Dokumen HTA
                                                             </a>
                                                         @endif
                                                     </td>
@@ -407,10 +414,14 @@
                                                             $adaFui = $item->getFui ? true : false;
                                                         @endphp
                                                         @if (!$adaFui)
-                                                            <a href="{{ route('usulan-investasi.create', [encrypt($data->id), encrypt($item->id)]) }}"
-                                                                class="btn btn-warning">
-                                                                <i class="fa fa-lightbulb"></i> Lengkapi FUI
-                                                            </a>
+                                                            <div class="mb-0 p-2 text-center"
+                                                                style="font-size: 0.95rem; border: 1px solid #ffc107; border-radius: 0.25rem;">
+                                                                <i class="fa fa-info-circle me-1"
+                                                                    style="color: #ffc107;"></i>
+                                                                <span class="fw-semibold">FUI</span> akan diisi oleh <span
+                                                                    class="fw-semibold">Logum / SMI</span> setelah
+                                                                rekomendasi diterbitkan.
+                                                            </div>
                                                         @else
                                                             <a href="{{ route('usulan-investasi.print', [$data->id, $item->id]) }}"
                                                                 class="btn btn-info">
@@ -466,7 +477,7 @@
 
                         @if ($data->Status == 'Diajukan')
                             <button type="button" class="btn btn-danger" id="btn-batalkan">
-                                <i class="fa fa-times"></i> Batalkan Pengajuan
+                                <i class="fa fa-times"></i> Tolak Pengajuan
                             </button>
                             <form id="form-batalkan" action="{{ route('ajukan.update-status', $data->id) }}"
                                 method="POST" style="display: none;">

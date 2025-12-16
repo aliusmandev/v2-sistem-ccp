@@ -114,7 +114,7 @@
                                         <col style="width: 20%;">
                                         <col style="width: 20%;">
                                         <col style="width: 20%;">
-                                        <col style="width: 20%;">
+                                        {{-- <col style="width: 20%;"> --}}
                                     </colgroup>
                                     <tbody>
                                         <tr>
@@ -133,14 +133,14 @@
                                                 Disetujui oleh,<br>
                                                 Direktur
                                             </td>
-                                            <td class="text-center align-bottom">
+                                            {{-- <td class="text-center align-bottom">
                                                 Diterima Oleh,<br>
                                                 Logum / SMI
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         <tr>
                                             <td style="height: 70px;" class="text-center">
-                                                @if ($data->DiajukanOleh && !empty($data->getDiajukanOleh->tandatangan))
+                                                @if (!empty($data->DiajukanOleh) && !empty($data->getDiajukanOleh->tandatangan))
                                                     <img src="{{ asset('storage/upload/tandatangan/' . $data->getDiajukanOleh->tandatangan) }}"
                                                         alt="TTD" style="max-width:110px; max-height:60px;">
                                                 @endif
@@ -152,23 +152,23 @@
                                                 @endif
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getKepalaDivisiPenunjang) && !empty($data->getKepalaDivisiPenunjang->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getKepalaDivisiPenunjang->tandatangan) }}"
+                                                @if (!empty($data->getAccPenunjangMedis) && !empty($data->getAccPenunjangMedis->tandatangan))
+                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getAccPenunjangMedis->tandatangan) }}"
                                                         alt="TTD" style="max-width:110px; max-height:60px;">
                                                 @endif
                                             </td>
                                             <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getKepalaDivisiPenunjang) && !empty($data->getKepalaDivisiPenunjang->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getKepalaDivisiPenunjang->tandatangan) }}"
+                                                @if (!empty($data->getAccDirektur) && !empty($data->getAccDirektur->tandatangan))
+                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getAccDirektur->tandatangan) }}"
                                                         alt="TTD" style="max-width:110px; max-height:60px;">
                                                 @endif
                                             </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getKepalaDivisiPenunjang) && !empty($data->getKepalaDivisiPenunjang->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getKepalaDivisiPenunjang->tandatangan) }}"
+                                            {{-- <td style="height: 70px;" class="text-center">
+                                                @if (!empty($data->getSmi) && !empty($data->getSmi->tandatangan))
+                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getSmi->tandatangan) }}"
                                                         alt="TTD" style="max-width:110px; max-height:60px;">
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         <tr>
                                             <td class="text-center" style="padding-bottom:0;">
@@ -183,9 +183,9 @@
                                             <td class="text-center" style="padding-bottom:0;">
                                                 <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
                                             </td>
-                                            <td class="text-center" style="padding-bottom:0;">
+                                            {{-- <td class="text-center" style="padding-bottom:0;">
                                                 <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         <tr>
                                             <td class="text-center align-top">
@@ -212,12 +212,12 @@
                                                     {{ $data->getAccDirektur->name ?? '-' }}
                                                 </span>
                                             </td>
-                                            <td class="text-center align-top">
+                                            {{-- <td class="text-center align-top">
                                                 <small>Nama Lengkap</small><br>
                                                 <span style="font-weight:600;">
                                                     {{ $data->getSmi->name ?? '-' }}
                                                 </span>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     </tbody>
                                 </table>
@@ -272,7 +272,7 @@
                                 </form>
                             @endcan
 
-                            @can('permintaan-approve-logistik')
+                            {{-- @can('permintaan-approve-logistik')
                                 <!-- Button untuk Logistik - Logistik / SMI -->
                                 <form id="formLogistik" action="{{ route('pp.acc-smi', $data->id) }}" method="POST"
                                     class="d-inline">
@@ -283,7 +283,7 @@
                                         <i class="fa fa-truck"></i> SMI</small>
                                     </button>
                                 </form>
-                            @endcan
+                            @endcan --}}
 
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterPerusahaan;
 use Illuminate\Http\Request;
+use Laraindo\RupiahFormat;
 use Yajra\DataTables\Facades\DataTables;
 
 class MasterPerusahaanController extends Controller
@@ -28,6 +29,12 @@ class MasterPerusahaanController extends Controller
                         </button>
                     ';
                 })
+                ->editColumn('NominalRap', function ($row) {
+                    return RupiahFormat::currency($row->NominalRkap);
+                })
+                ->editColumn('SisaSkap', function ($row) {
+                    return RupiahFormat::currency($row->SisaSkap);
+                })
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -47,6 +54,8 @@ class MasterPerusahaanController extends Controller
             'NamaLengkap' => 'required|string|max:255',
             'Deskripsi' => 'nullable|string',
             'Kategori' => 'required',
+            'NominalRkap' => 'required',
+
         ]);
 
         MasterPerusahaan::create([
@@ -55,6 +64,7 @@ class MasterPerusahaanController extends Controller
             'NamaLengkap' => $request->NamaLengkap,
             'Deskripsi' => $request->Deskripsi,
             'Kategori' => $request->Kategori,
+            'NominalRkap' => preg_replace('/\D/', '', $request->NominalRkap),
             'UserCreate' => auth()->user()->name,
         ]);
 
@@ -78,12 +88,15 @@ class MasterPerusahaanController extends Controller
 
     public function update(Request $request, $id)
     {
+        $id = decrypt($id);
         $request->validate([
             'Kode' => 'required|string|max:255',
             'Nama' => 'required|string|max:255',
             'NamaLengkap' => 'required|string|max:255',
             'Deskripsi' => 'nullable|string',
+            'NominalRkap' => 'nullable|string',
             'Kategori' => 'required|string|max:255',
+
         ]);
 
         $perusahaan = MasterPerusahaan::findOrFail($id);
@@ -93,6 +106,7 @@ class MasterPerusahaanController extends Controller
             'NamaLengkap' => $request->NamaLengkap,
             'Deskripsi' => $request->Deskripsi,
             'Kategori' => $request->Kategori,
+            'NominalRkap' => preg_replace('/\D/', '', $request->NominalRkap),
             'UserUpdate' => auth()->user()->name
         ]);
 

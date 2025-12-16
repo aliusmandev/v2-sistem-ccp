@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('Garansi')->nullable();
             $table->string('Teknisi')->nullable();
             $table->string('Bmhp')->nullable();
+            $table->string('Populasi')->nullable();
             $table->string('SparePart')->nullable();
             $table->string('BackupUnit')->nullable();
             $table->string('Top')->nullable();

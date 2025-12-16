@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->string('NominalRkap')->nullable();
             $table->enum('Status', ['Draft', 'Diajukan', 'Dalam Review', 'Selesai', 'Disetujui'])->nullable()->default('Draft');
             $table->string('DiajukanOleh', 100)->nullable();
+            $table->string('DepartemenId', 100)->nullable();
             $table->timestamp('DiajukanPada')->nullable();
             $table->text('Keterangan')->nullable();
             $table->string('DisetujuiOleh')->nullable();

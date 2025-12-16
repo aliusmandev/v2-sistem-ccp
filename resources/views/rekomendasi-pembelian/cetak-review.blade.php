@@ -36,10 +36,30 @@
             text-align: left;
         }
 
-        .signature {
-            margin-top: 80px;
-            text-align: right;
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 60px;
             font-size: 13px;
+        }
+
+        .signature-table td {
+            border: 1px solid #444;
+            padding: 16px 8px 6px 8px;
+            text-align: center;
+            vertical-align: middle;
+            height: 100px;
+        }
+
+        .signature-label {
+            font-weight: bold;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .signature-sub {
+            font-size: 13px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -70,7 +90,7 @@
             <td>Nama Barang</td>
             @foreach ($rekomendasi->getRekomedasiDetail as $item)
                 <td>
-                    {{ $item->NamaPermintaan ?? '-' }}
+                    {{ $item->getBarang->Nama ?? '-' }} / {{ $item->getBarang->getMerk->Nama ?? '-' }}
                 </td>
             @endforeach
         </tr>
@@ -182,7 +202,7 @@
         </tr>
     </table>
 
-    <div class="signature">
+    <div style="margin-top: 40px;">
         <div style="text-align: right; margin-bottom: 10px;">
             <span>
                 Pekanbaru,
@@ -192,28 +212,27 @@
             </span>
         </div>
 
-        <table style="width: 100%; margin-top: 40px; border: none; table-layout: fixed;">
+        <table class="signature-table" style="font-family: Arial, sans-serif; font-weight: normal;">
             <tr>
-                <!-- Kolom TTD 1 -->
-                <td style="width:33%; text-align: center; vertical-align: top;">
-                    <div style="font-weight: bold;">Yang Menegosiasi</div>
-                    <div style="height: 65px;"></div>
-                    <span style="display: block; font-weight: 500;">
+                <td>
+                    <span class="signature-label" style="font-family: Arial, sans-serif; font-weight: normal;">Yang
+                        Menegosiasi</span>
+                    <div style="height:40px;"></div>
+                    <span style="display: block;">
                         {{ $rekomendasi->getUserNego->name ?? '-' }}
                     </span>
-                    <hr style="width: 80%; margin: 10px auto 0 auto; border: 0; border-top: 1.3px solid #aaa;">
+                    <hr style="width: 70%; margin: 12px auto 0 auto; border: 0; border-top: 1.3px solid #aaa;">
                 </td>
-                <!-- Kolom Kosong Tengah -->
-                <td style="width:34%;">&nbsp;</td>
-                <!-- Kolom TTD 2 -->
-                <td style="width:33%; text-align: center; vertical-align: top;">
-                    <div style="font-weight: bold;">Disetujui</div>
-                    <div style="font-size:13px; font-weight:600;">Procurement Group</div>
-                    <div style="height: 65px;"></div>
-                    <span style="display: block; font-weight: 500;">
+                <td>
+                    <span class="signature-label"
+                        style="font-family: Arial, sans-serif; font-weight: normal;">Disetujui</span>
+                    <span class="signature-sub" style="font-family: Arial, sans-serif; font-weight: normal;">Procurement
+                        Group</span>
+                    <div style="height:28px;"></div>
+                    <span style="display: block;">
                         {{ $rekomendasi->getDisetujuiOleh->name ?? '-' }}
                     </span>
-                    <hr style="width: 80%; margin: 10px auto 0 auto; border: 0; border-top: 1.3px solid #aaa;">
+                    <hr style="width: 70%; margin: 12px auto 0 auto; border: 0; border-top: 1.3px solid #aaa;">
                 </td>
             </tr>
         </table>

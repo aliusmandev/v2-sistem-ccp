@@ -119,7 +119,7 @@
                                                 <td>
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][HargaAwal]"
-                                                        class="form-control" placeholder="Masukkan Harga Awal"
+                                                        class="form-control rupiah-input" placeholder="Masukkan Harga Awal"
                                                         value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : old("rekomendasi.$vIdx.HargaAwal") }}">
                                                 </td>
                                             </tr>
@@ -129,10 +129,11 @@
                                                 <td>
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][HargaNego]"
-                                                        class="form-control" placeholder="Masukkan Harga Nego"
+                                                        class="form-control rupiah-input" placeholder="Masukkan Harga Nego"
                                                         value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
                                                 </td>
                                             </tr>
+
                                             <tr>
                                                 <td class="text-center">3</td>
                                                 <td class="fw-bold">Spesifikasi</td>
@@ -239,21 +240,52 @@
                                                 <td class="text-center">12</td>
                                                 <td class="fw-bold">Rekomendasi Vendor</td>
                                                 <td>
-                                                    <select class="form-select mb-2"
-                                                        name="rekomendasi[{{ $vIdx }}][RekomendasiSelect]">
+                                                    @php
+                                                        $allSelected = [];
+                                                        foreach ($data->getVendor as $_idx => $_v) {
+                                                            if (
+                                                                isset($_v->getRekomendasi->Rekomendasi) &&
+                                                                $_v->getRekomendasi->Rekomendasi != ''
+                                                            ) {
+                                                                $allSelected[$_idx] = $_v->getRekomendasi->Rekomendasi;
+                                                            } else {
+                                                                $oldVal = old("rekomendasi.$_idx.RekomendasiSelect");
+                                                                if ($oldVal) {
+                                                                    $allSelected[$_idx] = $oldVal;
+                                                                }
+                                                            }
+                                                        }
+                                                        $options = [
+                                                            1 => 'Rekomendasi 1',
+                                                            2 => 'Rekomendasi 2',
+                                                            3 => 'Rekomendasi 3',
+                                                        ];
+                                                    @endphp
+                                                    <select class="form-select mb-2 rekomendasi-select"
+                                                        name="rekomendasi[{{ $vIdx }}][RekomendasiSelect]"
+                                                        data-vendor-idx="{{ $vIdx }}">
                                                         <option value="">Pilih Rekomendasi</option>
-                                                        <option value="1"
-                                                            {{ isset($Vendor->getRekomendasi->RekomendasiSelect) && $Vendor->getRekomendasi->RekomendasiSelect == 1 ? 'selected' : '' }}>
-                                                            Rekomendasi 1</option>
-                                                        <option value="2"
-                                                            {{ isset($Vendor->getRekomendasi->RekomendasiSelect) && $Vendor->getRekomendasi->RekomendasiSelect == 2 ? 'selected' : '' }}>
-                                                            Rekomendasi 2</option>
-                                                        <option value="3"
-                                                            {{ isset($Vendor->getRekomendasi->RekomendasiSelect) && $Vendor->getRekomendasi->RekomendasiSelect == 3 ? 'selected' : '' }}>
-                                                            Rekomendasi 3</option>
+                                                        @foreach ($options as $optVal => $optLabel)
+                                                            @php
+                                                                $selectedInOtherTab = collect($allSelected)
+                                                                    ->except($vIdx)
+                                                                    ->contains((string) $optVal);
+                                                                $thisSelected = isset(
+                                                                    $Vendor->getRekomendasi->Rekomendasi,
+                                                                )
+                                                                    ? $Vendor->getRekomendasi->Rekomendasi
+                                                                    : old("rekomendasi.$vIdx.RekomendasiSelect");
+                                                            @endphp
+                                                            <option value="{{ $optVal }}"
+                                                                @if ($thisSelected == $optVal) selected @endif
+                                                                @if ($selectedInOtherTab && $thisSelected != $optVal) style="display:none;" @endif>
+                                                                {{ $optLabel }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
-
+                                                </td>
                                             </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -278,10 +310,17 @@
                                 <tr>
                                     <td style="height: 70px;" class="text-center">
                                         {{-- Tanda tangan Yang Menegosiasi --}}
-                                        @if (!empty($data->getYangMenegosiasi) && !empty($data->getYangMenegosiasi->tandatangan))
-                                            <img src="{{ asset('storage/upload/tandatangan/' . $data->getYangMenegosiasi->tandatangan) }}"
-                                                alt="TTD" style="max-width:110px; max-height:60px;">
-                                        @endif
+                                        @php
+                                            $ttdPath =
+                                                $data->DiajukanOleh && !empty($data->getDiajukanOleh->tandatangan)
+                                                    ? asset(
+                                                        'storage/upload/tandatangan/' .
+                                                            $data->getDiajukanOleh->tandatangan,
+                                                    )
+                                                    : asset('assets/img/ccp/default_approve.png');
+                                        @endphp
+                                        <img src="{{ $ttdPath }}" alt="TTD"
+                                            style="max-width:110px; max-height:60px;">
                                     </td>
                                     <td style="height: 70px;" class="text-center">
                                         {{-- Tanda tangan Procurement Group --}}
@@ -316,11 +355,14 @@
                             </tbody>
                         </table>
                         <div class="mt-3 d-flex justify-content-end">
-                            <button type="submit" name="action" value="draft" class="btn btn-warning me-2">Simpan dan
-                                Setujui</button>
+                            <button type="button" id="btnAccRekomendasi" class="btn btn-warning me-2">
+                                Simpan dan Setujui
+                            </button>
+
+
                     </form>
 
-                    <a href="{{ route('pp.show', $data->id) }}" class="btn btn-secondary">Kembali</a>
+                    <a href="{{ route('rekomendasi.show', encrypt($data->id)) }}" class="btn btn-secondary">Kembali</a>
                 </div>
             </div>
         </div>
@@ -348,28 +390,29 @@
     @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const btnAcc = document.getElementById('btnAccRekomendasi');
-            if (btnAcc) {
-                btnAcc.addEventListener('click', function(e) {
+            const btn = document.getElementById('btnAccRekomendasi');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     Swal.fire({
-                        title: 'Setujui Rekomendasi?',
-                        text: "Apakah Anda yakin ingin menyetujui rekomendasi ini?",
+                        title: 'Konfirmasi',
+                        text: 'Apakah Anda yakin ingin menyimpan dan menyetujui rekomendasi ini?',
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, Setujui!',
+                        confirmButtonText: 'Ya, Simpan & Setujui',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            document.getElementById('formAccRekomendasi').submit();
+                            btn.form.submit();
                         }
                     });
                 });
             }
         });
     </script>
+
     <script>
         function updateSubtotalsAndGrandTotal(vendorTable) {
             let grandTotal = 0;
@@ -405,4 +448,72 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function formatRupiah(angka, prefix = 'Rp ') {
+                let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    rupiah += (sisa ? '.' : '') + ribuan.join('.');
+                }
+
+                rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+                return prefix + rupiah;
+            }
+
+            document.querySelectorAll('.rupiah-input').forEach(function(input) {
+                input.addEventListener('input', function(e) {
+                    // Remove any non-numeric but allow comma (,)
+                    let value = this.value.replace(/[^,\d]/g, '');
+                    this.value = formatRupiah(value);
+                });
+
+                // If initial value exists and not already formatted, format it
+                if (input.value && !input.value.startsWith('Rp')) {
+                    let value = input.value.replace(/[^,\d]/g, '');
+                    input.value = formatRupiah(value);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selects = document.querySelectorAll('.rekomendasi-select');
+
+            function refreshRekomendasiOptions() {
+                let selected = {};
+                selects.forEach((sel, idx) => {
+                    let val = sel.value;
+                    if (val) selected[idx] = val;
+                });
+                selects.forEach((sel, idx) => {
+                    let thisVal = sel.value;
+                    Array.from(sel.options).forEach(opt => {
+                        if (opt.value === "") return; // Skip placeholder
+                        // Hide if selected in other tabs
+                        let hide = false;
+                        Object.entries(selected).forEach(([tabIdx, val]) => {
+                            if (tabIdx !== idx.toString() && val === opt.value) hide = true;
+                        });
+                        // always show current selection even if duplicate
+                        if (hide && thisVal !== opt.value) {
+                            opt.style.display = "none";
+                        } else {
+                            opt.style.display = "";
+                        }
+                    });
+                });
+            }
+            selects.forEach(sel => {
+                sel.addEventListener('change', refreshRekomendasiOptions);
+            });
+            refreshRekomendasiOptions();
+        });
+    </script>
+
 @endpush

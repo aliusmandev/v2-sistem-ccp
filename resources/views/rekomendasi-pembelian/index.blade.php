@@ -31,6 +31,7 @@
                                     <th>Jenis</th>
                                     <th>Perusahaan</th>
                                     <th>Dibuat Oleh</th>
+                                    <th>Tanggal Diajukan</th>
                                     <th>Status</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
@@ -133,6 +134,10 @@
                         {
                             data: 'UserCreate',
                             name: 'UserCreate'
+                        },
+                        {
+                            data: 'DiajukanPada',
+                            name: 'DiajukanPada'
                         },
                         {
                             data: 'Status',

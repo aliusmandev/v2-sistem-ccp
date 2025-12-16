@@ -75,7 +75,6 @@ class CreateAdminUserSeeder extends Seeder
             ],
         ];
 
-        // Make sure the admin role & permissions exist once
         $role = Role::firstOrCreate(['name' => 'Admin']);
         $permissions = Permission::pluck('id', 'id')->all();
         $role->syncPermissions($permissions);

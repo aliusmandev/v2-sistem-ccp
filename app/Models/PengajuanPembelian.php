@@ -58,4 +58,8 @@ class PengajuanPembelian extends Model
     {
         return $this->hasMany(Rekomendasi::class, 'IdPengajuan', 'id');
     }
+    public function getDepartemen()
+    {
+        return $this->hasOne(MasterDepartemen::class, 'id', 'DepartemenId');
+    }
 }

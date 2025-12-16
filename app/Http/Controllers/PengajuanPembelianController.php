@@ -35,18 +35,16 @@ class PengajuanPembelianController extends Controller
                     return $row->getPerusahaan->Nama ?? '-';
                 })
                 ->addColumn('KodePengajuan', function ($row) {
-                    $id = $row->id;
+                    $id = encrypt($row->id);
                     $kode = isset($row->KodePengajuan) ? $row->KodePengajuan : '-';
                     return '<a href="' . route('ajukan.show', $id) . '" style="color: #007bff; font-weight: bold;">' . e($kode) . '</a>';
                 })
                 ->addColumn('action', function ($row) {
                     $id = $row->id;
                     return '
-                        <a href="' . route('ajukan.show', $id) . '" class="btn btn-sm btn-info" title="Detail">
-                            <i class="fa fa-eye"></i>
-                        </a>
 
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="' . $id . '" title="Hapus">
+
+                        <button class="btn btn-md btn-danger btn-delete" data-id="' . $id . '" title="Hapus">
                             <i class="fa fa-trash"></i>
                         </button>
                     ';
@@ -74,7 +72,7 @@ class PengajuanPembelianController extends Controller
                 ->make(true);
         }
         $permintaan = PermintaanPembelian::with('getPerusahaan', 'getDepartemen', 'getDiajukanOleh', 'getJenisPermintaan')
-            ->where('Logistik_Status', 'Y')
+            ->where('Direktur_Status', 'Y')
             ->whereDoesntHave('getPengajuanPembelian')
             ->latest()
             ->get();
@@ -94,7 +92,9 @@ class PengajuanPembelianController extends Controller
         return view('form.pengajuan-pembelian.create', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'departemen'));
     }
 
-    public function SimpanDraft($id) {}
+    public function SimpanDraft($id)
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -225,7 +225,7 @@ class PengajuanPembelianController extends Controller
                 'vendors' => $request->vendors,
             ])
             ->log('Membuat pengajuan pembelian baru dengan kode ' . $pengajuan->KodePengajuan);
-        return redirect()->back()->with('success', 'Pengajuan Berhasil Dibuat, Silahkan Isi HTA atau GPA');
+        return redirect()->back()->with('success', 'Pengisian vendor berhasil, silahkan lanjutkan isi vendor selanjutnya jika diperlukan');
     }
 
     private function generateNomorPengajuan()
@@ -254,7 +254,8 @@ class PengajuanPembelianController extends Controller
      */
     public function show($id)
     {
-        $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang')->find($id);
+        $id = decrypt($id);
+        $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang', 'getPengajuanItem.getHtaGpa', 'getPengajuanItem.getRekomendasi', 'getPengajuanItem.getFui', 'getDepartemen')->find($id);
         // dd($data);
         $vendor = MasterVendor::orderBy('Nama', 'asc')->get();
         $masterbarang = MasterBarang::get();
@@ -264,17 +265,135 @@ class PengajuanPembelianController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PengajuanPembelian $pengajuanPembelian)
+    public function edit($id)
     {
-        //
+        $id = decrypt($id);
+        $vendor = MasterVendor::where('Status', 'Y')->orderBy('Nama', 'asc')->get();
+        $masterbarang = MasterBarang::get();
+        $permintaan = PermintaanPembelian::with('getPerusahaan', 'getDepartemen', 'getDiajukanOleh', 'getDetail', 'getPengajuanPembelian.getVendor.getVendorDetail')->find($id);
+        $JenisPengajuan = MasterJenisPengajuan::get();
+        $departemen = MasterDepartemen::get();
+        $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang', 'getPengajuanItem.getHtaGpa', 'getPengajuanItem.getRekomendasi', 'getPengajuanItem.getFui', 'getDepartemen')->find($id);
+        // dd($id);
+        return view('form.pengajuan-pembelian.edit', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'departemen', 'data'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PengajuanPembelian $pengajuanPembelian)
+    public function update(Request $request, $id)
     {
-        //
+        // dd($id);
+        $request->validate([
+            'pengajuan.tanggal' => 'required|date',
+            'pengajuan.id_permintaan' => 'required',
+            'pengajuan.jenis' => 'required|string|max:255',
+            'pengajuan.tujuan' => 'required|string|max:255',
+            'pengajuan.perkiraan_utilitasi_bulanan' => 'required',
+            'pengajuan.perkiraan_bep_pada_tahun' => 'required',
+            'pengajuan.rkap' => 'required',
+            'pengajuan.nominal_rkap' => 'required',
+        ]);
+
+        $pengajuan = PengajuanPembelian::findOrFail($id);
+
+        $pengajuan->Tanggal = $request->pengajuan['tanggal'];
+        $pengajuan->Jenis = $request->pengajuan['jenis'];
+        $pengajuan->Tujuan = $request->pengajuan['tujuan'];
+        $pengajuan->PerkiraanUtilitasiBulanan = $request->pengajuan['perkiraan_utilitasi_bulanan'];
+        $pengajuan->PerkiraanBepPadaTahun = $request->pengajuan['perkiraan_bep_pada_tahun'];
+        $pengajuan->Rkap = $request->pengajuan['rkap'];
+        $pengajuan->NominalRkap = preg_replace('/\D/', '', $request->pengajuan['nominal_rkap']);
+        $pengajuan->DepartemenId = $request->pengajuan['departemen'];
+        $pengajuan->KodePerusahaan = auth()->user()->kodeperusahaan;
+        $pengajuan->UserUpdate = auth()->user()->name;
+        $pengajuan->save();
+
+        // Hapus ListVendor dan ListVendorDetail lama untuk pengajuan ini
+        ListVendor::where('IdPengajuan', $pengajuan->id)->delete();
+        ListVendorDetail::where('IdPengajuan', $pengajuan->id)->delete();
+        // PengajuanItem::where('IdPengajuan', $pengajuan->id)->delete();
+
+        foreach ($request->vendors as $key => $vendorData) {
+            if (!isset($vendorData['vendor_id']) || $vendorData['vendor_id'] === null) {
+                continue;
+            }
+
+            $filename = null;
+            if (isset($vendorData['penawaran_file']) && is_array($vendorData['penawaran_file'])) {
+                $fileArr = $vendorData['penawaran_file'];
+                if (isset($fileArr[0]) && $fileArr[0] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $fileArr[0];
+                    $filename = 'penawaran_' . time() . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('penawaran_vendor', $filename, 'public');
+                }
+            } elseif (isset($vendorData['penawaran_file']) && is_string($vendorData['penawaran_file'])) {
+                $filename = $vendorData['penawaran_file'];
+            } elseif ($request->hasFile('penawaran_file_' . ($key + 1))) {
+                $file = $request->file('penawaran_file_' . ($key + 1));
+                $filename = 'penawaran_' . time() . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('penawaran_vendor', $filename, 'public');
+            }
+
+            $ListVendor = ListVendor::create([
+                'IdPengajuan' => $pengajuan->id,
+                'VendorKe' => $key + 1,
+                'NamaVendor' => $vendorData['vendor_id'],
+                'SuratPenawaranVendor' => $filename,
+                'HargaTanpaDiskon' => preg_replace('/\D/', '', $vendorData['total_harga_sebelum_diskon']),
+                'HargaDenganDiskon' => preg_replace('/\D/', '', $vendorData['total_harga_setelah_diskon']),
+                'TotalDiskon' => preg_replace('/\D/', '', $vendorData['total_diskon']),
+                'Ppn' => $vendorData['ppn_persen'],
+                'TotalPpn' => preg_replace('/\D/', '', $vendorData['total_ppn']),
+                'TotalHarga' => preg_replace('/\D/', '', $vendorData['grand_total']),
+                'KodePerusahaan' => auth()->user()->kodeperusahaan,
+                'UserCreate' => auth()->user()->name,
+                'UserUpdate' => auth()->user()->name,
+            ]);
+
+            if (isset($vendorData['details']) && is_array($vendorData['details'])) {
+                foreach ($vendorData['details'] as $detailB) {
+                    ListVendorDetail::create([
+                        'IdPengajuan' => $pengajuan->id,
+                        'IdListVendor' => $ListVendor->id,
+                        'NamaBarang' => $detailB['barang_id'] ?? null,
+                        'NamaVendor' => null,
+                        'Jumlah' => $detailB['jumlah'],
+                        'HargaSatuan' => preg_replace('/\D/', '', $detailB['harga_satuan']),
+                        'Diskon' => preg_replace('/\D/', '', $detailB['diskon_item']),
+                        'JenisDiskon' => $detailB['jenis_diskon_item'],
+                        'TotalDiskon' => preg_replace('/\D/', '', $detailB['total_diskon']),
+                        'TotalHarga' => preg_replace('/\D/', '', $detailB['total_harga']),
+                        'KodePerusahaan' => auth()->user()->kodeperusahaan,
+                        'UserCreate' => auth()->user()->name,
+                    ]);
+                }
+            }
+        }
+
+        // foreach ($request->vendors[0]['details'] as $key => $listalat) {
+        //     PengajuanItem::create([
+        //         'IdPengajuan' => $pengajuan->id,
+        //         'IdBarang' => $listalat['barang_id'],
+        //         'Jumlah' => $listalat['jumlah'] ?? null,
+        //         'Satuan' => $listalat['satuan'] ?? null,
+        //         'HargaSatuan' => isset($listalat['harga_satuan']) ? preg_replace('/\D/', '', $listalat['harga_satuan']) : null,
+        //         'HargaNego' => isset($listalat['harga_nego']) ? preg_replace('/\D/', '', $listalat['harga_nego']) : null,
+        //         'UserCreate' => auth()->user()->name,
+        //         'UserUpdate' => auth()->user()->name,
+        //     ]);
+        // }
+
+        activity('pengajuan_pembelian')
+            ->causedBy(auth()->user())
+            ->performedOn($pengajuan)
+            ->withProperties([
+                'attributes' => $pengajuan->toArray(),
+                'vendors' => $request->vendors,
+            ])
+            ->log('Memperbarui pengajuan pembelian dengan kode ' . $pengajuan->KodePengajuan);
+
+        return back()->with('success', 'Pengajuan pembelian berhasil diperbarui');
     }
 
     public function UpdatePengajuan(Request $request, $id)

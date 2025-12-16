@@ -30,6 +30,10 @@ class RekomendasiDetail extends Model
     {
         return $this->hasOne(MasterVendor::class, 'id', 'IdVendor');
     }
+    public function getBarang()
+    {
+        return $this->hasOne(MasterBarang::class, 'id', 'NamaPermintaan');
+    }
     public function getPerusahaan()
     {
         return $this->hasOne(MasterPerusahaan::class, 'Kode', 'KodePerusahaan');

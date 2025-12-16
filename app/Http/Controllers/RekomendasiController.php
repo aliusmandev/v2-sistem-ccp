@@ -33,11 +33,7 @@ class RekomendasiController extends Controller
                 ->editColumn('KodePerusahaan', function ($row) {
                     return $row->getPerusahaan->Nama ?? '-';
                 })
-                ->addColumn('KodePengajuan', function ($row) {
-                    $id = $row->id;
-                    $kode = isset($row->KodePengajuan) ? $row->KodePengajuan : '-';
-                    return '<a href="' . route('ajukan.show', $id) . '" style="color: #007bff; font-weight: bold;">' . e($kode) . '</a>';
-                })
+
                 ->addColumn('action', function ($row) {
                     $id = encrypt($row->id);
                     return '
@@ -65,7 +61,14 @@ class RekomendasiController extends Controller
                             return '<span class="badge bg-light text-dark">' . e($row->Status ?? '-') . '</span>';
                     }
                 })
-                ->rawColumns(['action', 'KodePengajuan', 'Status'])
+                ->addColumn('DiajukanPada', function ($row) {
+                    // format tanggal pengajuan menjadi format Indonesia: 01 Jan 2024 13:30
+                    return $row->DiajukanPada
+                        ? \Carbon\Carbon::parse($row->DiajukanPada)->translatedFormat('d M Y H:i')
+                        : '-';
+                })
+
+                ->rawColumns(['action', 'Status', 'DiajukanPada'])
                 ->make(true);
         }
 
@@ -81,6 +84,9 @@ class RekomendasiController extends Controller
         $idPengajuanItem = decrypt($idPengajuanItem);
         $data = PengajuanPembelian::with([
             'getVendor.getVendorDetail',
+            'getHtaGpa' => function ($query) use ($idPengajuanItem) {
+                $query->where('PengajuanItemId', $idPengajuanItem);
+            },
             'getVendor.getHtaGpa' => function ($query) use ($idPengajuanItem) {
                 $query->where('PengajuanItemId', $idPengajuanItem);
             },
@@ -127,8 +133,8 @@ class RekomendasiController extends Controller
                     ],
                     [
                         'NamaPermintaan' => $value['NamaPermintaan'] ?? null,
-                        'HargaAwal' => $value['HargaAwal'] ?? null,
-                        'HargaNego' => $value['HargaNego'] ?? null,
+                        'HargaAwal' => isset($value['HargaAwal']) ? preg_replace('/\D/', '', $value['HargaAwal']) : null,
+                        'HargaNego' => isset($value['HargaNego']) ? preg_replace('/\D/', '', $value['HargaNego']) : null,
                         'Spesifikasi' => $value['Spesifikasi'] ?? null,
                         'NegaraProduksi' => $value['NegaraProduksi'] ?? null,
                         'Garansi' => $value['Garansi'] ?? null,
@@ -137,6 +143,7 @@ class RekomendasiController extends Controller
                         'SparePart' => $value['SparePart'] ?? null,
                         'BackupUnit' => $value['BackupUnit'] ?? null,
                         'Top' => $value['Top'] ?? null,
+                        'Populasi' => $value['Populasi'] ?? null,
                         'UserNego' => auth()->user()->id,
                         // 'Rekomendasi' dihilangkan, karena tidak ada di input sesuai contoh yang diberikan
                         'Keterangan' => $value['Keterangan'] ?? null,
@@ -156,7 +163,6 @@ class RekomendasiController extends Controller
     {
         $id = decrypt($id);
         $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang', 'getPengajuanItem.getHtaGpa', 'getPengajuanItem.getRekomendasi', 'getPengajuanItem.getFui')->find($id);
-        // dd($data);
         $vendor = MasterVendor::orderBy('Nama', 'asc')->get();
         $masterbarang = MasterBarang::get();
         return view('rekomendasi-pembelian.show', compact('data', 'vendor', 'masterbarang'));
@@ -175,8 +181,7 @@ class RekomendasiController extends Controller
         $idPengajuan = decrypt($idPengajuan);
         $idPengajuanItem = decrypt($idPengajuanItem);
 
-        $rekomendasi = Rekomendasi::with('getRekomedasiDetail.getPerusahaan')->where('PengajuanItemId', $idPengajuanItem)->first();
-        // dd($rekomendasi);
+        $rekomendasi = Rekomendasi::with('getRekomedasiDetail.getPerusahaan', 'getRekomedasiDetail.getBarang')->where('PengajuanItemId', $idPengajuanItem)->first();
         $pdf = Pdf::loadView('rekomendasi-pembelian.cetak-review', [
             'rekomendasi' => $rekomendasi,
         ]);
@@ -259,7 +264,13 @@ class RekomendasiController extends Controller
                 );
             }
         }
-        return redirect()->back()->with('success', 'Data berhasil disimpan.');
+        $pengajuan = PengajuanPembelian::find($request->rekomendasi[0]['IdPengajuan']);
+        // dd($pengajuan);
+        if ($pengajuan) {
+            $pengajuan->Status = 'Selesai';
+            $pengajuan->save();
+        }
+        return redirect()->back()->with('success', 'Anda sudah menentukan rekomendasi.');
     }
 
     /**

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="page-header">
         <div class="row">
             <div class="col">
@@ -33,6 +34,11 @@
                                 value="{{ isset($data->Tanggal) ? $data->Tanggal : '-' }}" readonly>
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label"><strong>Permintaan dari Departemen</strong></label>
+                            <input type="text" class="form-control"
+                                value="{{ isset($data->getDepartemen->Nama) ? $data->getDepartemen->Nama : '-' }}" readonly>
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label"><strong>Jenis</strong></label>
                             <input type="text" class="form-control" value="{{ $data->getJenisPermintaan->Nama ?? '-' }}"
                                 readonly>
@@ -62,10 +68,18 @@
                     </div>
                     {{-- PERBANDINGAN VENDOR --}}
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="card-title">
                                 Perbandingan Vendor
                             </div>
+                            @if ($data->Status == 'Draft')
+                                <a href="{{ route('ajukan.edit', encrypt($data->id)) }}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-edit"></i> Ubah Data Perbandingan Vendor
+                                </a>
+                            @else
+                                <span class="badge bg-success">Sudah diajukan</span>
+                            @endif
+
                         </div>
                         <div class="card-body">
                             @php
@@ -429,7 +443,7 @@
                                             <th class="text-center" style="width:40px;">No</th>
                                             <th>Nama Barang</th>
                                             <th class="text-center">HTA / GPA</th>
-                                            <th class="text-center">FUI</th>
+                                            <th class="text-center">Usulan Investasi</th>
                                             <th class="text-center">Rekomendasi</th>
                                         </tr>
                                     </thead>
@@ -449,63 +463,87 @@
                                                             <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
                                                                 class="btn btn-warning">
                                                                 <i class="fa fa-exclamation-circle"></i>
-                                                                Lengkapi HTA
+                                                                Lengkapi Data HTA
                                                             </a>
                                                         @else
+                                                            @if ($data->Status == 'Draft')
+                                                                <a href="{{ route('htagpa.form-hta', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-warning">
+                                                                    <i class="fa fa-exclamation-circle"></i>
+                                                                    Ubah Data HTA
+                                                                </a>
+                                                            @endif
                                                             <a href="{{ route('htagpa.show', [$data->id, $item->id]) }}"
                                                                 class="btn btn-success">
                                                                 <i class="fa fa-check-circle"></i>
-                                                                Lihat HTA
+                                                                Lihat Data HTA
                                                             </a>
                                                         @endif
                                                     </td>
                                                     <td class="text-center">
                                                         @php
                                                             $adaFui = $item->getFui ? true : false;
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
                                                         @endphp
-                                                        @if (!$adaFui)
-                                                            <a href="{{ route('usulan-investasi.create', [encrypt($data->id), encrypt($item->id)]) }}"
-                                                                class="btn btn-warning">
-                                                                <i class="fa fa-lightbulb"></i> Lengkapi FUI
-                                                            </a>
+                                                        @if ($adaRekomendasi)
+                                                            @if (!$adaFui)
+                                                                <a href="{{ route('usulan-investasi.create', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                    class="btn btn-warning">
+                                                                    <i class="fa fa-lightbulb"></i> Lengkapi Formulir
+                                                                    Usulan
+                                                                    Investasi (FUI)
+                                                                </a>
+                                                            @else
+                                                                <a href="{{ route('usulan-investasi.print', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-info">
+                                                                    <i class="fa fa-print"></i>
+                                                                    Cetak Formulir Usulan Investasi (FUI)
+                                                                </a>
+                                                                <a href="{{ route('usulan-investasi.show', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Lihat Formulir Usulan Investasi (FUI)
+                                                                </a>
+                                                            @endif
                                                         @else
-                                                            <a href="{{ route('usulan-investasi.print', [$data->id, $item->id]) }}"
-                                                                class="btn btn-info">
-                                                                <i class="fa fa-print"></i>
-                                                                Cetak FUI
-                                                            </a>
-                                                            <a href="{{ route('usulan-investasi.show', [$data->id, $item->id]) }}"
-                                                                class="btn btn-success">
-                                                                <i class="fa fa-eye"></i>
-                                                                Lihat FUI
-                                                            </a>
+                                                            <button type="button" class="btn btn-secondary" disabled>
+                                                                <i class="fa fa-lightbulb"></i> Lengkapi Formulir Usulan
+                                                                Investasi (FUI)
+                                                            </button>
+                                                            <div class="form-text text-danger mt-1">
+                                                                Mohon maaf, Formulir Usulan Investasi (FUI) dapat diisi
+                                                                setelah rekomendasi dikeluarkan oleh CCP.
+                                                            </div>
                                                         @endif
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="{{ route('rekomendasi.create', [encrypt($data->id), encrypt($item->id)]) }}"
-                                                            class="btn btn-primary">
-                                                            <i class="fa fa-pen"></i> Buat Rekomendasi
-                                                        </a>
+
                                                         @php
                                                             $adaRekomendasi = $item->getRekomendasi ? true : false;
                                                         @endphp
                                                         @if ($adaRekomendasi)
                                                             <a href="{{ route('rekomendasi.detail-print', [encrypt($data->id), encrypt($item->id)]) }}"
                                                                 class="btn btn-info ms-2" target="_blank">
-                                                                <i class="fa fa-print"></i> Print
+                                                                <i class="fa fa-print"></i> Cetak Rekomendasi Pembelian
                                                             </a>
-                                                            <a href="{{ route('rekomendasi.detail-view', [encrypt($data->id), encrypt($item->id)]) }}"
-                                                                class="btn btn-secondary ms-2" target="_blank">
-                                                                <i class="fa fa-eye"></i> Lihat
-                                                            </a>
+                                                            @can('rekomendasi-show')
+                                                                <a href="{{ route('rekomendasi.detail-view', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                    class="btn btn-secondary ms-2" target="_blank">
+                                                                    <i class="fa fa-eye"></i> Lihat Rekomendasi Pembelian
+                                                                </a>
+                                                            @endcan
+                                                        @else
+                                                            <span
+                                                                style="color: #856404; background: #fff3cd; padding: 6px 12px; border-radius: 5px; display: inline-block;">
+                                                                Rekomendasi sedang diproses oleh CCP.
+                                                            </span>
                                                         @endif
                                                     </td>
-
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="6" class="text-center">Tidak ada data item.</td>
+                                                <td colspan="6" class="text-center">Data item belum tersedia.</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -518,7 +556,7 @@
                             <i class="fa fa-arrow-left"></i> Kembali
                         </a>
 
-                        @if ($data->Status == 'Diajukan')
+                        @if ($data->Status == 'Diajukan' || $data->Status == 'Selesai')
                             <button type="button" class="btn btn-danger" id="btn-batalkan">
                                 <i class="fa fa-times"></i> Batalkan Pengajuan
                             </button>
@@ -566,6 +604,27 @@
     </div>
 @endsection
 @push('js')
+    @push('js')
+        <script>
+            document.getElementById('btn-ajukan').addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Konfirmasi Pengajuan',
+                    text: 'Apakah Anda yakin ingin mengajukan permohonan ini? Pastikan semua dokumen tambahan telah lengkap.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, ajukan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-ajukan').submit();
+                    }
+                });
+            });
+        </script>
+    @endpush
     <script>
         document.getElementById('btn-batalkan').addEventListener('click', function(e) {
             e.preventDefault();

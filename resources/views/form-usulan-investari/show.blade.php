@@ -248,15 +248,35 @@
                                         </tr>
                                         <tr>
                                             <td style="height: 70px;" class="text-center">
+                                                @php
+                                                    $ttdKadiv =
+                                                        !empty($usulan->getAccKadiv) &&
+                                                        !empty($usulan->getAccKadiv->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $usulan->getAccKadiv->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
                                                 @if (!empty($usulan->getAccKadiv->name))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $usulan->getAccKadiv->tandatangan) }}"
-                                                        alt="TTD Kadiv" style="height: 65px;">
+                                                    <img src="{{ $ttdKadiv }}" alt="TTD Kadiv"
+                                                        style="height: 100px;">
                                                 @endif
                                             </td>
                                             <td style="height: 70px;" class="text-center">
+                                                @php
+                                                    $ttdDirektur =
+                                                        !empty($usulan->getAccDirektur) &&
+                                                        !empty($usulan->getAccDirektur->tandatangan)
+                                                            ? asset(
+                                                                'storage/upload/tandatangan/' .
+                                                                    $usulan->getAccDirektur->tandatangan,
+                                                            )
+                                                            : asset('assets/img/ccp/default_approve.png');
+                                                @endphp
                                                 @if (!empty($usulan->getAccDirektur->name))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $usulan->getAccDirektur->tandatangan) }}"
-                                                        alt="TTD Direktur" style="height: 65px;">
+                                                    <img src="{{ $ttdDirektur }}" alt="TTD Direktur"
+                                                        style="height: 100px;">
                                                 @endif
                                             </td>
                                         </tr>
@@ -270,18 +290,33 @@
                                         </tr>
                                         <tr>
                                             <td class="text-center align-top">
-
                                                 <span style="font-weight:600;">
                                                     {{ $usulan->getAccKadiv ? $usulan->getAccKadiv->name : '-' }}
                                                 </span>
+                                                <br>
+                                                <small class="text-muted" style="font-size:85%;">
+                                                    @if (!empty($usulan->KadivJangMedPada))
+                                                        {{ \Carbon\Carbon::parse($usulan->KadivAt)->translatedFormat('d M Y H:i') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </small>
                                             </td>
                                             <td class="text-center align-top">
-
                                                 <span style="font-weight:600;">
                                                     {{ $usulan->getAccDirektur ? $usulan->getAccDirektur->name : '-' }}
                                                 </span>
+                                                <br>
+                                                <small class="text-muted" style="font-size:85%;">
+                                                    @if (!empty($usulan->DirekturPada))
+                                                        {{ \Carbon\Carbon::parse($usulan->DirekturPada)->translatedFormat('d M Y H:i') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </small>
                                             </td>
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>
