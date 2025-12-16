@@ -176,8 +176,7 @@
 
                     <div class="row mt-4 justify-content-center">
                         <div class="col-12">
-                            <h5 class="text-center mb-4"><strong>Persetujuan HTA / GPA</strong>
-                            </h5>
+                            <h5 class="text-center mb-4"><strong>Persetujuan HTA / GPA</strong></h5>
                             <div class="table-responsive">
                                 <table class="table table-borderless" style="max-width:100%; margin: 0 auto;">
                                     <colgroup>
@@ -189,243 +188,80 @@
                                     </colgroup>
                                     <tbody>
                                         <tr>
-                                            <td class="text-center align-bottom">
-                                                <strong>Disetujui 1</strong>
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                <strong>Disetujui 2</strong>
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                <strong>Disetujui 3</strong>
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                <strong>Disetujui 4</strong>
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                <strong>Disetujui 5</strong>
-                                            </td>
+                                            @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $idx => $penilai)
+                                                <td class="text-center align-bottom">
+                                                    <strong>Disetujui {{ $penilai->PenilaiKe ?? $idx + 1 }}</strong>
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            <td style="height: 70px;" class="text-center">
-                                                @php
-                                                    $ttd1 =
-                                                        !empty($data->getHtaGpa->Penilai1_Oleh) &&
-                                                        !empty($data->getHtaGpa->getPenilai1->tandatangan)
-                                                            ? asset(
-                                                                'storage/upload/tandatangan/' .
-                                                                    $data->getHtaGpa->getPenilai1->tandatangan,
-                                                            )
-                                                            : asset('assets/img/ccp/default_approve.png');
-                                                @endphp
-                                                <img src="{{ $ttd1 }}" alt="TTD"
-                                                    style="max-width:110px; max-height:60px;">
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @php
-                                                    $ttd2 =
-                                                        !empty($data->getHtaGpa->Penilai2_Oleh) &&
-                                                        !empty($data->getHtaGpa->getPenilai2->tandatangan)
-                                                            ? asset(
-                                                                'storage/upload/tandatangan/' .
-                                                                    $data->getHtaGpa->getPenilai2->tandatangan,
-                                                            )
-                                                            : asset('assets/img/ccp/default_approve.png');
-                                                @endphp
-                                                <img src="{{ $ttd2 }}" alt="TTD"
-                                                    style="max-width:110px; max-height:60px;">
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @php
-                                                    $ttd3 =
-                                                        !empty($data->getHtaGpa->Penilai3_Oleh) &&
-                                                        !empty($data->getHtaGpa->getPenilai3->tandatangan)
-                                                            ? asset(
-                                                                'storage/upload/tandatangan/' .
-                                                                    $data->getHtaGpa->getPenilai3->tandatangan,
-                                                            )
-                                                            : asset('assets/img/ccp/default_approve.png');
-                                                @endphp
-                                                <img src="{{ $ttd3 }}" alt="TTD"
-                                                    style="max-width:110px; max-height:60px;">
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @php
-                                                    $ttd4 =
-                                                        !empty($data->getHtaGpa->Penilai4_Oleh) &&
-                                                        !empty($data->getHtaGpa->getPenilai4->tandatangan)
-                                                            ? asset(
-                                                                'storage/upload/tandatangan/' .
-                                                                    $data->getHtaGpa->getPenilai4->tandatangan,
-                                                            )
-                                                            : asset('assets/img/ccp/default_approve.png');
-                                                @endphp
-                                                <img src="{{ $ttd4 }}" alt="TTD"
-                                                    style="max-width:110px; max-height:60px;">
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @php
-                                                    $ttd5 =
-                                                        !empty($data->getHtaGpa->Penilai5_Oleh) &&
-                                                        !empty($data->getHtaGpa->getPenilai5->tandatangan)
-                                                            ? asset(
-                                                                'storage/upload/tandatangan/' .
-                                                                    $data->getHtaGpa->getPenilai5->tandatangan,
-                                                            )
-                                                            : asset('assets/img/ccp/default_approve.png');
-                                                @endphp
-                                                <img src="{{ $ttd5 }}" alt="TTD"
-                                                    style="max-width:110px; max-height:60px;">
-                                            </td>
+                                            @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $penilai)
+                                                <td style="height: 70px;" class="text-center">
+                                                    @php
+                                                        $tandatangan =
+                                                            !empty($penilai->IdUser) && !empty($penilai->tandatangan)
+                                                                ? asset(
+                                                                    'storage/upload/tandatangan/' .
+                                                                        $penilai->tandatangan,
+                                                                )
+                                                                : asset('assets/img/ccp/default_approve.png');
+                                                    @endphp
+                                                    <img src="{{ $tandatangan }}" alt="TTD"
+                                                        style="max-width:110px; max-height:60px;">
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
+                                            @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $penilai)
+                                                <td class="text-center" style="padding-bottom:0;">
+                                                    <hr
+                                                        style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            {{-- @php
-                                                dd($data->getHtaGpa);
-                                            @endphp --}}
-                                            <td class="text-center align-top">
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getHtaGpa->getPenilai1->name ?? '-' }}
-                                                </span>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $data->getHtaGpa->Penilai1_Pada ?? '-' }}
-                                                </small>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getHtaGpa->getPenilai2->name ?? '-' }}
-                                                </span>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $data->getHtaGpa->Penilai2_Pada ?? '-' }}
-                                                </small>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getHtaGpa->getPenilai3->name ?? '-' }}
-                                                </span>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $data->getHtaGpa->Penilai3_Pada ?? '-' }}
-                                                </small>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getHtaGpa->getPenilai4->name ?? '-' }}
-                                                </span>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $data->getHtaGpa->Penilai4_Pada ?? '-' }}
-                                                </small>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getHtaGpa->getPenilai5->name ?? '-' }}
-                                                </span>
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ $data->getHtaGpa->Penilai5_Pada ?? '-' }}
-                                                </small>
-                                            </td>
+                                            @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $penilai)
+                                                <td class="text-center align-top">
+                                                    <span style="font-weight:600;">
+                                                        {{ $penilai->Nama ?? '-' }}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        {{ $penilai->AccPada ?? '-' }}
+                                                    </small>
+                                                </td>
+                                            @endforeach
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                         <div class="col-12 text-end mt-3">
-                            {{-- <a href="{{ route('pp.show', $data->id) }}" class="btn btn-secondary">Kembali</a> --}}
-
-                            @can('hta-gpa-approve-penilai1')
-                                @if (empty($data->getHtaGpa->getPenilai1->name))
-                                    <!-- Button untuk Penilai 1 -->
-                                    <form id="formPenilaian1"
-                                        action="{{ route('htagpa.acc-penilai1', $data->getHtaGpa->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success me-2"
-                                            onclick="confirmSweetAlert('formPenilaian1', 'Konfirmasi', 'Apakah Anda yakin ingin melanjutkan ke Penilaian 1?')">
-                                            <i class="fa fa-check"></i> Proses ke Penilaian 1
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
-
-                            @can('hta-gpa-approve-penilai2')
-                                @if (empty($data->getHtaGpa->getPenilai2->name))
-                                    <!-- Button untuk Penilai 2 -->
-                                    <form id="formPenilaian2"
-                                        action="{{ route('htagpa.acc-penilai2', $data->getHtaGpa->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success me-2"
-                                            onclick="confirmSweetAlert('formPenilaian2', 'Konfirmasi', 'Apakah Anda yakin ingin melanjutkan ke Penilaian 2?')">
-                                            <i class="fa fa-check"></i> Proses ke Penilaian 2
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
-
-                            @can('hta-gpa-approve-penilai3')
-                                @if (empty($data->getHtaGpa->getPenilai3->name))
-                                    <!-- Button untuk Penilai 3 -->
-                                    <form id="formPenilaian3"
-                                        action="{{ route('htagpa.acc-penilai3', $data->getHtaGpa->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success me-2"
-                                            onclick="confirmSweetAlert('formPenilaian3', 'Konfirmasi', 'Apakah Anda yakin ingin melanjutkan ke Penilaian 3?')">
-                                            <i class="fa fa-check"></i> Proses ke Penilaian 3
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
-
-                            @can('hta-gpa-approve-penilai4')
-                                @if (empty($data->getHtaGpa->getPenilai4->name))
-                                    <!-- Button untuk Penilai 4 -->
-                                    <form id="formPenilaian4"
-                                        action="{{ route('htagpa.acc-penilai4', $data->getHtaGpa->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success me-2"
-                                            onclick="confirmSweetAlert('formPenilaian4', 'Konfirmasi', 'Apakah Anda yakin ingin melanjutkan ke Penilaian 4?')">
-                                            <i class="fa fa-check"></i> Proses ke Penilaian 4
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
-
-                            @can('hta-gpa-approve-penilai5')
-                                @if (empty($data->getHtaGpa->getPenilai5->name))
-                                    <!-- Button untuk Penilai 5 -->
-                                    <form id="formPenilaian5"
-                                        action="{{ route('htagpa.acc-penilai5', $data->getHtaGpa->id) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success me-2"
-                                            onclick="confirmSweetAlert('formPenilaian5', 'Konfirmasi', 'Apakah Anda yakin ingin melanjutkan ke Penilaian 5?')">
-                                            <i class="fa fa-check"></i> Proses ke Penilaian 5
-                                        </button>
-                                    </form>
-                                @endif
-                            @endcan
+                            @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $idx => $penilai)
+                                @php
+                                    // PenilaiKe is always 1 to 5 as per your structure
+                                    $penilaiKe = $penilai->PenilaiKe ?? $idx + 1;
+                                    $canName = 'hta-gpa-approve-penilai' . $penilaiKe;
+                                    // Check if Nama kosong/empty (means belum acc)
+                                    $isEmpty = empty($penilai->Nama);
+                                    $formId = 'formPenilaian' . $penilaiKe;
+                                    $routeName = 'htagpa.acc-penilai' . $penilaiKe;
+                                    $confirmMsg = "Apakah Anda yakin ingin melanjutkan ke Penilaian $penilaiKe?";
+                                @endphp
+                                @can($canName)
+                                    @if ($isEmpty)
+                                        <form id="{{ $formId }}"
+                                            action="{{ route($routeName, $data->getHtaGpa->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            <button type="button" class="btn btn-success me-2"
+                                                onclick="confirmSweetAlert('{{ $formId }}', 'Konfirmasi', '{{ $confirmMsg }}')">
+                                                <i class="fa fa-check"></i> Proses ke Penilaian {{ $penilaiKe }}
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endcan
+                            @endforeach
                         </div>
                     </div>
                 </div>

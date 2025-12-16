@@ -1,6 +1,45 @@
 @extends('layouts.app')
 
 @section('content')
+    @push('css')
+        <style>
+            #scrollToTopBtn,
+            #scrollToBottomBtn {
+                position: fixed;
+                right: 30px;
+                width: 48px;
+                height: 48px;
+                border: none;
+                border-radius: 50%;
+                background: #4BCC1F;
+                color: white;
+                font-size: 24px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                cursor: pointer;
+                z-index: 999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.2s;
+                opacity: 0.8;
+            }
+
+            #scrollToTopBtn:hover,
+            #scrollToBottomBtn:hover {
+                opacity: 1;
+            }
+
+            #scrollToTopBtn {
+                bottom: 90px;
+                display: none;
+            }
+
+            #scrollToBottomBtn {
+                bottom: 30px;
+                display: none;
+            }
+        </style>
+    @endpush
     <div class="page-header">
         <div class="row">
             <div class="col">
@@ -252,13 +291,18 @@
                         <div class="mt-3 d-flex justify-content-end">
                             <button type="submit" name="action" value="draft" class="btn btn-warning me-2">Simpan
                                 Sebagai Draft</button>
-                            <button type="button" id="btnAjukan" class="btn btn-success me-2">Ajukan</button>
-                            <a href="{{ route('pp.show', $data->id) }}" class="btn btn-secondary">Kembali</a>
+                            <!-- Ajukan Button trigger modal -->
+                            <button type="button" id="btnAjukan" class="btn btn-success me-2" data-bs-toggle="modal"
+                                data-bs-target="#modalPenilai">
+                                Ajukan
+                            </button>
+
+                            <!-- Modal -->
+
+
+                            <a href="{{ route('ajukan.show', encrypt($data->id)) }}"
+                                class="btn btn-secondary">Kembali</a>
                         </div>
-
-
-
-
                     </form>
                 </div>
             </div>
@@ -270,9 +314,18 @@
                 <input type="hidden" name="IdBarang" value="{{ $data->getPengajuanItem[0]->IdBarang ?? '' }}">
                 <input type="hidden" name="Status" value="Diajukan">
             </form>
-
+            @include('hta-gpa.modal-kirim-email')
         </div>
     </div>
+    <!-- Floating Scroll Button -->
+
+
+    <button id="scrollToTopBtn" title="Scroll to Top">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+    <button id="scrollToBottomBtn" title="Scroll to Bottom">
+        <i class="fa fa-arrow-down"></i>
+    </button>
 @endsection
 @push('js')
     @if (Session::get('success'))
@@ -289,28 +342,7 @@
             }, 500);
         </script>
     @endif
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('btnAjukan').addEventListener('click', function(e) {
-                e.preventDefault();
 
-                Swal.fire({
-                    title: 'Ajukan Penilaian?',
-                    text: "Apakah Anda yakin ingin mengajukan data penilaian ini?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Ajukan!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('formAjukanHtaGpa').submit();
-                    }
-                });
-            });
-        });
-    </script>
     <script>
         function updateSubtotalsAndGrandTotal(vendorTable) {
             let grandTotal = 0;
@@ -346,4 +378,44 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const topBtn = document.getElementById('scrollToTopBtn');
+            const bottomBtn = document.getElementById('scrollToBottomBtn');
+
+            function toggleButtons() {
+                if (window.scrollY > 150) {
+                    topBtn.style.display = 'flex';
+                } else {
+                    topBtn.style.display = 'none';
+                }
+                if (window.innerHeight + window.scrollY < document.body.offsetHeight - 150) {
+                    bottomBtn.style.display = 'flex';
+                } else {
+                    bottomBtn.style.display = 'none';
+                }
+            }
+
+            window.addEventListener('scroll', toggleButtons);
+            window.addEventListener('resize', toggleButtons);
+
+            topBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            bottomBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Initial check
+            toggleButtons();
+        });
+    </script>
+
 @endpush

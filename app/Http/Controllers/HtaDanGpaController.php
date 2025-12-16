@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifikasiPengajuanMail;
 use App\Models\HtaDanGpa;
 use App\Models\HtaDanGpaDetail;
 use App\Models\MasterParameter;
 use App\Models\PengajuanPembelian;
+use App\Models\PenilaiHtaGpa;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class HtaDanGpaController extends Controller
 {
@@ -27,7 +31,8 @@ class HtaDanGpaController extends Controller
         ])->find($idPengajuan);
         // dd($data);
         $parameter = MasterParameter::get();
-        return view('hta-gpa.index', compact('data', 'parameter'));
+        $user = User::get();
+        return view('hta-gpa.index', compact('data', 'parameter', 'user'));
     }
 
     /**
@@ -108,6 +113,66 @@ class HtaDanGpaController extends Controller
         return redirect()->back()->with('success', 'Data berhasil disimpan.');
     }
 
+    public function SimpanPenilai(Request $request)
+    {
+        // dd($request->all());
+        $cariHTA = HtaDanGpa::where('IdPengajuan', $request->IdPengajuan)
+            ->where('PengajuanItemId', $request->PengajuanItemId)
+            ->first();
+
+        if (!$cariHTA) {
+            return redirect()->back()->with('error', 'Data HTA tidak ditemukan.');
+        }
+
+        // Rewrite to handle flat arrays, not array of objects
+        $count = count($request->TipeInputPenilai);
+        for ($i = 0; $i < $count; $i++) {
+            PenilaiHtaGpa::updateOrCreate(
+                [
+                    'IdHtaGpa' => $cariHTA->id,
+                    'PenilaiKe' => $i + 1,
+                ],
+                [
+                    'IdUser' => $request->NamaPenilai[$i] ?? null,
+                    'Nama' => $request->NamaPenilaiManual[$i] ?? null,
+                    'Jabatan' => null,
+                    'Email' => $request->EmailPenilai[$i] ?? null,
+                    'UserCreate' => auth()->user()->name,
+                ]
+            );
+        }
+        $idPengajuan = $request->IdPengajuan;
+        $idPengajuanItem = $request->PengajuanItemId;
+        // === KIRIM EMAIL ===
+        $pengajuan = PengajuanPembelian::with([
+            'getVendor.getVendorDetail',
+            'getHtaGpa' => function ($query) use ($idPengajuanItem) {
+                $query->where('PengajuanItemId', $idPengajuanItem);
+            },
+            'getJenisPermintaan.getForm',
+            'getHtaGpa.getPenilai1',
+            'getHtaGpa.getPenilai2',
+            'getHtaGpa.getPenilai3',
+            'getHtaGpa.getPenilai4',
+            'getHtaGpa.getPenilai5',
+            'getPengajuanItem' => function ($query) use ($idPengajuanItem) {
+                $query->where('id', $idPengajuanItem)->with('getBarang.getMerk');
+            }
+        ])->find($idPengajuan);
+
+        $emailTujuan = PenilaiHtaGpa::where('IdHtaGpa', $cariHTA->id)
+            ->pluck('Email')
+            ->filter()
+            ->toArray();
+
+        if (count($emailTujuan) > 0) {
+            Mail::to($emailTujuan)
+                ->send(new NotifikasiPengajuanMail($pengajuan, $cariHTA));
+        }
+
+        return redirect()->back()->with('success', 'Data berhasil disimpan & email notifikasi terkirim.');
+    }
+
     /**
      * Display the specified resource.
      */
@@ -124,6 +189,7 @@ class HtaDanGpaController extends Controller
             'getHtaGpa.getPenilai3',
             'getHtaGpa.getPenilai4',
             'getHtaGpa.getPenilai5',
+            'getHtaGpa.getPenilai',
             'getPengajuanItem' => function ($query) use ($idPengajuanItem) {
                 $query->where('id', $idPengajuanItem)->with('getBarang.getMerk');
             }

@@ -203,6 +203,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/ajukan-hta', [HtaDanGpaController::class, 'ajukan'])->name('htagpa.ajukan');
         Route::get('/show/{idPengajuan}/{idPengajuanItem}', [HtaDanGpaController::class, 'show'])->name('htagpa.show');
 
+        // input penilai
+        Route::POST('/simpan-penilai', [HtaDanGpaController::class, 'SimpanPenilai'])->name('htagpa.simpan-penilai');
         Route::post('/acc-penilai1/{id}', [HtaDanGpaController::class, 'accPenilai1'])->name('htagpa.acc-penilai1');
         Route::post('/acc-penilai2/{id}', [HtaDanGpaController::class, 'accPenilai2'])->name('htagpa.acc-penilai2');
         Route::post('/acc-penilai3/{id}', [HtaDanGpaController::class, 'accPenilai3'])->name('htagpa.acc-penilai3');

@@ -32,6 +32,11 @@ class HtaDanGpa extends Model
         return $this->belongsTo(User::class, 'Penilai1_Oleh', 'id');
     }
 
+    public function getPenilai()
+    {
+        return $this->hasMany(PenilaiHtaGpa::class, 'IdHtaGpa', 'id');
+    }
+
     /**
      * Relationship to get the user who performed Penilai2 action.
      */
@@ -56,10 +61,6 @@ class HtaDanGpa extends Model
         return $this->belongsTo(User::class, 'Penilai4_Oleh', 'id');
     }
 
-    /**
-     * Relationship to get the user who performed Penilai5 action.
-     * Penilai5_Oleh in controller is set as 'name', so we match to user's name here instead of id.
-     */
     public function getPenilai5()
     {
         return $this->belongsTo(User::class, 'Penilai5_Oleh', 'id');
