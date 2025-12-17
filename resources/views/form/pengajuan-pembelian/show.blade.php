@@ -513,32 +513,37 @@
                                                                 </a>
                                                             @endif
                                                         @else
-                                                            <button type="button" class="btn btn-secondary" disabled>
-                                                                <i class="fa fa-lightbulb"></i> Lengkapi Formulir Usulan
-                                                                Investasi (FUI)
-                                                            </button>
-                                                            <div class="form-text text-danger mt-1">
-                                                                Mohon maaf, Formulir Usulan Investasi (FUI) dapat diisi
+                                                            <div class="alert alert-danger mt-1" role="alert">
+                                                                Mohon maaf, Formulir Usulan Investasi (FUI) dapat diisi<br>
                                                                 setelah rekomendasi dikeluarkan oleh CCP.
                                                             </div>
                                                         @endif
                                                     </td>
                                                     <td class="text-center">
                                                         @php
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
                                                             $adaLembarDisposisi = $item->getDisposisi ? true : false;
                                                         @endphp
-                                                        @if ($adaLembarDisposisi)
-                                                            <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
-                                                                class="btn btn-success">
-                                                                <i class="fa fa-eye"></i>
-                                                                Lihat Lembar Disposisi
-                                                            </a>
+                                                        @if (!$adaRekomendasi)
+                                                            <div class="alert alert-danger p-2 m-0"
+                                                                style="font-size: 90%;">
+                                                                Lembar Disposisi dapat dibuat setelah rekomendasi
+                                                                dikeluarkan oleh CCP.
+                                                            </div>
                                                         @else
-                                                            <a href="{{ route('lembar-disposisi.create', [encrypt($data->id), encrypt($item->id)]) }}"
-                                                                class="btn btn-primary">
-                                                                <i class="fa fa-edit"></i>
-                                                                Isi Lembar Disposisi
-                                                            </a>
+                                                            @if ($adaLembarDisposisi)
+                                                                <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Lihat Lembar Disposisi
+                                                                </a>
+                                                            @else
+                                                                <a href="{{ route('lembar-disposisi.create', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                    class="btn btn-primary">
+                                                                    <i class="fa fa-edit"></i>
+                                                                    Isi Lembar Disposisi
+                                                                </a>
+                                                            @endif
                                                         @endif
 
                                                     </td>

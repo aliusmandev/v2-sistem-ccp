@@ -23,6 +23,7 @@ class RekomendasiController extends Controller
         if ($request->ajax()) {
             $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')
                 ->where('Status', 'Diajukan')
+                ->orWhere('Status', 'Selesai')
                 ->orderBy('id', 'desc');
 
             return DataTables::of($data)
@@ -33,7 +34,6 @@ class RekomendasiController extends Controller
                 ->editColumn('KodePerusahaan', function ($row) {
                     return $row->getPerusahaan->Nama ?? '-';
                 })
-
                 ->addColumn('action', function ($row) {
                     $id = encrypt($row->id);
                     return '
@@ -67,7 +67,6 @@ class RekomendasiController extends Controller
                         ? \Carbon\Carbon::parse($row->DiajukanPada)->translatedFormat('d M Y H:i')
                         : '-';
                 })
-
                 ->rawColumns(['action', 'Status', 'DiajukanPada'])
                 ->make(true);
         }

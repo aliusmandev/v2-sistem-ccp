@@ -30,8 +30,9 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="Nama" class="form-label"><strong>Nama</strong></label>
-                                <input type="text" name="Nama" class="form-control @error('Nama') is-invalid @enderror"
-                                    id="Nama" placeholder="Nama Barang" value="{{ old('Nama', $barang->Nama) }}">
+                                <input type="text" name="Nama"
+                                    class="form-control @error('Nama') is-invalid @enderror" id="Nama"
+                                    placeholder="Nama Barang" value="{{ old('Nama', $barang->Nama) }}">
                                 @error('Nama')
                                     <div class="text-danger mt-1">
                                         {{ $message }}
@@ -40,10 +41,13 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="Jenis" class="form-label"><strong>Jenis</strong></label>
-                                <select name="Jenis" id="Jenis" class="form-select @error('Jenis') is-invalid @enderror">
+                                <select name="Jenis" id="Jenis"
+                                    class="form-select @error('Jenis') is-invalid @enderror">
                                     <option value="">-- Pilih Jenis --</option>
-                                    <option value="MEDIS" {{ old('Jenis', $barang->Jenis) == 'MEDIS' ? 'selected' : '' }}>MEDIS</option>
-                                    <option value="UMUM" {{ old('Jenis', $barang->Jenis) == 'UMUM' ? 'selected' : '' }}>UMUM</option>
+                                    <option value="MEDIS" {{ old('Jenis', $barang->Jenis) == 'MEDIS' ? 'selected' : '' }}>
+                                        MEDIS</option>
+                                    <option value="UMUM" {{ old('Jenis', $barang->Jenis) == 'UMUM' ? 'selected' : '' }}>
+                                        UMUM</option>
                                 </select>
                                 @error('Jenis')
                                     <div class="text-danger mt-1">
@@ -56,8 +60,9 @@
                                 <select name="Satuan" id="Satuan"
                                     class="form-select select2 @error('Satuan') is-invalid @enderror">
                                     <option value="">-- Pilih Satuan --</option>
-                                    @foreach($satuan ?? [] as $s)
-                                        <option value="{{ $s->id }}" {{ old('Satuan', $barang->Satuan) == $s->id ? 'selected' : '' }}>
+                                    @foreach ($satuan ?? [] as $s)
+                                        <option value="{{ $s->id }}"
+                                            {{ old('Satuan', $barang->Satuan) == $s->id ? 'selected' : '' }}>
                                             {{ $s->NamaSatuan }}
                                         </option>
                                     @endforeach
@@ -73,8 +78,9 @@
                                 <select name="Merek" id="Merek"
                                     class="form-select select2 @error('Merek') is-invalid @enderror">
                                     <option value="">-- Pilih Merek --</option>
-                                    @foreach($merekList ?? [] as $merek)
-                                        <option value="{{ $merek->id }}" {{ old('Merek', $barang->Merek) == $merek->id ? 'selected' : '' }}>
+                                    @foreach ($merekList ?? [] as $merek)
+                                        <option value="{{ $merek->id }}"
+                                            {{ old('Merek', $barang->Merek) == $merek->id ? 'selected' : '' }}>
                                             {{ $merek->Nama }}
                                         </option>
                                     @endforeach
@@ -84,6 +90,25 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Tipe" class="form-label"><strong>Tipe</strong></label>
+                                <input type="text" name="Tipe" id="Tipe"
+                                    class="form-control @error('Tipe') is-invalid @enderror"
+                                    value="{{ old('Tipe', $barang->Tipe) }}" placeholder="Masukkan tipe barang">
+                                @error('Tipe')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-12 text-end mt-3">
+                                <a href="{{ route('barang.index') }}" class="btn btn-secondary me-2">
+                                    <i class="fa fa-arrow-left"></i> Kembali
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save"></i> Simpan
+                                </button>
                             </div>
                             <div class="col-12 text-end mt-3">
                                 <a href="{{ route('barang.index') }}" class="btn btn-secondary me-2">
@@ -99,8 +124,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 @push('js')
-
 @endpush

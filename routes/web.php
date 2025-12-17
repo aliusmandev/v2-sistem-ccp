@@ -223,5 +223,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/update/{id}', [LembarDisposisiController::class, 'update'])->name('lembar-disposisi.update');
         Route::get('/show/{idPengajuan}/{idPengajuanItem}', [LembarDisposisiController::class, 'show'])->name('lembar-disposisi.show');
         Route::delete('/delete/{id}', [LembarDisposisiController::class, 'destroy'])->name('lembar-disposisi.destroy');
+
+        Route::get('/approval/lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
     });
 });

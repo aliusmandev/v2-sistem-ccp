@@ -238,30 +238,30 @@
                         </div>
                         <div class="col-12 text-end mt-3">
                             @foreach (($data->getHtaGpa->getPenilai ?? collect())->take(5) as $idx => $penilai)
-                                @php
-                                    $penilaiKe = $penilai->PenilaiKe ?? $idx + 1;
-                                    $canName = 'hta-gpa-approve-penilai' . $penilaiKe;
-                                    // Check if Nama kosong/empty (means belum acc)
-                                    $isEmpty = empty($penilai->Nama);
-                                    $formId = 'formPenilaian' . $penilaiKe;
-                                    $routeName = 'htagpa.acc-penilai' . $penilaiKe;
-                                    $confirmMsg = "Apakah Anda yakin ingin melanjutkan ke Penilaian $penilaiKe?";
-                                @endphp
-                                @can($canName)
-                                    @if ($isEmpty)
-                                        <form id="{{ $formId }}"
-                                            action="{{ route($routeName, $data->getHtaGpa->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            <button type="button" class="btn btn-success me-2"
-                                                onclick="confirmSweetAlert('{{ $formId }}', 'Konfirmasi', '{{ $confirmMsg }}')">
-                                                <i class="fa fa-check"></i> Proses ke Penilaian {{ $penilaiKe }}
-                                            </button>
-                                        </form>
-                                    @endif
-                                @endcan
+                                <a href="#" class="btn btn-success btn-approve-penilai"
+                                    data-url="{{ route('htagpa.approve', $penilai->ApprovalToken) }}"
+                                    data-penilaike="{{ $penilai->PenilaiKe ?? $idx + 1 }}"
+                                    onclick="event.preventDefault();
+                                    Swal.fire({
+                                        title: 'Konfirmasi Persetujuan',
+                                        text: 'Apakah Anda yakin ingin menyetujui HTA/GPA ini sebagai Penilai {{ $penilai->PenilaiKe ?? $idx + 1 }}?',
+                                        icon: 'question',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Ya, Setujui!',
+                                        cancelButtonText: 'Batal',
+                                        confirmButtonColor: '#28a745',
+                                        cancelButtonColor: '#d33'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = '{{ route('htagpa.approve', $penilai->ApprovalToken) }}';
+                                        }
+                                    });">
+                                    <i class="fa fa-check"></i> Setujui HTA/GPA (Penilai
+                                    {{ $penilai->PenilaiKe ?? $idx + 1 }})
+                                </a>
                             @endforeach
                         </div>
+
                     </div>
                 </div>
 
@@ -302,19 +302,19 @@
     @endif
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function confirmSweetAlert(formId, title, text) {
+        function konfirmasiApprove(idx, penilaiKe) {
             Swal.fire({
-                title: title,
-                text: text,
+                title: 'Konfirmasi Persetujuan',
+                text: 'Apakah Anda yakin ingin menyetujui HTA/GPA ini sebagai Penilai ' + penilaiKe + '?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Proses!',
+                confirmButtonText: 'Ya, Setujui!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
+                    document.getElementById('approve-form-' + idx).submit();
                 }
             });
         }

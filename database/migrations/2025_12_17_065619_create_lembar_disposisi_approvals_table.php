@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('IdLembarDisposisi')->nullable();
             $table->string('IdUser')->nullable();
             $table->string('Nama')->nullable();
+            $table->string('Email')->nullable();
             $table->string('Jabatan')->nullable();
             $table->string('Departemen')->nullable();
             $table->string('Justifikasi')->nullable();

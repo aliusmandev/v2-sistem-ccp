@@ -92,9 +92,7 @@ class PengajuanPembelianController extends Controller
         return view('form.pengajuan-pembelian.create', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'departemen'));
     }
 
-    public function SimpanDraft($id)
-    {
-    }
+    public function SimpanDraft($id) {}
 
     /**
      * Store a newly created resource in storage.
@@ -420,7 +418,7 @@ class PengajuanPembelianController extends Controller
             $message = 'Status pengajuan berhasil diperbarui.';
         }
         return redirect()
-            ->route('ajukan.show', $id)
+            ->route('ajukan.show', encrypt($id))
             ->with('success', $message);
     }
 

@@ -38,6 +38,7 @@
                                     <th>Jenis</th>
                                     <th>Satuan</th>
                                     <th>Merek</th>
+                                    <th>Tipe</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
@@ -64,8 +65,8 @@
         </script>
     @endif
     <script>
-        $(document).ready(function () {
-            $('body').on('click', '.btn-delete', function () {
+        $(document).ready(function() {
+            $('body').on('click', '.btn-delete', function() {
                 var id = $(this).data('id');
                 Swal.fire({
                     title: 'Hapus Data?',
@@ -82,7 +83,7 @@
                             data: {
                                 _token: '{{ csrf_token() }}'
                             },
-                            success: function (response) {
+                            success: function(response) {
                                 if (response.status === 200) {
                                     Swal.fire('Dihapus!', response.message, 'success');
                                     $('#barangTable').DataTable().ajax.reload();
@@ -90,8 +91,9 @@
                                     Swal.fire('Gagal!', response.message, 'error');
                                 }
                             },
-                            error: function (xhr) {
-                                Swal.fire('Gagal!', xhr.responseJSON?.message ?? 'Terjadi kesalahan saat menghapus.', 'error');
+                            error: function(xhr) {
+                                Swal.fire('Gagal!', xhr.responseJSON?.message ??
+                                    'Terjadi kesalahan saat menghapus.', 'error');
                             }
                         });
                     }
@@ -114,8 +116,7 @@
                             previous: '<i class="fa fa-angle-double-left" aria-hidden="true"></i>'
                         }
                     },
-                    columns: [
-                        {
+                    columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             orderable: false,
@@ -136,6 +137,10 @@
                         {
                             data: 'Merek',
                             name: 'Merek'
+                        },
+                        {
+                            data: 'Tipe',
+                            name: 'Tipe'
                         },
                         {
                             data: 'action',

@@ -86,7 +86,7 @@ class PermintaanPembelianController extends Controller
     public function create()
     {
         $barang = MasterBarang::with('getMerk', 'getSatuan')->get();
-        $departemen = MasterDepartemen::where('KodePerusahaan', auth()->user()->kodeperusahaan)->get();
+        $departemen = MasterDepartemen::get();
         $satuan = MasterSatuan::get();
         $jenisPengajuan = MasterJenisPengajuan::get();
         return view('form.permintaan-pembelian.create', compact('jenisPengajuan', 'barang', 'departemen', 'satuan'));

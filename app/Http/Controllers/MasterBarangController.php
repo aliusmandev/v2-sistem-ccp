@@ -10,7 +10,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterBarangController extends Controller
 {
-
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -38,7 +37,6 @@ class MasterBarangController extends Controller
 
     public function create()
     {
-
         $satuan = MasterSatuan::all();
         $merekList = MasterMerk::all();
 
@@ -49,9 +47,10 @@ class MasterBarangController extends Controller
     {
         $request->validate([
             'Nama' => 'required|string|max:255',
-            'Jenis' => 'required|string|max:100',
-            'Satuan' => 'required|string|max:100',
-            'Merek' => 'required|string|max:100',
+            'Jenis' => 'required|string|max:190',
+            'Satuan' => 'required|string|max:190',
+            'Merek' => 'required|string|max:190',
+            'Tipe' => 'required',
         ]);
 
         MasterBarang::create([
@@ -60,6 +59,7 @@ class MasterBarangController extends Controller
             'Jenis' => $request->Jenis,
             'Satuan' => $request->Satuan,
             'Merek' => $request->Merek,
+            'Tipe' => $request->Tipe,
             'KodePerusahaan' => auth()->user()->kodeperusahaan,
             'UserCreate' => auth()->user()->name,
         ]);
@@ -72,6 +72,7 @@ class MasterBarangController extends Controller
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan.');
     }
+
     private function generateKode($jenis)
     {
         $bulan = date('m');
@@ -113,9 +114,10 @@ class MasterBarangController extends Controller
 
         $request->validate([
             'Nama' => 'required|string|max:255',
-            'Jenis' => 'required|string|max:100',
-            'Satuan' => 'required|string|max:100',
-            'Merek' => 'required|string|max:100',
+            'Jenis' => 'required|string|max:190',
+            'Satuan' => 'required|string|max:190',
+            'Merek' => 'required|string|max:190',
+            'Tipe' => 'required|string|max:190',
         ]);
 
         $barang->update([
@@ -123,6 +125,7 @@ class MasterBarangController extends Controller
             'Jenis' => $request->Jenis,
             'Satuan' => $request->Satuan,
             'Merek' => $request->Merek,
+            'Tipe' => $request->Tipe,
             'KodePerusahaan' => $request->KodePerusahaan,
             'UserUpdate' => auth()->user()->name,
         ]);

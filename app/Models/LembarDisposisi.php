@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class LembarDisposisi extends Model
 {
     use HasFactory, SoftDeletes;
+
     /**
      * The table associated with the model.
      *
      * @var string
      */
     protected $table = 'lembar_disposisis';
+
     /**
      * The attributes that aren't mass assignable.
      *
@@ -29,6 +31,16 @@ class LembarDisposisi extends Model
      */
     public function getDetail()
     {
-        return $this->hasMany(LembarDisposisiApproval::class, 'id', 'IdLembarDisposisi');
+        return $this->hasMany(LembarDisposisiApproval::class, 'IdLembarDisposisi', 'id');
+    }
+
+    public function getBarang()
+    {
+        return $this->hasOne(MasterBarang::class, 'id', 'NamaBarang');
+    }
+
+    public function getVendor()
+    {
+        return $this->hasOne(MasterVendor::class, 'id', 'RencanaVendor');
     }
 }

@@ -493,7 +493,7 @@
                             </div>
                         </div>
                         <div class="col-12 text-end mt-4">
-                            <a href="#" class="btn btn-secondary me-2">
+                            <a href="{{ route('pp.show', encrypt($data->id)) }}" class="btn btn-secondary me-2">
                                 <i class="fa fa-arrow-left"></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">

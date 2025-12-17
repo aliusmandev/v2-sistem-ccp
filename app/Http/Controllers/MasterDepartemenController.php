@@ -17,7 +17,6 @@ class MasterDepartemenController extends Controller
     {
         if ($request->ajax()) {
             $data = MasterDepartemen::with('getPerusahaan')
-                ->where('KodePerusahaan', auth()->user()->kodeperusahaan)
                 ->orderBy('id', 'desc')
                 ->get();
 
@@ -48,6 +47,7 @@ class MasterDepartemenController extends Controller
     {
         return view('master.departemen.create');
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -67,11 +67,13 @@ class MasterDepartemenController extends Controller
         }
         return redirect()->route('departemen.index')->with('success', 'Departemen berhasil ditambahkan.');
     }
+
     public function edit($id)
     {
         $departemen = MasterDepartemen::findOrFail($id);
         return view('master.departemen.edit', compact('departemen'));
     }
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -143,7 +145,6 @@ class MasterDepartemenController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -169,7 +170,6 @@ class MasterDepartemenController extends Controller
      * @param  \App\Models\MasterDepartemen  $MasterDepartemen
      * @return \Illuminate\Http\Response
      */
-
 
     /**
      * Remove the specified resource from storage.

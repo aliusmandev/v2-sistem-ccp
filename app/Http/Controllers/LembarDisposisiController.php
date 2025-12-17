@@ -11,6 +11,8 @@ use App\Models\PengajuanItem;
 use App\Models\PengajuanPembelian;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class LembarDisposisiController extends Controller
 {
@@ -52,47 +54,63 @@ class LembarDisposisiController extends Controller
      */
     public function store(Request $request)
     {
+        $idPengajuan = encrypt($request->IdPengajuan);
+        // dd($idPengajuan);
+        $idPengajuanItem = encrypt($request->PengajuanItemId);
         $validatedHeader = $request->validate([
             'NamaBarang' => 'required|string',
             'IdPengajuan' => 'required',
             'PengajuanItemId' => 'required',
             'Harga' => 'required|string',
+            // 'Email' => 'required|string',
             'RencanaVendor' => 'required|string',
             'TujuanPenempatan' => 'required|string',
             'FormPermintaan' => 'required|string',
         ]);
 
         // Simpan Header (LembarDisposisi sebagai header)
-        $lembarDisposisi = LembarDisposisi::create([
-            'IdPengajuan' => $validatedHeader['IdPengajuan'],
-            'PengajuanItemId' => $validatedHeader['PengajuanItemId'],
-            'NamaBarang' => $validatedHeader['NamaBarang'],
-            'Harga' => $validatedHeader['Harga'],
-            'RencanaVendor' => $validatedHeader['RencanaVendor'],
-            'TujuanPenempatan' => $validatedHeader['TujuanPenempatan'],
-            'FormPermintaan' => $validatedHeader['FormPermintaan'],
-        ]);
+        $lembarDisposisi = LembarDisposisi::updateOrCreate(
+            [
+                'IdPengajuan' => $validatedHeader['IdPengajuan'],
+                'PengajuanItemId' => $validatedHeader['PengajuanItemId'],
+            ],
+            [
+                'NamaBarang' => $validatedHeader['NamaBarang'],
+                'Harga' => preg_replace('/\D/', '', $validatedHeader['Harga']),
+                'RencanaVendor' => $validatedHeader['RencanaVendor'],
+                'TujuanPenempatan' => $validatedHeader['TujuanPenempatan'],
+                'FormPermintaan' => $validatedHeader['FormPermintaan'],
+            ]
+        );
 
+        // Hapus data approval lama terlebih dahulu jika ada
+        if (LembarDisposisiApproval::where('IdLembarDisposisi', $lembarDisposisi->id)->exists()) {
+            LembarDisposisiApproval::where('IdLembarDisposisi', $lembarDisposisi->id)->delete();
+        }
 
         if ($request->has('IdUser') && is_array($request->IdUser)) {
             foreach ($request->IdUser as $i => $idUser) {
                 if (!$idUser) {
                     continue;
                 }
+                // Tambahkan ApprovalToken (misal: uuid atau string random unik)
+                $approvalToken = Str::uuid()->toString();
                 LembarDisposisiApproval::create([
                     'IdLembarDisposisi' => $lembarDisposisi->id,
                     'IdUser' => $idUser,
                     'Nama' => $request->input('Nama')[$i] ?? null,
+                    'Email' => $request->input('Email')[$i] ?? null,
                     'Jabatan' => $request->input('Jabatan')[$i] ?? null,
                     'Departemen' => $request->input('Departemen')[$i] ?? null,
                     'Justifikasi' => $request->input('Justifikasi')[$i] ?? null,
                     'Status' => 'N',
                     'UserCreate' => auth()->user()->id ?? null,
+                    'ApprovalToken' => $approvalToken,
                 ]);
             }
         }
 
-        return redirect()->route('lembar-disposisi.index')->with('success', 'Lembar Disposisi berhasil disimpan.');
+        return redirect()->route('lembar-disposisi.create', $idPengajuan, $idPengajuanItem)->with('success', 'Lembar Disposisi berhasil disimpan.');
     }
 
     /**
@@ -100,10 +118,9 @@ class LembarDisposisiController extends Controller
      */
     public function show($idPengajuan, $idPengajuanItem)
     {
-        // $idPengajuan = decrypt($idPengajuan);
-        // $idPengajuanItem = decrypt($idPengajuanItem);
-        $data = LembarDisposisi::with('getDetail')->where('IdPengajuan', $idPengajuan)->where('PengajuanItemId', $idPengajuanItem)->first();
-        dd($data);
+        $data = LembarDisposisi::with('getDetail', 'getBarang')->where('IdPengajuan', $idPengajuan)->where('PengajuanItemId', $idPengajuanItem)->first();
+        // dd($data);
+        return view('lembar-disposisi.show', compact('data'));
     }
 
     /**
@@ -112,6 +129,27 @@ class LembarDisposisiController extends Controller
     public function edit(LembarDisposisi $lembarDisposisi)
     {
         //
+    }
+
+    public function approve($token)
+    {
+        // dd($token);
+        $penilai = LembarDisposisiApproval::where('ApprovalToken', $token)->firstOrFail();
+
+        // if (!is_null($penilai->StatusAcc)) {
+        //     return view('emails.setelah-approval', [
+        //         'message' => 'Persetujuan sudah diproses sebelumnya.'
+        //     ]);
+        // }
+
+        $penilai->update([
+            'Status' => 'Y',
+            'ApprovePada' => Carbon::now(),
+        ]);
+
+        return view('emails.setelah-approval', [
+            'message' => 'Terima kasih, persetujuan Anda berhasil dicatat.'
+        ]);
     }
 
     /**

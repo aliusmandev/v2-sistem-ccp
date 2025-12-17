@@ -119,7 +119,8 @@
                                           </tr>
                                       </thead>
                                       <tbody>
-                                          @forelse($data->getHtaGpa->getPenilai as $key => $val)
+
+                                          @forelse(optional($data->getHtaGpa)->getPenilai ?? [] as $key => $val)
                                               @php
                                                   $i = $key + 1;
                                                   $defaultType = $val->TipeInputPenilai ?? 'master';

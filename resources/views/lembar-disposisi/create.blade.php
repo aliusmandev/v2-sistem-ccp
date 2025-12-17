@@ -221,8 +221,8 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-save me-1"></i> Simpan
                             </button>
-                            <a href="{{ route('lembar-disposisi.index') }}" class="btn btn-secondary ms-2">
-                                <i class="fa fa-arrow-left me-1"></i> Batal
+                            <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left me-1"></i> Kembali
                             </a>
                         </div>
                 </div>

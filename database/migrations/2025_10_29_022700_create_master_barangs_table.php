@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->enum('Jenis', ['UMUM', 'MEDIS'])->nullable();
             $table->string('Satuan')->nullable();
             $table->string('Merek')->nullable();
+            $table->string('Tipe')->nullable();
             $table->string('KodePerusahaan')->nullable();
             $table->string('UserCreate')->nullable();
             $table->string('UserUpdate')->nullable();

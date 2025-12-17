@@ -29,8 +29,9 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="Nama" class="form-label"><strong>Nama</strong></label>
-                                <input type="text" name="Nama" class="form-control @error('Nama') is-invalid @enderror"
-                                    id="Nama" placeholder="Nama Barang" value="{{ old('Nama') }}">
+                                <input type="text" name="Nama"
+                                    class="form-control @error('Nama') is-invalid @enderror" id="Nama"
+                                    placeholder="Nama Barang" value="{{ old('Nama') }}">
                                 @error('Nama')
                                     <div class="text-danger mt-1">
                                         {{ $message }}
@@ -39,7 +40,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="Jenis" class="form-label"><strong>Jenis</strong></label>
-                                <select name="Jenis" id="Jenis" class="form-select @error('Jenis') is-invalid @enderror">
+                                <select name="Jenis" id="Jenis"
+                                    class="form-select @error('Jenis') is-invalid @enderror">
                                     <option value="">-- Pilih Jenis --</option>
                                     <option value="MEDIS" {{ old('Jenis') == 'MEDIS' ? 'selected' : '' }}>MEDIS</option>
                                     <option value="UMUM" {{ old('Jenis') == 'UMUM' ? 'selected' : '' }}>UMUM</option>
@@ -55,7 +57,7 @@
                                 <select name="Satuan" id="Satuan"
                                     class="form-select select2 @error('Satuan') is-invalid @enderror">
                                     <option value="">-- Pilih Satuan --</option>
-                                    @foreach($satuan ?? [] as $s)
+                                    @foreach ($satuan ?? [] as $s)
                                         <option value="{{ $s->id }}" {{ old('Satuan') == $s->id ? 'selected' : '' }}>
                                             {{ $s->NamaSatuan }}
                                         </option>
@@ -72,13 +74,25 @@
                                 <select name="Merek" id="Merek"
                                     class="form-select select2 @error('Merek') is-invalid @enderror">
                                     <option value="">-- Pilih Merek --</option>
-                                    @foreach($merekList ?? [] as $merek)
-                                        <option value="{{ $merek->id }}" {{ old('Merek') == $merek->id ? 'selected' : '' }}>
+                                    @foreach ($merekList ?? [] as $merek)
+                                        <option value="{{ $merek->id }}"
+                                            {{ old('Merek') == $merek->id ? 'selected' : '' }}>
                                             {{ $merek->Nama }}
                                         </option>
                                     @endforeach
                                 </select>
                                 @error('Merek')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Tipe" class="form-label"><strong>Tipe</strong></label>
+                                <input type="text" name="Tipe" id="Tipe"
+                                    class="form-control @error('Tipe') is-invalid @enderror" value="{{ old('Tipe') }}"
+                                    placeholder="Masukkan tipe barang">
+                                @error('Tipe')
                                     <div class="text-danger mt-1">
                                         {{ $message }}
                                     </div>
@@ -98,9 +112,6 @@
             </div>
         </div>
     </div>
-
-
 @endsection
 @push('js')
-
 @endpush

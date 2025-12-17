@@ -342,7 +342,7 @@
                                 </button>
                             </form>
                         @endcan
-                        <a href="{{ route('usulan-investasi.index') }}" class="btn btn-secondary">
+                        <a href="javascript:history.back()" class="btn btn-secondary me-2">
                             <i class="fa fa-arrow-left"></i> Kembali
                         </a>
                     </div>
