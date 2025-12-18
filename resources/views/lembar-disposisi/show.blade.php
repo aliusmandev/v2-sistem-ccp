@@ -73,11 +73,7 @@
                             </div>
                             <div class="mb-4">
                             </div>
-                            <div class="d-flex justify-content-end">
-                                <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary">
-                                    <i class="fa fa-arrow-left me-1"></i> Kembali
-                                </a>
-                            </div>
+
                         </div>
                     </form>
                     <div class="row mt-4 justify-content-center">
@@ -169,8 +165,15 @@
                                 @endif
                             @endforeach
                         </div>
+                        {{-- <div class="d-flex justify-content-end mt-3">
+                            <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left me-1"></i> Kembali
+                            </a>
+                        </div> --}}
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>

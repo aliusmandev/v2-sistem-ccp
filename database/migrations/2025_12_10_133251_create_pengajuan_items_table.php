@@ -14,10 +14,15 @@ return new class extends Migration {
             $table->id();
             $table->string('IdPengajuan')->nullable();
             $table->string('IdBarang')->nullable();
+            $table->string('RencanaPenempatan')->nullable();
+            $table->string('DiajukanOleh')->nullable();
+            $table->string('DiajukanDepartemen')->nullable();
             $table->string('Jumlah')->nullable();
             $table->string('Satuan')->nullable();
-            $table->string('HargaSatuan')->nullable();
-            $table->string('HargaNego')->nullable();
+            $table->string('VendorAcc')->nullable();
+            $table->string('HargaSatuanAcc')->nullable();
+            $table->string('HargaNegoAcc')->nullable();
+            $table->string('HargaAkhirFui')->nullable();
             $table->string('KodePerusahaan')->nullable();
             $table->string('UserCreate')->nullable();
             $table->string('UserUpdate')->nullable();

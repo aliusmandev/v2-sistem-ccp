@@ -37,6 +37,11 @@
                             <input type="text" class="form-control" value="{{ $data->getJenisPermintaan->Nama ?? '-' }}"
                                 readonly>
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Permintaan dari Departemen</strong></label>
+                            <input type="text" class="form-control"
+                                value="{{ isset($data->getDepartemen->Nama) ? $data->getDepartemen->Nama : '-' }}" readonly>
+                        </div>
                     </div>
 
                     <div class="row g-3 mb-4">
@@ -373,6 +378,8 @@
                                             <th>Nama Barang</th>
                                             <th class="text-center">HTA / GPA</th>
                                             <th class="text-center">Usulan Investasi</th>
+                                            <th class="text-center">Lembar Disposisi</th>
+                                            <th class="text-center">Feasibility Study</th>
                                             <th class="text-center">Rekomendasi</th>
                                         </tr>
                                     </thead>
@@ -433,6 +440,62 @@
                                                                 <i class="fa fa-eye"></i>
                                                                 Lihat FUI
                                                             </a>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @php
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
+                                                            $adaLembarDisposisi = $item->getDisposisi ? true : false;
+                                                        @endphp
+                                                        @if (!$adaRekomendasi)
+                                                            <div class="alert alert-danger p-2 m-0"
+                                                                style="font-size: 90%;">
+                                                                Lembar Disposisi akan dibuat oleh SMI setelah rekomendasi
+                                                                dikeluarkan.
+                                                            </div>
+                                                        @else
+                                                            @if ($adaLembarDisposisi)
+                                                                <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Lihat Lembar Disposisi
+                                                                </a>
+                                                            @else
+                                                                <div class="alert alert-danger p-2 m-0"
+                                                                    style="font-size: 90%;">
+                                                                    Lembar Disposisi akan dibuat oleh SMI setelah
+                                                                    rekomendasi
+                                                                    dikeluarkan.
+                                                                </div>
+                                                            @endif
+                                                        @endif
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @php
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
+                                                            $adaFs = $item->getFs ? true : false;
+                                                        @endphp
+                                                        @if (!$adaRekomendasi)
+                                                            <div class="alert alert-danger p-2 m-0"
+                                                                style="font-size: 90%;">
+                                                                Form Fisibility Study Akan Dibuat Oleh SMI setelah
+                                                                Rekomendasi Dikeluarkan
+                                                            </div>
+                                                        @else
+                                                            @if ($adaFs)
+                                                                <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Lihat FS
+                                                                </a>
+                                                            @else
+                                                                <div class="alert alert-danger p-2 m-0"
+                                                                    style="font-size: 90%;">
+                                                                    Form Fisibility Study Akan Dibuat Oleh SMI setelah
+                                                                    Rekomendasi Dikeluarkan
+                                                                </div>
+                                                            @endif
                                                         @endif
                                                     </td>
                                                     <td class="text-center">

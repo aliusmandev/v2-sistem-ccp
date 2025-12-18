@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CountriesTableSeeder::class,
             JenisPengajuanSeeder::class,
             MasterFormSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

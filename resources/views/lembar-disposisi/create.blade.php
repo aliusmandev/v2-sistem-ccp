@@ -20,7 +20,7 @@
                     <h4 class="card-title mb-0">Formulir Lembar Disposisi</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('lembar-disposisi.store') }}" method="POST">
+                    <form action="{{ route('lembar-disposisi.store') }}" method="POST" id="form-lembar-disposisi">
                         @csrf
                         <input type="hidden" name="IdPengajuan" value="{{ $idPengajuan }}">
                         <input type="hidden" name="PengajuanItemId" value="{{ $idPengajuanItem }}">
@@ -136,7 +136,7 @@
                                 <strong>Informasi:</strong> Harap masukkan <b>email</b> dengan benar karena notifikasi akan
                                 dikirim ke email terkait.
                             </div>
-                            <label class="form-label d-block"><strong>Data User</strong></label>
+
                             <div class="table-responsive">
                                 <table class="table align-middle" style="width:100%;">
                                     <thead class="table-light">
@@ -157,13 +157,13 @@
                                                         class="form-control select2" data-placeholder="Pilih Nama">
                                                         <option value="">Pilih Nama</option>
                                                         @foreach ($user as $u)
-                                                            <option value="{{ $u->id }}"
+                                                            <option value="{{ $u->id }},{{ $u->name }}"
                                                                 data-email="{{ $u->email ?? '' }}"
                                                                 data-jabatan="{{ $u->jabatan ?? '' }}"
                                                                 data-jabatan_id="{{ $u->jabatan }}"
                                                                 data-departemen="{{ $u->departemen ?? '' }}"
                                                                 data-departemen_id="{{ $u->departemen }}"
-                                                                {{ old('IdUser.' . ($i - 1)) == $u->id ? 'selected' : '' }}>
+                                                                {{ old('IdUser.' . ($i - 1)) == $u->id . '|' . $u->name ? 'selected' : '' }}>
                                                                 {{ $u->name }}
                                                             </option>
                                                         @endforeach
@@ -177,8 +177,8 @@
                                                         class="form-control select2" data-placeholder="Pilih Jabatan">
                                                         <option value="">Pilih Jabatan</option>
                                                         @foreach ($jabatan as $j)
-                                                            <option value="{{ $j->id }}"
-                                                                {{ old('Jabatan.' . ($i - 1)) == $j->id ? 'selected' : '' }}>
+                                                            <option value="{{ $j->Nama }}"
+                                                                {{ old('Jabatan.' . ($i - 1)) == $j->Nama ? 'selected' : '' }}>
                                                                 {{ $j->Nama }}
                                                             </option>
                                                         @endforeach
@@ -192,8 +192,8 @@
                                                         class="form-control select2" data-placeholder="Pilih Departemen">
                                                         <option value="">Pilih Departemen</option>
                                                         @foreach ($departemen as $d)
-                                                            <option value="{{ $d->id }}"
-                                                                {{ old('Departemen.' . ($i - 1)) == $d->id ? 'selected' : '' }}>
+                                                            <option value="{{ $d->Nama }}"
+                                                                {{ old('Departemen.' . ($i - 1)) == $d->Nama ? 'selected' : '' }}>
                                                                 {{ $d->Nama }}
                                                             </option>
                                                         @endforeach
@@ -218,7 +218,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="btn-simpan-disposisi">
                                 <i class="fa fa-save me-1"></i> Simpan
                             </button>
                             <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary">
@@ -232,8 +232,107 @@
         @endsection
 
         @push('js')
+            @if (session('success'))
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{{ session('success') }}',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            @endif
+
+            @if (session('error'))
+                <script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: '{{ session('error') }}',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            @endif
             <script>
                 $(document).ready(function() {
+                    // Variable untuk tracking loading state
+                    let isSubmitting = false;
+
+                    // Fungsi untuk disable semua interaksi
+                    function disableAllInteractions() {
+                        isSubmitting = true;
+
+                        // Disable klik kanan
+                        $(document).on('contextmenu.loading', function(e) {
+                            e.preventDefault();
+                            return false;
+                        });
+
+                        // Disable semua keyboard shortcuts
+                        $(document).on('keydown.loading', function(e) {
+                            // Block F5 (refresh)
+                            if (e.keyCode === 116) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block Ctrl+R (refresh)
+                            if ((e.ctrlKey || e.metaKey) && e.keyCode === 82) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block Ctrl+W (close tab)
+                            if ((e.ctrlKey || e.metaKey) && e.keyCode === 87) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block Ctrl+F4 (close tab)
+                            if (e.ctrlKey && e.keyCode === 115) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block Alt+F4 (close window)
+                            if (e.altKey && e.keyCode === 115) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block ESC
+                            if (e.keyCode === 27) {
+                                e.preventDefault();
+                                return false;
+                            }
+                            // Block semua keyboard input lainnya
+                            e.preventDefault();
+                            return false;
+                        });
+
+                        // Disable mouse wheel
+                        $(document).on('mousewheel.loading DOMMouseScroll.loading', function(e) {
+                            e.preventDefault();
+                            return false;
+                        });
+
+                        // Disable text selection
+                        $('body').css({
+                            'user-select': 'none',
+                            '-webkit-user-select': 'none',
+                            '-moz-user-select': 'none',
+                            '-ms-user-select': 'none'
+                        });
+
+                        // Add overlay untuk block semua klik
+                        if ($('#loading-overlay').length === 0) {
+                            $('body').append(
+                                '<div id="loading-overlay"
+                                style =
+                                "position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999;cursor:not-allowed;background:rgba(0,0,0,0.3);" >
+                                <
+                                /div>'
+                            );
+                        }
+                    }
+
                     // Otomatis isi email, jabatan, dan departemen ketika user dipilih (multi-row)
                     @for ($i = 1; $i <= 5; $i++)
                         $('#IdUser_{{ $i }}').on('change', function() {
@@ -255,11 +354,8 @@
                             $('#IdUser_{{ $i }}').trigger('change');
                         }
                     @endfor
-                });
-            </script>
-            <script>
-                // Format input harga as Rupiah on keyup
-                document.addEventListener("DOMContentLoaded", function() {
+
+                    // Format input harga as Rupiah on keyup
                     const hargaInput = document.getElementById('Harga');
                     if (hargaInput) {
                         hargaInput.addEventListener('input', function(e) {
@@ -284,6 +380,100 @@
                             hargaInput.dispatchEvent(e);
                         }
                     }
+
+                    // Handle form submit dengan loading - PERBAIKAN
+                    $('#form-lembar-disposisi').on('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Jika sudah submitting, return
+                        if (isSubmitting) {
+                            return false;
+                        }
+
+                        var form = this;
+
+                        // Validasi sederhana - cek apakah minimal ada 1 user yang dipilih
+                        let hasUser = false;
+                        $('select[name="IdUser[]"]').each(function() {
+                            if ($(this).val()) {
+                                hasUser = true;
+                                return false; // break loop
+                            }
+                        });
+
+                        if (!hasUser) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Perhatian!',
+                                text: 'Mohon pilih minimal 1 user untuk disposisi.',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            return false;
+                        }
+
+                        Swal.fire({
+                            title: 'Konfirmasi Simpan?',
+                            text: 'Apakah Anda yakin data lembar disposisi sudah benar dan akan mengirim notifikasi ke email terkait?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Ya, Simpan!',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Aktifkan semua proteksi SEBELUM tampilkan loading
+                                disableAllInteractions();
+
+                                // Tampilkan loading yang tidak bisa ditutup
+                                Swal.fire({
+                                    title: 'Menyimpan Data...',
+                                    html: '<div style="margin: 20px 0;"><i class="fa fa-paper-plane fa-3x" style="color: #3085d6;"></i></div>' +
+                                        'Mohon tunggu, sedang menyimpan data dan mengirim notifikasi email.<br>' +
+                                        '<strong style="color: #d33; margin-top: 15px; display: block;">JANGAN tutup atau refresh halaman
+                                    ini! < /strong><br>' +
+                                    '<small>Waktu tunggu: <b id="timer-counter">0</b> detik</small>',
+                                    icon: 'info',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    allowEnterKey: false,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+
+                                        // Timer untuk menampilkan waktu tunggu
+                                        let seconds = 0;
+                                        const timerInterval = setInterval(() => {
+                                            seconds++;
+                                            const counterEl = document.getElementById(
+                                                'timer-counter');
+                                            if (counterEl) {
+                                                counterEl.textContent = seconds;
+                                            }
+                                        }, 1000);
+
+                                        // Simpan interval
+                                        Swal.getPopup().timerInterval = timerInterval;
+                                    },
+                                    willClose: () => {
+                                        if (Swal.getPopup().timerInterval) {
+                                            clearInterval(Swal.getPopup().timerInterval);
+                                        }
+                                    }
+                                });
+
+                                // Submit form setelah delay kecil untuk memastikan UI update
+                                setTimeout(function() {
+                                    // Submit form secara native HTML, bukan jQuery
+                                    form.submit();
+                                }, 200);
+                            }
+                        });
+
+                        return false;
+                    });
                 });
             </script>
         @endpush

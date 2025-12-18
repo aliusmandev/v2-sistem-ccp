@@ -13,7 +13,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-
+use App\Mail\NotifikasiDisposisiMail;
+use App\Models\MasterVendor;
+use Illuminate\Support\Facades\Mail;
 class LembarDisposisiController extends Controller
 {
     /**
@@ -87,18 +89,27 @@ class LembarDisposisiController extends Controller
         if (LembarDisposisiApproval::where('IdLembarDisposisi', $lembarDisposisi->id)->exists()) {
             LembarDisposisiApproval::where('IdLembarDisposisi', $lembarDisposisi->id)->delete();
         }
+        // Mendapatkan nama vendor untuk setiap vendor pada pengajuan item
+        $MasterVendor = MasterVendor::find($lembarDisposisi->RencanaVendor);
+        $MasterBarang = MasterBarang::find($lembarDisposisi->NamaBarang);
+
+
 
         if ($request->has('IdUser') && is_array($request->IdUser)) {
             foreach ($request->IdUser as $i => $idUser) {
+                // Jika $idUser adalah string dengan koma, pecah menjadi array
+                if (is_string($idUser)) {
+                    $idUser = explode(',', $idUser);
+                }
                 if (!$idUser) {
                     continue;
                 }
                 // Tambahkan ApprovalToken (misal: uuid atau string random unik)
                 $approvalToken = Str::uuid()->toString();
-                LembarDisposisiApproval::create([
+                $approval = LembarDisposisiApproval::create([
                     'IdLembarDisposisi' => $lembarDisposisi->id,
-                    'IdUser' => $idUser,
-                    'Nama' => $request->input('Nama')[$i] ?? null,
+                    'IdUser' => $idUser[0],
+                    'Nama' => $idUser[1] ?? null,
                     'Email' => $request->input('Email')[$i] ?? null,
                     'Jabatan' => $request->input('Jabatan')[$i] ?? null,
                     'Departemen' => $request->input('Departemen')[$i] ?? null,
@@ -107,10 +118,15 @@ class LembarDisposisiController extends Controller
                     'UserCreate' => auth()->user()->id ?? null,
                     'ApprovalToken' => $approvalToken,
                 ]);
+
+                if (!empty($approval->Email)) {
+                    Mail::to($approval->Email)
+                        ->send(new NotifikasiDisposisiMail($lembarDisposisi, $approval, $MasterVendor, $MasterBarang));
+                }
             }
         }
 
-        return redirect()->route('lembar-disposisi.create', $idPengajuan, $idPengajuanItem)->with('success', 'Lembar Disposisi berhasil disimpan.');
+        return redirect()->back()->with('success', 'Lembar Disposisi berhasil disimpan.');
     }
 
     /**

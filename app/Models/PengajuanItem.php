@@ -46,6 +46,10 @@ class PengajuanItem extends Model
     {
         return $this->hasOne(LembarDisposisi::class, 'PengajuanItemId', 'id');
     }
+    public function getFs()
+    {
+        return $this->hasOne(FeasibilityStudy::class, 'PengajuanItemId', 'id');
+    }
 
     public function getRekomendasi()
     {

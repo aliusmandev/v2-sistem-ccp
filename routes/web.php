@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeasibilityStudyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HtaDanGpaController;
 use App\Http\Controllers\HtaGpaController;
@@ -215,7 +216,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/acc-penilai4/{id}', [HtaDanGpaController::class, 'accPenilai4'])->name('htagpa.acc-penilai4');
         Route::post('/acc-penilai5/{id}', [HtaDanGpaController::class, 'accPenilai5'])->name('htagpa.acc-penilai5');
     });
-    Route::prefix('pengajuan/lembar-disposisi')->group(function () {
+    Route::prefix('lembar-disposisi')->group(function () {
         Route::get('/', [LembarDisposisiController::class, 'index'])->name('lembar-disposisi.index');
         Route::get('/create/{idPengajuan}/{idPengajuanItem}', [LembarDisposisiController::class, 'create'])->name('lembar-disposisi.create');
         Route::post('/store', [LembarDisposisiController::class, 'store'])->name('lembar-disposisi.store');
@@ -224,6 +225,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/show/{idPengajuan}/{idPengajuanItem}', [LembarDisposisiController::class, 'show'])->name('lembar-disposisi.show');
         Route::delete('/delete/{id}', [LembarDisposisiController::class, 'destroy'])->name('lembar-disposisi.destroy');
 
-        Route::get('/approval/lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
+        Route::get('lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
+    });
+    Route::prefix('fs')->group(function () {
+        Route::get('/', [FeasibilityStudyController::class, 'index'])->name('fs.index');
+        Route::get('/create/{idPengajuan}/{idPengajuanItem}', [FeasibilityStudyController::class, 'create'])->name('fs.create');
+        Route::post('/store', [FeasibilityStudyController::class, 'store'])->name('fs.store');
+        Route::get('/edit/{id}', [FeasibilityStudyController::class, 'edit'])->name('fs.edit');
+        Route::put('/update/{id}', [FeasibilityStudyController::class, 'update'])->name('fs.update');
+        Route::get('/show/{idPengajuan}/{idPengajuanItem}', [FeasibilityStudyController::class, 'show'])->name('fs.show');
+        Route::delete('/delete/{id}', [FeasibilityStudyController::class, 'destroy'])->name('fs.destroy');
+        Route::get('/approval/feasibility-study/{token}/approve', [FeasibilityStudyController::class, 'approve'])->name('fs.approve');
     });
 });

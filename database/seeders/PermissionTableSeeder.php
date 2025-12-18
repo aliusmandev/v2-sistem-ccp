@@ -116,6 +116,7 @@ class PermissionTableSeeder extends Seeder
             'fui-show',
             'fui-print',
             // rekomendasi
+            'rekomendasi-list',
             'rekomendasi-create',
             'rekomendasi-edit',
             'rekomendasi-delete',

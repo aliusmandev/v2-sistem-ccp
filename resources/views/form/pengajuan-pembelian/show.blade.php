@@ -548,7 +548,31 @@
 
                                                     </td>
                                                     <td class="text-center">
-                                                        wqe
+                                                        @php
+                                                            $adaRekomendasi = $item->getRekomendasi ? true : false;
+                                                            $adaFs = $item->getFs ? true : false;
+                                                        @endphp
+                                                        @if (!$adaRekomendasi)
+                                                            <div class="alert alert-danger p-2 m-0"
+                                                                style="font-size: 90%;">
+                                                                Form Fisibility Study Akan Dibuat Oleh SMI setelah
+                                                                Rekomendasi Dikeluarkan
+                                                            </div>
+                                                        @else
+                                                            @if ($adaFs)
+                                                                <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Lihat FS
+                                                                </a>
+                                                            @else
+                                                                <a href="{{ route('fs.create', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                    class="btn btn-primary">
+                                                                    <i class="fa fa-edit"></i>
+                                                                    Isi Fisibility Study
+                                                                </a>
+                                                            @endif
+                                                        @endif
                                                     </td>
 
                                                     <td class="text-center">

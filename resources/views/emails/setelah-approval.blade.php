@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Persetujuan HTA / GPA Telah Disetujui</title>
+    <title>Persetujuan Telah Dicatat</title>
 </head>
 
 <body style="margin:0;padding:0;background:#f4f6fa;font-family:Arial,sans-serif;">
@@ -17,29 +17,28 @@
                             <img src="https://cdn-icons-png.flaticon.com/512/753/753318.png" width="90"
                                 alt="Approved Icon" style="margin-bottom:16px;">
                             <h2 style="color:#fff;margin:0;font-weight:bold;font-size:2rem;letter-spacing:1px;">
-                                Penilaian HTA / GPA Telah Disetujui
+                                Persetujuan Telah Dicatat
                             </h2>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:32px 32px 0 32px;color:#222;">
                             <p style="font-size:17px;margin:0 0 10px 0;">
-                                <b>Yth. Bapak/Ibu {{ $penilai->Nama ?? 'Penilai' }},</b>
+                                <b>Yth. Bapak/Ibu,</b>
                             </p>
                             <p style="font-size:15px;line-height:1.7;margin:0 0 18px 0;">
                                 Dengan hormat,<br>
-                                Kami informasikan bahwa penilaian <b>HTA / GPA</b> yang Anda ajukan telah
-                                <b>disetujui</b>.
+                                Kami informasikan bahwa permohonan persetujuan Anda telah berhasil dicatat dan diproses.
                             </p>
                             <p style="font-size:15px;line-height:1.6;margin:0 0 18px 0;">
-                                Terima kasih atas partisipasi dan kerjasama Bapak/Ibu dalam proses penilaian ini.
+                                Terima kasih atas partisipasi dan kerjasama Bapak/Ibu dalam proses ini.
                             </p>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:10px 32px 24px 32px;">
                             <p style="font-size:15px;margin:24px 0 4px 0;">Jika Anda membutuhkan informasi lebih lanjut,
-                                silakan hubungi Departemen Procurement.</p>
+                                silakan hubungi Departemen terkait.</p>
                             <p style="font-size:15px;margin:0;">
                                 Hormat kami,<br>
                                 <span style="font-weight:bold;color:#198754;">Departemen Procurement</span>
