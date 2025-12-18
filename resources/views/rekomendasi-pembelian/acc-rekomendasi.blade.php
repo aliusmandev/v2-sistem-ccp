@@ -35,6 +35,50 @@
                                     <th>Merek</th>
                                     <td>{{ $data->getPengajuanItem[0]->getBarang->getMerk->Nama ?? '-' }}</td>
                                 </tr>
+                                <tr>
+                                    <th>Tipe</th>
+                                    <td>{{ $data->getPengajuanItem[0]->getBarang->Tipe ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lanjut Presentasi ?</th>
+                                    <td>
+                                        <select name="Presentasi" id="lanjutPresentasi" class="form-select" required>
+                                            <option value="" disabled
+                                                {{ empty($data->getPengajuanItem[0]->getRekomendasi->Presentasi ?? '') ? 'selected' : '' }}>
+                                                Pilih</option>
+                                            <option value="Y"
+                                                {{ ($data->getPengajuanItem[0]->getRekomendasi->Presentasi ?? '') == 'Y' ? 'selected' : '' }}>
+                                                Ya</option>
+                                            <option value="N"
+                                                {{ ($data->getPengajuanItem[0]->getRekomendasi->Presentasi ?? '') == 'N' ? 'selected' : '' }}>
+                                                Tidak</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr id="trTanggalPresentasi"
+                                    style="display: {{ old('rekomendasi.0.Presentasi', $data->getPengajuanItem[0]->getRekomendasi->Presentasi ?? '') == 'Y' ? '' : 'none' }};">
+                                    <th>Tanggal Presentasi</th>
+                                    <td>
+                                        <input type="date" name="TanggalPresentasi" class="form-control"
+                                            value="{{ old('rekomendasi.0.TanggalPresentasi', $data->getPengajuanItem[0]->getRekomendasi->TanggalPresentasi ?? '') }}">
+                                    </td>
+                                </tr>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        var select = document.getElementById('lanjutPresentasi');
+                                        var tanggalRow = document.getElementById('trTanggalPresentasi');
+                                        if (select) {
+                                            select.addEventListener('change', function() {
+                                                if (this.value === 'Y') {
+                                                    tanggalRow.style.display = '';
+                                                } else {
+                                                    tanggalRow.style.display = 'none';
+                                                    tanggalRow.querySelector('input').value = '';
+                                                }
+                                            });
+                                        }
+                                    });
+                                </script>
                                 </tbody>
                         </table>
                     </div>

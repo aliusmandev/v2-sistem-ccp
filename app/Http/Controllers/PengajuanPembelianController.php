@@ -92,9 +92,7 @@ class PengajuanPembelianController extends Controller
         return view('form.pengajuan-pembelian.create', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'departemen'));
     }
 
-    public function SimpanDraft($id)
-    {
-    }
+    public function SimpanDraft($id) {}
 
     /**
      * Store a newly created resource in storage.
@@ -140,19 +138,29 @@ class PengajuanPembelianController extends Controller
             }
 
             $filename = null;
+            $ListVendorOld = ListVendor::where('IdPengajuan', $pengajuan->id)
+                ->where('VendorKe', $key + 1)
+                ->first();
+
             if (isset($vendorData['penawaran_file']) && is_array($vendorData['penawaran_file'])) {
                 $fileArr = $vendorData['penawaran_file'];
                 if (isset($fileArr[0]) && $fileArr[0] instanceof \Illuminate\Http\UploadedFile) {
                     $file = $fileArr[0];
                     $filename = 'penawaran_' . time() . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
                     $file->storeAs('penawaran_vendor', $filename, 'public');
+                } elseif (isset($fileArr[0]) && is_string($fileArr[0]) && $fileArr[0]) {
+                    $filename = $fileArr[0];
                 }
-            } elseif (isset($vendorData['penawaran_file']) && is_string($vendorData['penawaran_file'])) {
+            } elseif (isset($vendorData['penawaran_file']) && is_string($vendorData['penawaran_file']) && $vendorData['penawaran_file'] !== null && $vendorData['penawaran_file'] !== '') {
                 $filename = $vendorData['penawaran_file'];
             } elseif ($request->hasFile('penawaran_file_' . ($key + 1))) {
                 $file = $request->file('penawaran_file_' . ($key + 1));
-                $filename = 'penawaran_' . time() . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('penawaran_vendor', $filename, 'public');
+                if ($file) {
+                    $filename = 'penawaran_' . time() . '_' . ($key + 1) . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('penawaran_vendor', $filename, 'public');
+                }
+            } elseif ($ListVendorOld && $ListVendorOld->SuratPenawaranVendor) {
+                $filename = $ListVendorOld->SuratPenawaranVendor;
             }
 
             $ListVendor = ListVendor::updateOrCreate(
@@ -206,13 +214,17 @@ class PengajuanPembelianController extends Controller
                     'IdBarang' => $listalat['barang_id'],
                 ],
                 [
+                    'RencanaPenempatan' => $listalat['rencana_penempatan'] ?? null,
+                    'DiajukanOleh' => $listalat['diajukan_oleh'] ?? null,
+                    'DiajukanDepartemen' => $request->pengajuan['departemen'] ?? null,
                     'Jumlah' => $listalat['jumlah'] ?? null,
                     'Satuan' => $listalat['satuan'] ?? null,
-                    'HargaSatuan' => isset($listalat['harga_satuan']) ? preg_replace('/\D/', '', $listalat['harga_satuan']) : null,
-                    'HargaNego' => isset($listalat['harga_nego']) ? preg_replace('/\D/', '', $listalat['harga_nego']) : null,
+                    'VendorAcc' => $listalat['vendor_acc'] ?? null,
+                    'HargaSatuanAcc' => isset($listalat['harga_satuan_acc']) ? preg_replace('/\D/', '', $listalat['harga_satuan_acc']) : null,
+                    'HargaNegoAcc' => isset($listalat['harga_nego_acc']) ? preg_replace('/\D/', '', $listalat['harga_nego_acc']) : null,
+                    'HargaAkhirFui' => isset($listalat['harga_akhir_fui']) ? preg_replace('/\D/', '', $listalat['harga_akhir_fui']) : null,
+                    'KodePerusahaan' => auth()->user()->kodeperusahaan,
                     'UserCreate' => auth()->user()->name,
-                    // Tambah UserUpdate jika ingin mencatat update
-                    'UserUpdate' => auth()->user()->name,
                 ]
             );
         }

@@ -361,18 +361,28 @@
                                             <th style="width:5%">No</th>
                                             <th>Biaya / Harga Akhir</th>
                                             <th>Suplier yang dipilih</th>
-                                            <th>Harga + Diskon + PPN</th>
+                                            <th>Harga</th>
+                                            <th>Diskon</th>
+                                            <th>Ppn</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            // Ambil nilai default
+                                            $hargaSatuan = $data2->getVendor[0]->getVendorDetail[0]->HargaSatuan ?? 0;
+                                            $diskon = $data2->getVendor[0]->getVendorDetail[0]->TotalDiskon ?? 0;
+                                            $dpp = $hargaSatuan - $diskon;
+                                            $ppn = $dpp * 0.11;
+                                            $total = $dpp + $ppn;
+                                        @endphp
                                         <tr>
                                             <td>1</td>
                                             <td>
                                                 <div class="input-group">
                                                     <span class="input-group-text">Rp</span>
                                                     <input type="text" name="BiayaAkhir" class="form-control rupiah"
-                                                        value="{{ old('BiayaAkhir', isset($data2->getVendor[0]->getVendorDetail[0]->HargaSatuan) ? number_format($data2->getVendor[0]->getVendorDetail[0]->HargaSatuan, 0, ',', '.') : '') }}">
+                                                        value="{{ old('BiayaAkhir', $hargaSatuan ? number_format($hargaSatuan, 0, ',', '.') : '') }}">
                                                 </div>
                                                 @error('BiayaAkhir')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -389,11 +399,30 @@
                                             <td>
                                                 <div class="input-group">
                                                     <span class="input-group-text">Rp</span>
-                                                    <input type="text" name="HargaDiskonPpn"
-                                                        class="form-control rupiah"
-                                                        value="{{ old('HargaDiskonPpn', isset($data2->getVendor[0]->getVendorDetail[0]->HargaSatuan) ? number_format($data2->getVendor[0]->getVendorDetail[0]->HargaSatuan, 0, ',', '.') : '') }}">
+                                                    <input type="text" name="HargaSatuan" class="form-control rupiah"
+                                                        value="{{ old('HargaSatuan', $hargaSatuan ? number_format($hargaSatuan, 0, ',', '.') : '') }}">
                                                 </div>
-                                                @error('HargaDiskonPpn')
+                                                @error('HargaSatuan')
+                                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="text" name="Diskon" class="form-control rupiah"
+                                                        value="{{ old('Diskon', $diskon ? number_format($diskon, 0, ',', '.') : '') }}">
+                                                </div>
+                                                @error('Diskon')
+                                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="text" name="Ppn" class="form-control rupiah"
+                                                        value="{{ old('Ppn', $dpp > 0 ? number_format($ppn, 0, ',', '.') : '') }}">
+                                                </div>
+                                                @error('Ppn')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </td>
@@ -401,7 +430,7 @@
                                                 <div class="input-group">
                                                     <span class="input-group-text">Rp</span>
                                                     <input type="text" name="Total" class="form-control rupiah"
-                                                        value="{{ old('Total', isset($data2->getVendor[0]->getVendorDetail[0]->TotalHarga) ? number_format($data2->getVendor[0]->getVendorDetail[0]->TotalHarga, 0, ',', '.') : '') }}">
+                                                        value="{{ old('Total', $dpp > 0 ? number_format($total, 0, ',', '.') : '') }}">
                                                 </div>
                                                 @error('Total')
                                                     <div class="text-danger mt-1">{{ $message }}</div>

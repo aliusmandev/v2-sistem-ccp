@@ -6,6 +6,7 @@ use App\Models\MasterBarang;
 use App\Models\MasterParameter;
 use App\Models\MasterVendor;
 use App\Models\Negara;
+use App\Models\PengajuanItem;
 use App\Models\PengajuanPembelian;
 use App\Models\Rekomendasi;
 use App\Models\RekomendasiDetail;
@@ -108,6 +109,7 @@ class RekomendasiController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $header = Rekomendasi::updateOrCreate(
             [
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
@@ -116,7 +118,6 @@ class RekomendasiController extends Controller
             [
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
                 'PengajuanItemId' => $request->rekomendasi[0]['PengajuanItemId'],
-                // 'VendorAcc' => $request->VendorAcc,
                 'UserNego' => auth()->user()->id,
             ]
         );
@@ -229,6 +230,8 @@ class RekomendasiController extends Controller
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
                 'PengajuanItemId' => $request->rekomendasi[0]['PengajuanItemId'],
                 'VendorAcc' => $request->rekomendasi[0]['RekomendasiSelect'],
+                'Presentasi' => $request->Presentasi ?? null,
+                'TanggalPresentasi' => $request->TanggalPresentasi ?? null,
                 'DisetujuiOleh' => auth()->user()->id,
                 'DisetujuiPada' => now(),
                 'KodePerusahaan' => auth()->user()->kodeperusahaan,
@@ -261,6 +264,14 @@ class RekomendasiController extends Controller
                         'Keterangan' => $value['Keterangan'] ?? null,
                     ]
                 );
+                if (($value['RekomendasiSelect'] ?? null) == 1) {
+                    $pengajuanItem = PengajuanItem::find($value['PengajuanItemId']);
+                    if ($pengajuanItem) {
+                        $pengajuanItem->VendorAcc = $request->rekomendasi[0]['RekomendasiSelect'];
+                        $pengajuanItem->HargaNegoAcc = preg_replace('/\D/', '', $value['HargaNego']);
+                        $pengajuanItem->save();
+                    }
+                }
             }
         }
         $pengajuan = PengajuanPembelian::find($request->rekomendasi[0]['IdPengajuan']);
@@ -269,6 +280,8 @@ class RekomendasiController extends Controller
             $pengajuan->Status = 'Selesai';
             $pengajuan->save();
         }
+        // hanya isi jika rekomendasi 1
+
         return redirect()->back()->with('success', 'Anda sudah menentukan rekomendasi.');
     }
 

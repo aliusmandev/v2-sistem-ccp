@@ -484,7 +484,7 @@
                                                             </div>
                                                         @else
                                                             @if ($adaFs)
-                                                                <a href="{{ route('lembar-disposisi.show', [$data->id, $item->id]) }}"
+                                                                <a href="{{ route('fs.show', [$data->id, $item->id]) }}"
                                                                     class="btn btn-success">
                                                                     <i class="fa fa-eye"></i>
                                                                     Lihat FS

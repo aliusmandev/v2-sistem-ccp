@@ -22,38 +22,46 @@
                         Rekomendasi Pembelian untuk Pengajuan: <strong>{{ $data->KodePengajuan }}</strong>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <h5 class="mb-3">Informasi Barang</h5>
-                        <table class="table align-middle" style="width:100%;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width:180px;">Nama Barang</th>
-                                    <td>{{ $data->getPengajuanItem[0]->getBarang->Nama ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Merek</th>
-                                    <td>{{ $data->getPengajuanItem[0]->getBarang->getMerk->Nama ?? '-' }}</td>
-                                </tr>
-                                </tbody>
-                        </table>
-                    </div>
+                <form id="formRekomendasi" action="{{ route('rekomendasi.store') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5 class="mb-3">Informasi Barang</h5>
+                            <table class="table align-middle" style="width:100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:180px;">Nama Barang</th>
+                                        <td>{{ $data->getPengajuanItem[0]->getBarang->Nama ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Merek</th>
+                                        <td>{{ $data->getPengajuanItem[0]->getBarang->getMerk->Nama ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tipe</th>
+                                        <td>{{ $data->getPengajuanItem[0]->getBarang->Tipe ?? '-' }}</td>
+                                    </tr>
 
-                    <div class="alert alert-warning d-flex align-items-center" role="alert" style="min-height: 70px;">
-                        <i class="fa fa-exclamation-circle me-2" style="align-self: center; font-size: 1.6rem;"></i>
-                        <div class="d-flex align-items-center" style="min-height: 50px;">
-                            <ol class="mb-0 ps-2">
-                                <li>Isi rekomendasi pembelian untuk setiap Vendor dengan data yang lengkap. Setelah
-                                    rekomendasi untuk Vendor ini diisi, Anda dapat melanjutkan ke Vendor berikutnya.</li>
-                                <li>Semua kolom rekomendasi wajib diisi.</li>
-                                <li>Jika {{ auth()->user()->name }} sedang sibuk, Anda dapat menyimpan data sebagai draft
-                                    dan melanjutkan pengisian di lain waktu.</li>
-                            </ol>
+                                    </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <form id="formRekomendasi" action="{{ route('rekomendasi.store') }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
+
+                        <div class="alert alert-warning d-flex align-items-center" role="alert" style="min-height: 70px;">
+                            <i class="fa fa-exclamation-circle me-2" style="align-self: center; font-size: 1.6rem;"></i>
+                            <div class="d-flex align-items-center" style="min-height: 50px;">
+                                <ol class="mb-0 ps-2">
+                                    <li>Isi rekomendasi pembelian untuk setiap Vendor dengan data yang lengkap. Setelah
+                                        rekomendasi untuk Vendor ini diisi, Anda dapat melanjutkan ke Vendor berikutnya.
+                                    </li>
+                                    <li>Semua kolom rekomendasi wajib diisi.</li>
+                                    <li>Jika {{ auth()->user()->name }} sedang sibuk, Anda dapat menyimpan data sebagai
+                                        draft
+                                        dan melanjutkan pengisian di lain waktu.</li>
+                                </ol>
+                            </div>
+                        </div>
+
                         <ul class="nav nav-tabs tab-style-1 d-sm-flex d-block" role="tablist" id="vendorTabs">
                             @foreach ($data->getVendor as $vIdx => $Vendor)
                                 @php
@@ -266,19 +274,19 @@
                             <a href="{{ route('rekomendasi.show', encrypt($data->id)) }}"
                                 class="btn btn-secondary">Kembali</a>
                         </div>
-                    </form>
-                </div>
+                </form>
             </div>
-
-            <form id="formAjukanHtaGpa" action="{{ route('htagpa.ajukan') }}" method="POST" style="display:none;">
-                @csrf
-                <input type="hidden" name="IdPengajuan" value="{{ $data->id }}">
-                <input type="hidden" name="PengajuanItemId" value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
-                <input type="hidden" name="IdBarang" value="{{ $data->getPengajuanItem[0]->IdBarang ?? '' }}">
-                <input type="hidden" name="Status" value="Diajukan">
-            </form>
-
         </div>
+
+        <form id="formAjukanHtaGpa" action="{{ route('htagpa.ajukan') }}" method="POST" style="display:none;">
+            @csrf
+            <input type="hidden" name="IdPengajuan" value="{{ $data->id }}">
+            <input type="hidden" name="PengajuanItemId" value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+            <input type="hidden" name="IdBarang" value="{{ $data->getPengajuanItem[0]->IdBarang ?? '' }}">
+            <input type="hidden" name="Status" value="Diajukan">
+        </form>
+
+    </div>
     </div>
 @endsection
 @push('js')

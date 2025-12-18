@@ -161,8 +161,23 @@
                                                             name="vendor[{{ $vIdx }}][IdParameter][]" readonly>
                                                     </td>
                                                     <td>
-                                                        <textarea class="form-control" name="vendor[{{ $vIdx }}][Deskripsi][]" rows="10"
-                                                            placeholder="Masukkan deskripsi">{!! $Vendor->getHtaGpa->Deskripsi[$key] ?? '' !!}</textarea>
+                                                        @if ($pm == 11)
+                                                            <input type="text" class="form-control currency-input-global"
+                                                                name="vendor[{{ $vIdx }}][Deskripsi][]"
+                                                                placeholder="Masukkan nominal (format rupiah)"
+                                                                value="{{ isset($Vendor->getHtaGpa->Deskripsi[$key]) ? number_format((int) preg_replace('/\D/', '', $Vendor->getHtaGpa->Deskripsi[$key]), 0, ',', '.') : '' }}"
+                                                                oninput="
+                                                                    let val = this.value.replace(/[^0-9]/g, '');
+                                                                    if(val){
+                                                                        this.value = parseInt(val).toLocaleString('id-ID');
+                                                                    }else{
+                                                                        this.value = '';
+                                                                    }
+                                                                ">
+                                                        @else
+                                                            <textarea class="form-control summernote" name="vendor[{{ $vIdx }}][Deskripsi][]"
+                                                                placeholder="Masukkan deskripsi" rows="10">{{ $Vendor->getHtaGpa->Deskripsi[$key] ?? '' }}</textarea>
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         {{-- @php
@@ -340,7 +355,25 @@
             }, 500);
         </script>
     @endif
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input.currency-input-global').forEach(function(inp) {
+                inp.addEventListener('blur', function() {
+                    let val = this.value.replace(/[^0-9]/g, '');
+                    if (val) {
+                        this.value = parseInt(val).toLocaleString('id-ID');
+                    }
+                });
+                // auto-format on load if there is value
+                if (inp.value) {
+                    let n = inp.value.replace(/[^0-9]/g, '');
+                    if (n) {
+                        inp.value = parseInt(n).toLocaleString('id-ID');
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         function updateSubtotalsAndGrandTotal(vendorTable) {
             let grandTotal = 0;
