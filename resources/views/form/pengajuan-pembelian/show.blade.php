@@ -537,6 +537,10 @@
                                                                     <i class="fa fa-eye"></i>
                                                                     Lihat Lembar Disposisi
                                                                 </a>
+                                                                <a href="{{ route('lembar-disposisi.print', [$data->id, $item->id]) }}"
+                                                                    class="btn btn-info ms-2" target="_blank">
+                                                                    <i class="fa fa-print"></i> Cetak
+                                                                </a>
                                                             @else
                                                                 <a href="{{ route('lembar-disposisi.create', [encrypt($data->id), encrypt($item->id)]) }}"
                                                                     class="btn btn-primary">

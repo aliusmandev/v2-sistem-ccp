@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Mail\NotifikasiDisposisiMail;
 use App\Models\MasterVendor;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 class LembarDisposisiController extends Controller
 {
@@ -138,7 +139,55 @@ class LembarDisposisiController extends Controller
         // dd($data);
         return view('lembar-disposisi.show', compact('data'));
     }
+    public function print($idPengajuan, $idPengajuanItem)
+    {
+        // Ambil data lembar disposisi dengan relasi
+        $lembarDisposisi = LembarDisposisi::with(['getDetail', 'getBarang'])
+            ->where('IdPengajuan', $idPengajuan)
+            ->where('PengajuanItemId', $idPengajuanItem)
+            ->first();
 
+        if (!$lembarDisposisi) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        // Ambil data penilaian/approval berdasarkan IdLembarDisposisi
+        $penilaian = DB::table('lembar_disposisi_approvals') // sesuaikan nama tabel
+            ->where('IdLembarDisposisi', $lembarDisposisi->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Grouping penilaian berdasarkan role/posisi
+        $kadivYanmed = $penilaian->where('Jabatan', 'like', '%Kadiv%')->first();
+        $kadivJangmed = $penilaian->where('Jabatan', 'like', '%Kepala Divisi%')->first();
+        $direktur = $penilaian->where('Jabatan', 'like', '%Direktur%')->first();
+        $ghProcurement = $penilaian->where('Jabatan', 'like', '%Group Head%')->first();
+        $direkturRsabGroup = $penilaian->where('Jabatan', 'like', '%Direktur RSAB%')->first();
+        $ceoRsabGroup = $penilaian->where('Jabatan', 'like', '%CEO%')->first();
+
+        // Siapkan data untuk PDF
+        $data = [
+            'lembarDisposisi' => $lembarDisposisi,
+            'namaBarang' => $lembarDisposisi->getBarang->Nama,
+            'harga' => $lembarDisposisi->Harga,
+            'rencanaVendor' => $lembarDisposisi->getVendor->Nama,
+            'tujuanPenempatan' => $lembarDisposisi->TujuanPenempatan,
+            'formPermintaan' => $lembarDisposisi->FormPermintaanUser,
+
+            // Data approval/penilaian
+            'kadivYanmed' => $kadivYanmed,
+            'kadivJangmed' => $kadivJangmed,
+            'direktur' => $direktur,
+            'ghProcurement' => $ghProcurement,
+            'direkturRsabGroup' => $direkturRsabGroup,
+            'ceoRsabGroup' => $ceoRsabGroup,
+        ];
+
+        $pdf = \PDF::loadView('lembar-disposisi.cetak-pdf', compact('data'));
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('lembar-disposisi-' . $idPengajuan . '.pdf');
+    }
     /**
      * Show the form for editing the specified resource.
      */
