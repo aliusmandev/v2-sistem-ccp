@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DokumenApproval;
 use App\Models\MasterBarang;
 use App\Models\MasterDepartemen;
+use App\Models\MasterForm;
 use App\Models\MasterJenisPengajuan;
 use App\Models\MasterPerusahaan;
 use App\Models\MasterSatuan;
@@ -117,6 +119,7 @@ class PermintaanPembelianController extends Controller
         // Generate Nomor Pengajuan
         $nomorAkhir = $this->generateNomorPermintaan();
         $permintaan = PermintaanPembelian::create([
+            'JenisForm' => '3',
             'NomorPermintaan' => $nomorAkhir,
             'Jenis' => $request->Jenis,
             'Tujuan' => $request->Tujuan,
@@ -140,6 +143,37 @@ class PermintaanPembelianController extends Controller
                 'Keterangan' => $request->Keterangan[$key],
                 'KodePerusahaan' => auth()->user()->kodeperusahaan,
             ]);
+        }
+        $Form = MasterForm::with([
+            'getApproval' => function ($q) use ($permintaan) {
+                $q->where('KodePerusahaan', $permintaan->KodePerusahaan);
+            },
+            'getApproval.getUser'
+        ])
+            ->where('id', $permintaan->JenisForm)
+            ->first();
+
+        foreach ($Form->getApproval as $approvalSetting) {
+            DokumenApproval::updateOrCreate(
+                [
+                    'JenisFormId' => $permintaan->JenisForm,
+                    'DokumenId' => $permintaan->id,
+                    'Urutan' => $approvalSetting->Urutan ?? null,
+                ],
+                [
+                    'JenisUser' => $approvalSetting->JenisUser ?? 'Master',
+                    'DepartemenId' => $permintaan->Departemen,
+                    'PerusahaanId' => $approvalSetting->KodePerusahaan,
+                    'JabatanId' => $approvalSetting->JabatanId ?? null,
+                    'UserId' => $approvalSetting->UserId ?? null,
+                    'Nama' => $approvalSetting->getUser->name ?? null,
+                    'Status' => 'Pending',
+                    'TanggalApprove' => null,
+                    'Catatan' => null,
+                    'Ttd' => null,
+                    'UserCreate' => auth()->user()->name,
+                ]
+            );
         }
         if (function_exists('activity')) {
             activity()
@@ -176,8 +210,12 @@ class PermintaanPembelianController extends Controller
     {
         $id = decrypt($id);
         $data = PermintaanPembelian::with('getJenisPermintaan', 'getDetail.getBarang', 'getDiajukanOleh')->find($id);
-        // dd($data);
-        return view('form.permintaan-pembelian.show', compact('data'));
+        $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $data->JenisForm)
+            ->where('DokumenId', $data->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
+        return view('form.permintaan-pembelian.show', compact('data', 'approval'));
     }
 
     public function print($id)

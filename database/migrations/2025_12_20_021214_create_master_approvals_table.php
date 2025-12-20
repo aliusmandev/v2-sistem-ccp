@@ -10,11 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('master_forms', function (Blueprint $table) {
+        Schema::create('master_approvals', function (Blueprint $table) {
             $table->id();
-            $table->string('Nama')->nullable();
-            $table->json('Parameter')->nullable();
-            $table->string('KodePerusahaan')->nullable();
+            $table->string('KodePerusahaan');
+            $table->string('JenisForm');
+            $table->string('JabatanId');
+            $table->string('UserId');
+            $table->integer('Urutan');
+            $table->enum('Wajib', ['Y', 'N'])->default('N');
+            $table->enum('Aktif', ['Y', 'N'])->default('Y');
             $table->string('UserCreate')->nullable();
             $table->string('UserUpdate')->nullable();
             $table->string('UserDelete')->nullable();
@@ -28,6 +32,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_forms');
+        Schema::dropIfExists('master_approvals');
     }
 };

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterPerusahaan extends Model
+class MasterApproval extends Model
 {
     use HasFactory, SoftDeletes;
     /**
@@ -14,16 +14,15 @@ class MasterPerusahaan extends Model
      *
      * @var string
      */
-    protected $table = 'master_perusahaans';
-
+    protected $table = 'master_approvals';
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
-    public function getFormPerusahaan()
+    public function getUser()
     {
-        return $this->hasMany(MasterForm::class, 'KodePerusahaan', 'Kode');
+        return $this->belongsTo(User::class, 'UserId', 'id');
     }
 }

@@ -107,189 +107,94 @@
                     <div class="row mt-4 justify-content-center">
                         <div class="col-12">
                             <h5 class="text-center mb-4"><strong>Persetujuan Permintaan Pembelian</strong></h5>
+                            <!-- Tambah baris untuk nama jabatan di atas tabel approval -->
+                            <div class="mb-2 text-center">
+                                @if (!empty($approval))
+                                    <div class="row justify-content-center">
+                                        @foreach ($approval as $item)
+                                            <div class="col text-center" style="font-weight:600;">
+                                                {{ $item->getJabatan->Nama ?? '-' }}
+                                                {{ $item->getDepartemen->Nama ?? '-' }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless" style="max-width:100%; margin: 0 auto;">
                                     <colgroup>
-                                        <col style="width: 20%;">
-                                        <col style="width: 20%;">
-                                        <col style="width: 20%;">
-                                        <col style="width: 20%;">
-                                        {{-- <col style="width: 20%;"> --}}
+                                        @if (!empty($approval))
+                                            @foreach ($approval as $item)
+                                                <col style="width: {{ 100 / count($approval) }}%;">
+                                            @endforeach
+                                        @endif
                                     </colgroup>
                                     <tbody>
                                         <tr>
-                                            <td class="text-center align-bottom">
-                                                Diajukan oleh,
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                Diketahui oleh,<br>
-                                                Kepala Divisi
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                Diketahui oleh,<br>
-                                                Kepala Divisi Penunjang Medis/Umum
-                                            </td>
-                                            <td class="text-center align-bottom">
-                                                Disetujui oleh,<br>
-                                                Direktur
-                                            </td>
-                                            {{-- <td class="text-center align-bottom">
-                                                Diterima Oleh,<br>
-                                                Logum / SMI
-                                            </td> --}}
+                                            @foreach ($approval as $item)
+                                                <td class="text-center align-bottom">
+                                                    {{-- Nama jabatan sudah ditampilkan di atas, bisa dikosongi atau diisi strip --}}
+                                                    -
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->DiajukanOleh) && !empty($data->getDiajukanOleh->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getDiajukanOleh->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getKepalaDivisi) && !empty($data->getKepalaDivisi->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getKepalaDivisi->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getAccPenunjangMedis) && !empty($data->getAccPenunjangMedis->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getAccPenunjangMedis->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
-                                            </td>
-                                            <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getAccDirektur) && !empty($data->getAccDirektur->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getAccDirektur->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
-                                            </td>
-                                            {{-- <td style="height: 70px;" class="text-center">
-                                                @if (!empty($data->getSmi) && !empty($data->getSmi->tandatangan))
-                                                    <img src="{{ asset('storage/upload/tandatangan/' . $data->getSmi->tandatangan) }}"
-                                                        alt="TTD" style="max-width:110px; max-height:60px;">
-                                                @endif
-                                            </td> --}}
+                                            @foreach ($approval as $item)
+                                                <td style="height: 70px;" class="text-center">
+                                                    @if (!empty($item->Ttd))
+                                                        <img src="{{ asset('storage/upload/tandatangan/' . $item->Ttd) }}"
+                                                            alt="TTD" style="max-width:110px; max-height:60px;">
+                                                    @endif
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td>
-                                            {{-- <td class="text-center" style="padding-bottom:0;">
-                                                <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                            </td> --}}
+                                            @foreach ($approval as $item)
+                                                <td class="text-center" style="padding-bottom:0;">
+                                                    <hr
+                                                        style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
+                                                </td>
+                                            @endforeach
                                         </tr>
                                         <tr>
-                                            <td class="text-center align-top">
-                                                <small>Nama Lengkap</small><br>
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getDiajukanOleh->name ?? '-' }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <small>Nama Lengkap</small><br>
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getKepalaDivisi->name ?? '-' }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <small>Nama Lengkap</small><br>
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getAccPenunjangMedis->name ?? '-' }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center align-top">
-                                                <small>Nama Lengkap</small><br>
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getAccDirektur->name ?? '-' }}
-                                                </span>
-                                            </td>
-                                            {{-- <td class="text-center align-top">
-                                                <small>Nama Lengkap</small><br>
-                                                <span style="font-weight:600;">
-                                                    {{ $data->getSmi->name ?? '-' }}
-                                                </span>
-                                            </td> --}}
+                                            @foreach ($approval as $item)
+                                                <td class="text-center align-top">
+                                                    <small>Nama Lengkap</small><br>
+                                                    <span style="font-weight:600;">
+                                                        {{ $item->Nama ?? '-' }}
+                                                    </span>
+                                                    <br>
+                                                    <small>{{ $item->Status ?? '-' }}</small>
+                                                </td>
+                                            @endforeach
                                         </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
+
                         <div class="col-12 text-end mt-3">
                             <a href="{{ route('pp.index') }}" class="btn btn-secondary me-2">
                                 <i class="fa fa-arrow-left"></i> Kembali
                             </a>
 
-                            @can('permintaan-approve-kepala-divisi')
-                                <!-- Button untuk Kepala Divisi - Diketahui oleh -->
-                                <form id="formKepalaDivisi" action="{{ route('pp.acc-kepala-divisi', $data->id) }}"
-                                    method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
-                                        data-title="Konfirmasi"
-                                        data-text="Apakah Anda yakin ingin mengirimkan ke Kepala Divisi untuk diketahui?"
-                                        data-form="formKepalaDivisi">
-                                        <i class="fa fa-user"></i> Kepala Divisi
-                                    </button>
-                                </form>
-                            @endcan
-
-                            @can('permintaan-approve-penunjang')
-                                <!-- Button untuk Kepala Divisi Penunjang Medis/Umum - Disetujui oleh -->
-                                <form id="formDivisiPenunjang"
-                                    action="{{ route('pp.acc-kepala-divisi-penunjang-medis', $data->id) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
-                                        data-title="Konfirmasi"
-                                        data-text="Apakah Anda yakin ingin mengirimkan ke Kepala Divisi Penunjang Medis/Umum untuk disetujui?"
-                                        data-form="formDivisiPenunjang">
-                                        <i class="fa fa-user-md"></i> Kadiv Penunjang Medis / Umum
-                                    </button>
-                                </form>
-                            @endcan
-
-                            @can('permintaan-approve-direktur')
-                                <!-- Button untuk Direktur - Diterima oleh -->
-                                <form id="formDirektur" action="{{ route('pp.acc-direktur', $data->id) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
-                                        data-title="Konfirmasi"
-                                        data-text="Apakah Anda yakin ingin mengirimkan ke Direktur untuk diterima?"
-                                        data-form="formDirektur">
-                                        <i class="fa fa-user-tie"></i> Direktur
-                                    </button>
-                                </form>
-                            @endcan
-
-                            {{-- @can('permintaan-approve-logistik')
-                                <!-- Button untuk Logistik - Logistik / SMI -->
-                                <form id="formLogistik" action="{{ route('pp.acc-smi', $data->id) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
-                                        data-title="Konfirmasi" data-text="Apakah Anda yakin ingin mengirimkan ke Logistik?"
-                                        data-form="formLogistik">
-                                        <i class="fa fa-truck"></i> SMI</small>
-                                    </button>
-                                </form>
-                            @endcan --}}
-
-
-
+                            @foreach ($approval as $item)
+                                @if (auth()->id() == ($item->UserId ?? null))
+                                    <form id="formApprove{{ $item->id }}"
+                                        action="{{ route($item->approve_route ?? '#', $data->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
+                                            data-title="Konfirmasi"
+                                            data-text="Apakah Anda yakin ingin menyetujui sebagai {{ $item->JabatanNama ?? $item->JenisUser }}?"
+                                            data-form="formApprove{{ $item->id }}">
+                                            <i class="fa {{ $item->icon ?? 'fa-user' }}"></i>
+                                            {{ $item->JabatanNama ?? $item->JenisUser }}
+                                        </button>
+                                    </form>
+                                @endif
+                            @endforeach
                         </div>
-
-
                     </div>
                 </div>
             </div>

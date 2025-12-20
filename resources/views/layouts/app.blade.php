@@ -307,6 +307,15 @@
                                                 </a>
                                             </li>
                                         @endcan
+                                        @can('nama-form-list')
+                                            <li>
+                                                <a href="{{ route('master-approval.index') }}"
+                                                    class="{{ Request::segment(2) == 'pengaturan-approval' ? 'active' : '' }}">
+                                                    <i data-feather="file-text"></i>
+                                                    <span>Master Approval</span>
+                                                </a>
+                                            </li>
+                                        @endcan
                                         @can('jenis-pengajuan-list')
                                             <li>
                                                 <a href="{{ route('jenis-pengajuan.index') }}"

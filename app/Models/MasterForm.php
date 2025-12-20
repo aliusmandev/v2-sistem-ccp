@@ -30,4 +30,9 @@ class MasterForm extends Model
     protected $casts = [
         'Parameter' => 'array',
     ];
+    public function getApproval()
+    {
+        return $this->hasMany(MasterApproval::class, 'JenisForm', 'id');
+    }
+
 }

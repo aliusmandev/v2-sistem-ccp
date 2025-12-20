@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HtaDanGpaController;
 use App\Http\Controllers\HtaGpaController;
 use App\Http\Controllers\LembarDisposisiController;
+use App\Http\Controllers\MasterApprovalController;
 use App\Http\Controllers\MasterBarangController;
 use App\Http\Controllers\MasterDepartemenController;
 use App\Http\Controllers\MasterFormController;
@@ -170,6 +171,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/update/{id}', [MasterJenisPengajuanController::class, 'update'])->name('jenis-pengajuan.update');
         Route::get('/show/{id}', [MasterJenisPengajuanController::class, 'show'])->name('jenis-pengajuan.show');
         Route::delete('/delete/{id}', [MasterJenisPengajuanController::class, 'destroy'])->name('jenis-pengajuan.destroy');
+    });
+    Route::prefix('master/pengaturan-approval')->group(function () {
+        Route::get('/', [MasterApprovalController::class, 'index'])->name('master-approval.index');
+        Route::get('/create/{id}', [MasterApprovalController::class, 'create'])->name('master-approval.create');
+        Route::post('/store', [MasterApprovalController::class, 'store'])->name('master-approval.store');
+        Route::get('/edit/{id}', [MasterApprovalController::class, 'edit'])->name('master-approval.edit');
+        Route::put('/update/{id}', [MasterApprovalController::class, 'update'])->name('master-approval.update');
+        Route::get('/show/{id}', [MasterApprovalController::class, 'show'])->name('master-approval.show');
+        Route::delete('/delete/{id}', [MasterApprovalController::class, 'destroy'])->name('master-approval.destroy');
+        Route::get('/ttd/{id}/{KodePerusahaan}', [MasterApprovalController::class, 'aturTtd'])->name('master-approval.ttd');
     });
     Route::prefix('rekomendasi')->group(function () {
         Route::get('/', [RekomendasiController::class, 'index'])->name('rekomendasi.index');

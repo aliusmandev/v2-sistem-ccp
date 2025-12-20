@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('permintaan_pembelians', function (Blueprint $table) {
             $table->id();
+            $table->string('JenisForm')->nullable();
             $table->string('NomorPermintaan')->nullable();
             $table->string('Jenis')->nullable();
             $table->string('Tujuan')->nullable();
