@@ -165,15 +165,8 @@
                                                             <input type="text" class="form-control currency-input-global"
                                                                 name="vendor[{{ $vIdx }}][Deskripsi][]"
                                                                 placeholder="Masukkan nominal (format rupiah)"
-                                                                value="{{ isset($Vendor->getHtaGpa->Deskripsi[$key]) ? number_format((int) preg_replace('/\D/', '', $Vendor->getHtaGpa->Deskripsi[$key]), 0, ',', '.') : '' }}"
-                                                                oninput="
-                                                                    let val = this.value.replace(/[^0-9]/g, '');
-                                                                    if(val){
-                                                                        this.value = parseInt(val).toLocaleString('id-ID');
-                                                                    }else{
-                                                                        this.value = '';
-                                                                    }
-                                                                ">
+                                                                value="{{ isset($Vendor->TotalHarga) ? number_format($Vendor->TotalHarga, 0, ',', '.') : '' }}"
+                                                                readonly>
                                                         @else
                                                             <textarea class="form-control summernote" name="vendor[{{ $vIdx }}][Deskripsi][]"
                                                                 placeholder="Masukkan deskripsi" rows="10">{{ $Vendor->getHtaGpa->Deskripsi[$key] ?? '' }}</textarea>

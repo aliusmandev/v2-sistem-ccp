@@ -73,4 +73,9 @@ class UsulanInvestasi extends Model
     {
         return $this->hasOne(User::class, 'id', 'KadivJangMed');
     }
+
+    public function getNamaForm()
+    {
+        return $this->hasOne(MasterForm::class, 'id', 'JenisForm');
+    }
 }

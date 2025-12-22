@@ -113,7 +113,7 @@ class LembarDisposisiController extends Controller
                 // Mendapatkan nama user berdasarkan IdUser
                 $user = User::find($idUser);
                 $namaUser = $user ? $user->name : null;
-                $approvalToken = Str::uuid()->toString();
+                $approvalToken = str_replace('-', '', Str::uuid()->toString());
 
                 $approval = DokumenApproval::updateOrCreate(
                     [
@@ -126,7 +126,7 @@ class LembarDisposisiController extends Controller
                         'PerusahaanId' => auth()->user()->kodeperusahaan,
                         'DepartemenId' => $request->Departemen[$i] ?? null,
                         'JabatanId' => $request->Jabatan[$i] ?? null,
-                        'UserId' => $approvalSetting->UserId ?? null,
+                        'UserId' => $request->IdUser[$i] ?? null,
                         'Nama' => $namaUser ?? null,
                         'Status' => 'Pending',
                         'TanggalApprove' => null,
@@ -204,11 +204,12 @@ class LembarDisposisiController extends Controller
 
     public function approve($token)
     {
-        $penilai = LembarDisposisiApproval::where('ApprovalToken', $token)->firstOrFail();
+        $penilai = DokumenApproval::where('ApprovalToken', $token)->firstOrFail();
+        // dd($penilai);
 
         $penilai->update([
-            'Status' => 'Y',
-            'ApprovePada' => Carbon::now(),
+            'Status' => 'Approved',
+            'TanggalAppove' => Carbon::now(),
         ]);
 
         return view('emails.setelah-approval', [

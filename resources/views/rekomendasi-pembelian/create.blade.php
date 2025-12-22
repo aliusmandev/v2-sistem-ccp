@@ -129,7 +129,12 @@
                                         <tbody>
                                             <tr>
                                                 <td class="text-center">1</td>
-                                                <td class="fw-bold">Harga Awal</td>
+                                                <td class="fw-bold">Harga Awal
+                                                    <br>
+                                                    <small class="text-muted" style="font-weight: normal;">
+                                                        Harga sudah termasuk PPN dari pengajuan
+                                                    </small>
+                                                </td>
                                                 <td>
                                                     <input type="text"
                                                         name="rekomendasi[{{ $vIdx }}][HargaAwal]"

@@ -67,21 +67,21 @@
         </tr>
     </table>
 
-    {{-- Table HEAD --}}
+    {{-- Table HEAD: No | Parameter | Vendor 1 (Deskripsi, Nilai 1-5, Subtotal) | Vendor 2 (Deskripsi, Nilai 1-5, Subtotal) ... --}}
     <table class="cetak-hta">
         <thead>
             <tr>
                 <th rowspan="2" style="min-width: 30px; width: 35px;">No</th>
                 <th rowspan="2" class="col-parameter">Parameter</th>
-                <th rowspan="2" style="min-width: 110px; max-width: 200px;">Deskripsi</th>
                 @foreach ($data->getVendor as $vIdx => $Vendor)
-                    <th colspan="6" style="text-align:center; min-width:270px;">
+                    <th colspan="7" style="text-align:center; min-width:310px;">
                         {{ $Vendor->getNamaVendor->Nama ?? 'Vendor ' . ($vIdx + 1) }}
                     </th>
                 @endforeach
             </tr>
             <tr>
                 @foreach ($data->getVendor as $vIdx => $Vendor)
+                    <th style="min-width:110px;max-width:200px;">Deskripsi</th>
                     <th>1</th>
                     <th>2</th>
                     <th>3</th>
@@ -97,11 +97,9 @@
                     <td style="text-align:center;">{{ $key + 1 }}</td>
                     <td class="col-parameter">{{ $parameter[$pm - 1]->Nama ?? '-' }}</td>
                     @foreach ($data->getVendor as $vIdx => $Vendor)
-                        @if ($loop->first)
-                            <td>{!! $Vendor->getHtaGpa->Deskripsi[$key] ?? '-' !!}</td>
-                        @endif
-                    @endforeach
-                    @foreach ($data->getVendor as $vIdx => $Vendor)
+                        <td>
+                            {!! isset($Vendor->getHtaGpa->Deskripsi[$key]) ? $Vendor->getHtaGpa->Deskripsi[$key] : '-' !!}
+                        </td>
                         <td style="width:20px;text-align:center;">{{ $Vendor->getHtaGpa->Nilai1[$key] ?? '' }}</td>
                         <td style="width:20px;text-align:center;">{{ $Vendor->getHtaGpa->Nilai2[$key] ?? '' }}</td>
                         <td style="width:20px;text-align:center;">{{ $Vendor->getHtaGpa->Nilai3[$key] ?? '' }}</td>
@@ -116,7 +114,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="3" style="text-align:right;">Grand Total</th>
+                <th colspan="2" style="text-align:right;">Grand Total</th>
                 @foreach ($data->getVendor as $vIdx => $Vendor)
                     @php
                         $grandTotal = 0;
@@ -126,8 +124,9 @@
                             }
                         }
                     @endphp
-                    <th colspan="6" style="text-align:right; background: #f4f4f4; font-weight:700;">
-                        {{ $grandTotal }}</th>
+                    <th colspan="7" style="text-align:right; background: #f4f4f4; font-weight:700;">
+                        {{ $grandTotal }}
+                    </th>
                 @endforeach
             </tr>
         </tfoot>
@@ -177,3 +176,64 @@
         </tbody>
     </table>
 </div>
+
+<h5 class="text-center mb-4"><strong>Persetujuan Permintaan Pembelian</strong></h5>
+<!-- Untuk cetak PDF tanda tangan approval -->
+<table style="width:100%; margin: 0 auto; border:none;">
+    <colgroup>
+        @if (!empty($approval))
+            @foreach ($approval as $item)
+                <col style="width: {{ 100 / count($approval) }}%;">
+            @endforeach
+        @endif
+    </colgroup>
+    <tbody>
+        <tr>
+            @foreach ($approval as $item)
+                <td style="text-align:center; font-weight:600; border:none;">
+                    {{ $item->getJabatan->Nama ?? '-' }}<br>
+                    {{ $item->getDepartemen->Nama ?? '' }}
+                </td>
+            @endforeach
+        </tr>
+        <tr>
+            @foreach ($approval as $item)
+                <td class="text-center align-bottom" style="height: 20px; border:none;">
+                    {{-- Tempat kosong untuk tanda tangan basah di cetak PDF --}}
+                </td>
+            @endforeach
+        </tr>
+        <tr>
+            @foreach ($approval as $item)
+                <td style="height: 70px; text-align:center; border:none;">
+                    @if (!empty($item->Ttd))
+                        <img src="{{ public_path('storage/upload/tandatangan/' . $item->Ttd) }}" alt="TTD"
+                            style="max-width:110px; max-height:60px;">
+                    @else
+                        <!-- Jika tidak ada tanda tangan digital, biarkan kosong untuk tanda tangan manual -->
+                    @endif
+                </td>
+            @endforeach
+        </tr>
+        <tr>
+            @foreach ($approval as $item)
+                <td class="text-center" style="padding-bottom:0; border:none;">
+                    <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
+                </td>
+            @endforeach
+        </tr>
+        <tr>
+            @foreach ($approval as $item)
+                <td class="text-center align-top" style="border:none;">
+                    <span style="font-weight:600; display: block; text-align: center;">
+                        {{ $item->Nama ?? '-' }}
+                    </span>
+                    <div style="display: block; text-align: center;">
+                        <small style="display: inline-block;">{{ $item->Status ?? '-' }}</small>
+
+                    </div>
+                </td>
+            @endforeach
+        </tr>
+    </tbody>
+</table>

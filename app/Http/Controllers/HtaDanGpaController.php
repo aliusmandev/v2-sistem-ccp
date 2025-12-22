@@ -288,10 +288,14 @@ class HtaDanGpaController extends Controller
                 $query->where('id', $idPengajuanItem)->with('getBarang.getMerk');
             }
         ])->find($idPengajuan);
-
+        $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $data->getHtaGpa->JenisForm)
+            ->where('DokumenId', $data->getHtaGpa->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
         $parameter = MasterParameter::get();
 
-        $pdf = \PDF::loadView('hta-gpa.cetak-hta-gpa', compact('data', 'parameter'))
+        $pdf = \PDF::loadView('hta-gpa.cetak-hta-gpa', compact('data', 'parameter', 'approval'))
             ->setPaper('a4', 'landscape');  // Ubah ke A4 landscape
 
         return $pdf->stream('hta-gpa-' . $idPengajuan . '-' . $idPengajuanItem . '.pdf');

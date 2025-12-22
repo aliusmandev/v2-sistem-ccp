@@ -227,7 +227,7 @@
                 <div class="logo">RS AWAL BROS</div>
                 <div class="title-section">
                     <div class="form-title">FORMULIR USULAN INVESTASI</div>
-                    <div class="form-subtitle">Nominal Permintaan 50 Juta s/d 100 Juta</div>
+                    <div class="form-subtitle">{{ $usulan->getNamaForm->Nama }}</div>
                 </div>
             </div>
         </div>
@@ -404,75 +404,67 @@
                 <u>{{ number_format($usulan->SisaBudget2 ?? 0, 0, ',', '.') }}</u>
         </div>
 
-        <div class="row mt-4 justify-content-center">
-            <div class="col-12">
-                <h5 class="text-center mb-4"><strong>Persetujuan Permintaan Pembelian</strong></h5>
-                <!-- Untuk cetak PDF tanda tangan approval -->
-                <div class="mb-2 text-center">
-                    @if (!empty($approval))
-                        <div class="row justify-content-center">
-                            @foreach ($approval as $item)
-                                <div class="col text-center" style="font-weight:600;">
-                                    {{ $item->getJabatan->Nama ?? '-' }}
-                                    {{ $item->getDepartemen->Nama ?? '-' }}
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-borderless" style="max-width:100%; margin: 0 auto;">
-                        <colgroup>
-                            @if (!empty($approval))
-                                @foreach ($approval as $item)
-                                    <col style="width: {{ 100 / count($approval) }}%;">
-                                @endforeach
+
+        {{-- <h5 class="text-center mb-4"><strong>Persetujuan</strong></h5> --}}
+        <!-- Untuk cetak PDF tanda tangan approval -->
+        <table style="width:100%; margin: 0 auto; border:none;">
+            <colgroup>
+                @if (!empty($approval))
+                    @foreach ($approval as $item)
+                        <col style="width: {{ 100 / count($approval) }}%;">
+                    @endforeach
+                @endif
+            </colgroup>
+            <tbody>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td style="text-align:center; font-weight:600; border:none;">
+                            {{ $item->getJabatan->Nama ?? '-' }}<br>
+                            {{ $item->getDepartemen->Nama ?? '' }}
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center align-bottom" style="height: 20px; border:none;">
+                            {{-- Tempat kosong untuk tanda tangan basah di cetak PDF --}}
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td style="height: 70px; text-align:center; border:none;">
+                            @if (!empty($item->Ttd))
+                                <img src="{{ public_path('storage/upload/tandatangan/' . $item->Ttd) }}" alt="TTD"
+                                    style="max-width:110px; max-height:60px;">
+                            @else
+                                <!-- Jika tidak ada tanda tangan digital, biarkan kosong untuk tanda tangan manual -->
                             @endif
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                @foreach ($approval as $item)
-                                    <td class="text-center align-bottom" style="height: 20px;">
-                                        {{-- Tempat kosong untuk tanda tangan basah di cetak PDF --}}
-                                    </td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                @foreach ($approval as $item)
-                                    <td style="height: 70px;" class="text-center">
-                                        @if (!empty($item->Ttd))
-                                            <img src="{{ public_path('storage/upload/tandatangan/' . $item->Ttd) }}"
-                                                alt="TTD" style="max-width:110px; max-height:60px;">
-                                        @else
-                                            <!-- Jika tidak ada tanda tangan digital, biarkan kosong untuk tanda tangan manual -->
-                                        @endif
-                                    </td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                @foreach ($approval as $item)
-                                    <td class="text-center" style="padding-bottom:0;">
-                                        <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
-                                    </td>
-                                @endforeach
-                            </tr>
-                            <tr>
-                                @foreach ($approval as $item)
-                                    <td class="text-center align-top">
-                                        <small>Nama Lengkap</small><br>
-                                        <span style="font-weight:600;">
-                                            {{ $item->Nama ?? '-' }}
-                                        </span>
-                                        <br>
-                                        <small>{{ $item->Status ?? '-' }}</small>
-                                    </td>
-                                @endforeach
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center" style="padding-bottom:0; border:none;">
+                            <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center align-top" style="border:none;">
+                            <span style="font-weight:600; display: block; text-align: center;">
+                                {{ $item->Nama ?? '-' }}
+                            </span>
+                            <div style="display: block; text-align: center;">
+                                <small style="display: inline-block;">{{ $item->Status ?? '-' }}</small>
+
+                            </div>
+                        </td>
+                    @endforeach
+                </tr>
+            </tbody>
+        </table>
 
         <div class="footer-note">
             <p>*) Coret yang tidak perlu</p>

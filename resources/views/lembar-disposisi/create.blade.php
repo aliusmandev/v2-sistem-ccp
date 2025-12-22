@@ -206,7 +206,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-end gap-2">
                             <button type="submit" class="btn btn-primary"><i class="fa fa-save me-1"></i>
                                 Simpan</button>
                             <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary"><i

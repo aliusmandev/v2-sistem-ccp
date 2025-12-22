@@ -85,6 +85,7 @@ class UsulanInvestasiController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // try {
         $validatedData = $request->validate([
             'IdPengajuan' => 'required|integer',
@@ -108,17 +109,25 @@ class UsulanInvestasiController extends Controller
             'SudahRkap2' => 'nullable|string|in:Y,N',
             'SisaBudget2' => 'nullable|string',
         ]);
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     dd($e->validator->errors());
-        // }
-        // dd($request->all());
+
+        $totalNumeric = isset($request->Total) ? preg_replace('/[^0-9]/', '', $request->Total) : null;
+        $jenisForm = null;
+        if ($totalNumeric !== null && $totalNumeric !== '') {
+            if ($totalNumeric < 50000000) {
+                $jenisForm = '7';
+            } elseif ($totalNumeric >= 50000000 && $totalNumeric <= 100000000) {
+                $jenisForm = '11';
+            } elseif ($totalNumeric > 100000000) {
+                $jenisForm = '12';
+            }
+        }
         $usulan = UsulanInvestasi::updateOrCreate(
             [
                 'IdPengajuan' => $request->IdPengajuan ?? null,
                 'PengajuanItemId' => $request->PengajuanItemId ?? null,
             ],
             [
-                'JenisForm' => '7',
+                'JenisForm' => $jenisForm,
                 'IdVendor' => $request->VendorDipilih ?? null,
                 'IdBarang' => $request->PengajuanItemId ?? null,
                 'Tanggal' => $request->Tanggal ?? null,
@@ -222,7 +231,7 @@ class UsulanInvestasiController extends Controller
 
     public function print($IdPengajuan, $barang)
     {
-        $usulan = UsulanInvestasi::with('getFuiDetail', 'getBarang', 'getVendor', 'getAccDirektur', 'getAccKadiv', 'getDepartemen', 'getDepartemen2')
+        $usulan = UsulanInvestasi::with('getFuiDetail', 'getBarang', 'getVendor', 'getAccDirektur', 'getAccKadiv', 'getDepartemen', 'getDepartemen2', 'getNamaForm')
             ->where('IdPengajuan', $IdPengajuan)
             ->where('PengajuanItemId', $barang)
             ->first();

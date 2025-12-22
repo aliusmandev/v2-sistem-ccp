@@ -231,6 +231,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row mt-4 justify-content-center">
                         <div class="col-12">
                             <h5 class="text-center mb-4"><strong>Persetujuan Permintaan Pembelian</strong></h5>
@@ -306,27 +307,17 @@
                             </a>
 
                             @foreach ($approval as $item)
-                                <form id="formApprove{{ $item->id }}"
-                                    action="{{ route('usulan-investasi.approve', $item->ApprovalToken) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="UserId" value="{{ $item->UserId }}">
-                                    <input type="hidden" name="DokumenId" value="{{ $item->DokumenId }}">
-                                    <input type="hidden" name="JenisForm" value="{{ $item->JenisFormId }}">
-                                    @if (auth()->id() == ($item->UserId ?? null))
-                                        <button type="button" class="btn btn-primary me-2 swal-confirm-btn"
-                                            data-title="Konfirmasi"
-                                            data-text="Apakah Anda yakin ingin menyetujui sebagai {{ $item->getJabatan->Nama ?? $item->JenisUser }}?"
-                                            data-form="formApprove{{ $item->id }}">
-                                            <i class="fa {{ $item->icon ?? 'fa-user' }}"></i>
-                                            {{ $item->JabatanNama ?? $item->JenisUser }}
-                                        </button>
-                                    @endif
-                                </form>
+                                @if (auth()->id() == ($item->UserId ?? null))
+                                    <a href="{{ route('fui.approve', $item->ApprovalToken) }}"
+                                        class="btn btn-primary me-2 swal-confirm-btn" data-title="Konfirmasi"
+                                        data-text="Apakah Anda yakin ingin menyetujui sebagai {{ $item->getJabatan->Nama ?? $item->JenisUser }}?">
+                                        <i class="fa fa-check"></i>
+                                        Setujui
+                                    </a>
+                                @endif
                             @endforeach
                         </div>
                     </div>
-
 
                 </div>
             </div>

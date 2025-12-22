@@ -52,6 +52,9 @@ Route::get('/approval/usulan-investasi/{token}/approve', [UsulanInvestasiControl
 Route::get('/approval/usulan-investasi/{token}/reject', [UsulanInvestasiController::class, 'reject'])->name('usulan-investasi.reject');
 Route::get('/approval/fisibility-studi/{token}/approve', [FeasibilityStudyController::class, 'approve'])->name('fs.approve');
 Route::get('/approval/fisibility-studi/{token}/reject', [FeasibilityStudyController::class, 'reject'])->name('fs.reject');
+
+Route::get('/approval/lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
+Route::get('/approval/lembar-disposisi/{token}/reject', [LembarDisposisiController::class, 'reject'])->name('lembar-disposisi.reject');
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permission', PermissionController::class);
@@ -240,8 +243,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/show/{idPengajuan}/{idPengajuanItem}', [LembarDisposisiController::class, 'show'])->name('lembar-disposisi.show');
         Route::delete('/delete/{id}', [LembarDisposisiController::class, 'destroy'])->name('lembar-disposisi.destroy');
         Route::get('/print/{idPengajuan}/{idPengajuanItem}', [LembarDisposisiController::class, 'print'])->name('lembar-disposisi.print');
-
-        Route::get('lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
     });
     Route::prefix('fs')->group(function () {
         Route::get('/', [FeasibilityStudyController::class, 'index'])->name('fs.index');

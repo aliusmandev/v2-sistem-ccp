@@ -130,13 +130,8 @@
             </td>
             <td class="approval-box">
                 <div class="sign-area">
-                    @if (
-                        !empty($data['approval'][1]) &&
-                            isset($data['approval'][1]->StatusApprove) &&
-                            $data['approval'][1]->StatusApprove == 'Y')
-                        <p>{{ $data['approval'][1]->Nama ?? '' }}</p>
-                        <p>{{ isset($data['approval'][1]->ApprovePada) ? date('d/m/Y H:i', strtotime($data['approval'][1]->ApprovePada)) : '' }}
-                        </p>
+                    @if (!empty($data['approval'][1]) && isset($data['approval'][1]->Nama))
+                        <p>{{ $data['approval'][1]->Nama }}</p>
                     @endif
                 </div>
             </td>
@@ -149,16 +144,15 @@
             <th style="width: 30%;">DIREKTUR RS</th>
         </tr>
         <tr>
-            <td class="approval-box"></td>
+            <td class="approval-box">
+                @if (!empty($data['approval'][2]) && isset($data['approval'][2]->Catatan))
+                    {{ $data['approval'][2]->Catatan }}
+                @endif
+            </td>
             <td class="approval-box">
                 <div class="sign-area">
-                    @if (
-                        !empty($data['approval'][2]) &&
-                            isset($data['approval'][2]->StatusApprove) &&
-                            $data['approval'][2]->StatusApprove == 'Y')
-                        <p>{{ $data['approval'][2]->Nama ?? '' }}</p>
-                        <p>{{ isset($data['approval'][2]->ApprovePada) ? date('d/m/Y H:i', strtotime($data['approval'][2]->ApprovePada)) : '' }}
-                        </p>
+                    @if (!empty($data['approval'][2]) && isset($data['approval'][2]->Nama))
+                        <p>{{ $data['approval'][2]->Nama }}</p>
                     @endif
                 </div>
             </td>
@@ -171,21 +165,15 @@
             <th style="width: 30%;">GH PROCUREMENT</th>
         </tr>
         <tr>
-            <td class="approval-box"></td>
+            <td class="approval-box">
+                @if (!empty($data['approval'][3]) && isset($data['approval'][3]->Catatan))
+                    {{ $data['approval'][3]->Catatan }}
+                @endif
+            </td>
             <td class="approval-box">
                 <div class="sign-area">
-                    @if (
-                        !empty($data['approval'][3]) &&
-                            isset($data['approval'][3]->StatusApprove) &&
-                            $data['approval'][3]->StatusApprove == 'Y')
-                        <p>
-                            {{ $data['approval'][3]->Nama ?? '' }}
-                            @if (isset($data['approval'][3]->Jabatan))
-                                , {{ $data['approval'][3]->Jabatan }}
-                            @endif
-                        </p>
-                        <p>{{ isset($data['approval'][3]->ApprovePada) ? date('d/m/Y H:i', strtotime($data['approval'][3]->ApprovePada)) : '' }}
-                        </p>
+                    @if (!empty($data['approval'][3]) && isset($data['approval'][3]->Nama))
+                        <p>{{ $data['approval'][3]->Nama }}</p>
                     @endif
                 </div>
             </td>
@@ -198,16 +186,15 @@
             <th style="width: 30%;">DIREKTUR RSAB GROUP</th>
         </tr>
         <tr>
-            <td class="approval-box"></td>
+            <td class="approval-box">
+                @if (!empty($data['approval'][4]) && isset($data['approval'][4]->Catatan))
+                    {{ $data['approval'][4]->Catatan }}
+                @endif
+            </td>
             <td class="approval-box">
                 <div class="sign-area">
-                    @if (
-                        !empty($data['approval'][4]) &&
-                            isset($data['approval'][4]->StatusApprove) &&
-                            $data['approval'][4]->StatusApprove == 'Y')
-                        <p>{{ $data['approval'][4]->Nama ?? '' }}</p>
-                        <p>{{ isset($data['approval'][4]->ApprovePada) ? date('d/m/Y H:i', strtotime($data['approval'][4]->ApprovePada)) : '' }}
-                        </p>
+                    @if (!empty($data['approval'][4]) && isset($data['approval'][4]->Nama))
+                        <p>{{ $data['approval'][4]->Nama }}</p>
                     @endif
                 </div>
             </td>
@@ -220,16 +207,15 @@
             <th style="width: 30%;">CEO RSAB GROUP</th>
         </tr>
         <tr>
-            <td class="approval-box"></td>
+            <td class="approval-box">
+                @if (!empty($data['approval'][5]) && isset($data['approval'][5]->Catatan))
+                    {{ $data['approval'][5]->Catatan }}
+                @endif
+            </td>
             <td class="approval-box">
                 <div class="sign-area">
-                    @if (
-                        !empty($data['approval'][5]) &&
-                            isset($data['approval'][5]->StatusApprove) &&
-                            $data['approval'][5]->StatusApprove == 'Y')
-                        <p>{{ $data['approval'][5]->Nama ?? '' }}</p>
-                        <p>{{ isset($data['approval'][5]->ApprovePada) ? date('d/m/Y H:i', strtotime($data['approval'][5]->ApprovePada)) : '' }}
-                        </p>
+                    @if (!empty($data['approval'][5]) && isset($data['approval'][5]->Nama))
+                        <p>{{ $data['approval'][5]->Nama }}</p>
                     @endif
                 </div>
             </td>
