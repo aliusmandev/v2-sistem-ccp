@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DokumenApproval;
 use App\Models\MasterApproval;
 use App\Models\MasterDepartemen;
 use App\Models\MasterForm;
@@ -125,7 +126,23 @@ class MasterApprovalController extends Controller
     {
         //
     }
+    public function validasi($id)
+    {
+        $approval = DokumenApproval::where('ApprovalToken', $id)
+            ->where('Status', 'Approved')
+            ->first();
 
+        if (!$approval) {
+            return view('approval.validasi', [
+                'status' => 'TIDAK SAH'
+            ]);
+        }
+
+        return view('approval.validasi-valid', [
+            'status' => 'SAH',
+            'approval' => $approval
+        ]);
+    }
     /**
      * Remove the specified resource from storage.
      */

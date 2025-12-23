@@ -115,10 +115,9 @@
                                         </tr>
                                         <tr>
                                             @foreach ($approval as $item)
-                                                <td style="height: 70px;" class="text-center">
-                                                    @if (!empty($item->Ttd))
-                                                        <img src="{{ asset('storage/upload/tandatangan/' . $item->Ttd) }}"
-                                                            alt="TTD" style="max-width:110px; max-height:60px;">
+                                                <td class="text-center" style="height:70px;">
+                                                    @if ($item->Status == 'Approved')
+                                                        {!! QrCode::size(80)->generate(route('approval.validasi', $item->ApprovalToken)) !!}
                                                     @endif
                                                 </td>
                                             @endforeach

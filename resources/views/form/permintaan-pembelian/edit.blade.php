@@ -176,7 +176,7 @@
                                                             <option value="{{ $b->id }}"
                                                                 data-jenis-id="{{ $b->Jenis }}"
                                                                 {{ $list->NamaBarang == $b->id ? 'selected' : '' }}>
-                                                                {{ $b->Nama }} - {{ $b->getMerk->Nama }}
+                                                                {{ $b->Nama }} - {{ $b->getMerk->Nama ?? null }}
                                                             </option>
                                                         @endforeach
                                                     </select>

@@ -398,8 +398,8 @@
                                                             <thead class="table-light">
                                                                 <tr>
                                                                     <th>Barang</th>
-                                                                    <th>Nama Vendor</th>
                                                                     <th>Merek</th>
+                                                                    <th>Nama Vendor</th>
                                                                     <th>Jumlah</th>
                                                                     <th>Harga Satuan</th>
                                                                     <th>Jenis Diskon</th>
@@ -443,7 +443,7 @@
                                                                                 name="vendors[{{ $i }}][details][{{ $key }}][merek]"
                                                                                 class="form-control merek-vendor-input-{{ $i }}"
                                                                                 placeholder="Merek"
-                                                                                value=" {{ $barang->getBarang->getMerk->Nama }}"
+                                                                                value=" {{ $barang->getBarang->getMerk->Nama ?? null }}"
                                                                                 readonly>
                                                                         </td>
                                                                         <td width="15%">

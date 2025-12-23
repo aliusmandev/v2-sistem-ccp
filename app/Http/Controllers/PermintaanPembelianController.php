@@ -25,15 +25,28 @@ class PermintaanPembelianController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh', 'getDepartemen')
-                ->orderBy('id', 'desc');
+            if (auth()->user()->hasRole('SMI')) {
+                $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
+                    ->where('Jenis', 1)
+                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->orderBy('id', 'desc');
+            } elseif (auth()->user()->hasRole('LOGUM')) {
+                // LOGUM: tampilkan semua kecuali Jenis = 1
+                $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
+                    ->where('Jenis', '!=', 1)
+                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->orderBy('id', 'desc');
+            } else {
+                $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
+                    ->orderBy('id', 'desc');
+            }
 
-            if ($request->filled('perusahaan')) {
-                $query->where('KodePerusahaan', $request->perusahaan);
-            }
-            if ($request->filled('jenis')) {
-                $query->where('Jenis', $request->jenis);
-            }
+            // if ($request->filled('perusahaan')) {
+            //     $query->where('KodePerusahaan', $request->perusahaan);
+            // }
+            // if ($request->filled('jenis')) {
+            //     $query->where('Jenis', $request->jenis);
+            // }
             if ($request->filled('departemen')) {
                 $query->where('Departemen', $request->departemen);
             }

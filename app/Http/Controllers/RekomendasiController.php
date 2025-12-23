@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterBarang;
+use App\Models\MasterJenisPengajuan;
 use App\Models\MasterParameter;
+use App\Models\MasterPerusahaan;
 use App\Models\MasterVendor;
 use App\Models\Negara;
 use App\Models\PengajuanItem;
@@ -23,14 +25,27 @@ class RekomendasiController extends Controller
     {
         if ($request->ajax()) {
             $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')
-                ->where('Status', 'Diajukan')
-                ->orWhere('Status', 'Selesai')
+                ->when($request->jenis, function ($query) use ($request) {
+                    $query->where('Jenis', $request->jenis);
+                })
+                ->when($request->perusahaan, function ($query) use ($request) {
+                    $query->where('KodePerusahaan', $request->perusahaan);
+                })
+                ->when($request->Status, function ($query) use ($request) {
+                    $query->where('Status', $request->status);
+                }, function ($query) {
+                    // Default: Tampilkan Diajukan atau Selesai jika tidak ada filter status
+                    $query->where(function ($q) {
+                        $q->where('Status', 'Diajukan')
+                            ->orWhere('Status', 'Selesai');
+                    });
+                })
                 ->orderBy('id', 'desc');
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('Jenis', function ($row) {
-                    return isset($row->Jenis) ? $row->Jenis : '-';
+                    return optional($row->getJenisPermintaan)->Nama ?? '-';
                 })
                 ->editColumn('KodePerusahaan', function ($row) {
                     return $row->getPerusahaan->Nama ?? '-';
@@ -43,23 +58,36 @@ class RekomendasiController extends Controller
                         </a>
                     ';
                 })
-                ->editColumn('Jenis', function ($row) {
-                    return optional($row->getJenisPermintaan)->Nama ?? '-';
-                })
                 ->addColumn('Status', function ($row) {
                     switch ($row->Status) {
                         case 'Draft':
-                            return '<span class="badge bg-secondary">Draft</span>';
-                        case 'proses':
-                            return '<span class="badge bg-warning text-dark">Dalam Proses</span>';
-                        case 'ditolak':
-                            return '<span class="badge bg-danger">Ditolak</span>';
-                        case 'disetujui':
-                            return '<span class="badge bg-success">Disetujui</span>';
-                        case 'batal':
-                            return '<span class="badge bg-dark">Dibatalkan</span>';
+                            return '<span class="badge" style="background-color:#6c757d;color:#fff;">
+                                <i class="fa fa-pencil-alt"></i> Draft
+                            </span>'; // abu
+                        case 'Diajukan':
+                            return '<span class="badge" style="background-color:#007bff;color:#fff;">
+                                <i class="fa fa-paper-plane"></i> Diajukan
+                            </span>'; // biru
+                        case 'Dalam Review':
+                            return '<span class="badge" style="background-color:#ffc107;color:#212529;">
+                                <i class="fa fa-search"></i> Dalam Review
+                            </span>'; // kuning
+                        case 'Selesai':
+                            return '<span class="badge" style="background-color:#198754;color:#fff;">
+                                <i class="fa fa-check-circle"></i> Selesai
+                            </span>'; // hijau tua
+                        case 'Disetujui':
+                            return '<span class="badge" style="background-color:#28a745;color:#fff;">
+                                <i class="fa fa-thumbs-up"></i> Disetujui
+                            </span>'; // hijau
+                        case 'Ditolak':
+                            return '<span class="badge" style="background-color:#dc3545;color:#fff;">
+                                <i class="fa fa-times-circle"></i> Ditolak
+                            </span>'; // merah
                         default:
-                            return '<span class="badge bg-light text-dark">' . e($row->Status ?? '-') . '</span>';
+                            return '<span class="badge" style="background-color:#f8f9fa;color:#212529;">
+                                <i class="fa fa-question-circle"></i> ' . e($row->Status ?? '-') . '
+                            </span>';
                     }
                 })
                 ->addColumn('DiajukanPada', function ($row) {
@@ -71,8 +99,9 @@ class RekomendasiController extends Controller
                 ->rawColumns(['action', 'Status', 'DiajukanPada'])
                 ->make(true);
         }
-
-        return view('rekomendasi-pembelian.index');
+        $jenis = MasterJenisPengajuan::get();
+        $perusahaan = MasterPerusahaan::get();
+        return view('rekomendasi-pembelian.index', compact('jenis', 'perusahaan'));
     }
 
     /**

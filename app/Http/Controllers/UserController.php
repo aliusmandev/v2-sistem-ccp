@@ -58,7 +58,7 @@ class UserController extends Controller
             'password' => 'required',
             'roles' => 'required',
             'kodeperusahaan' => 'required',
-            'departemen' => 'required',
+            // 'departemen' => 'required',
             'foto' => 'nullable',
             'tandatangan' => 'nullable',
         ]);
@@ -136,7 +136,7 @@ class UserController extends Controller
             'email' => 'required',
             'roles' => 'required',
             'kodeperusahaan' => 'required',
-            'departemen' => 'required',
+            // 'departemen' => 'required',
             'foto' => 'nullable',
             'tandatangan' => 'nullable',
         ]);

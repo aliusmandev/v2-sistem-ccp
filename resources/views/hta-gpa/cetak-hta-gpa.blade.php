@@ -205,12 +205,9 @@
         </tr>
         <tr>
             @foreach ($approval2 as $item)
-                <td style="height: 70px; text-align:center; border:none;">
-                    @if (!empty($item->Ttd))
-                        <img src="{{ public_path('storage/upload/tandatangan/' . $item->Ttd) }}" alt="TTD"
-                            style="max-width:110px; max-height:60px;">
-                    @else
-                        <!-- Jika tidak ada tanda tangan digital, biarkan kosong untuk tanda tangan manual -->
+                <td class="text-center" style="height:70px;">
+                    @if ($item->Status == 'Approved')
+                        {!! QrCode::size(80)->generate(route('approval.validasi', $item->ApprovalToken)) !!}
                     @endif
                 </td>
             @endforeach

@@ -25,7 +25,20 @@ class PengajuanPembelianController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')->orderBy('id', 'desc')->get();
+            if (auth()->user()->hasRole('SMI')) {
+                $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')
+                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('Jenis', 1)
+                    ->orderBy('id', 'desc');
+            } elseif (auth()->user()->hasRole('LOGUM')) {
+                $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')
+                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('Jenis', '!=', 1)
+                    ->orderBy('id', 'desc');
+            } else {
+                $data = PengajuanPembelian::with('getPerusahaan', 'getJenisPermintaan')
+                    ->orderBy('id', 'desc');
+            }
 
             return DataTables::of($data)
                 ->addIndexColumn()

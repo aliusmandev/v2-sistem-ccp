@@ -36,7 +36,7 @@
 
                     <!-- Filter section -->
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <label for="filter-perusahaan" class="form-label">Filter Perusahaan / RS</label>
                             <select class="form-select select2" id="filter-perusahaan">
                                 <option value="">-- Semua Perusahaan --</option>
@@ -53,7 +53,7 @@
                                     <option value="{{ $item->id }}">{{ $item->Nama }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="col-md-4">
                             <label for="filter-departemen" class="form-label">Filter Departemen</label>
                             <select class="form-select select2" id="filter-departemen">

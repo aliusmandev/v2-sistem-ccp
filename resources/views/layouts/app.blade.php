@@ -143,17 +143,18 @@
         <div class="sidebar-inner slimscroll">
             <div id="sidebar-menu" class="sidebar-menu">
                 <ul>
-                    {{-- <li class="submenu-open">
-                        <h6 class="submenu-hdr">Produk</h6>
+                    <li class="submenu-open">
+                        <h6 class="submenu-hdr">Dashboard</h6>
                         <ul>
-                            <li>
-                                <a href="{{ route('produk.index') }}">
-                                    <i data-feather="package"></i>
-                                    <span>Produk</span>
+                            <li
+                                class="{{ Request::segment(1) == '' || Request::segment(1) == 'home' ? 'active' : '' }}">
+                                <a href="{{ route('home') }}">
+                                    <i data-feather="home"></i>
+                                    <span>Dashboard</span>
                                 </a>
                             </li>
                         </ul>
-                    </li> --}}
+                    </li>
                     <li class="submenu-open">
                         <h6 class="submenu-hdr">Form Pengajuan</h6>
                         <ul>

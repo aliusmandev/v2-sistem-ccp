@@ -128,7 +128,7 @@
                                                         <option value="{{ $b->id }}"
                                                             data-idjenis="{{ $b->Jenis }}"
                                                             {{ isset($oldBarang[$i]) && $oldBarang[$i] == $b->id ? 'selected' : '' }}>
-                                                            {{ $b->Nama }} - {{ $b->getMerk->Nama }}
+                                                            {{ $b->Nama }} - {{ $b->getMerk->Nama ?? null }}
                                                         </option>
                                                     @endforeach
                                                 </select>

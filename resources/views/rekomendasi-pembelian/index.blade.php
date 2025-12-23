@@ -12,6 +12,8 @@
             </div>
         </div>
     </div>
+
+    {{-- End Filter Bar --}}
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
@@ -22,6 +24,43 @@
                     </p>
                 </div>
                 <div class="card-body">
+                    <div class="col-lg-12">
+                        <div class="card p-3">
+                            <form id="filterForm" class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label for="filterJenis" class="form-label mb-0">Jenis</label>
+                                    <select class="form-select" id="filterJenis" name="jenis">
+                                        <option value="">Semua Jenis</option>
+                                        @foreach ($jenis as $item)
+                                            <option value="{{ $item->id }}">{{ $item->Nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="filterPerusahaan" class="form-label mb-0">Perusahaan</label>
+                                    <select class="form-select" id="filterPerusahaan" name="perusahaan">
+                                        <option value="">Semua Perusahaan</option>
+                                        @foreach ($perusahaan as $item)
+                                            <option value="{{ $item->Kode }}">{{ $item->Nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="filterStatus" class="form-label mb-0">Status</label>
+                                    <select class="form-select" id="filterStatus" name="status">
+                                        <option value="">Semua Status</option>
+                                        <option value="Diajukan">Diajukan</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <button type="button" id="resetFilterBtn" class="btn btn-secondary">
+                                        <i class="fa fa-undo"></i> Reset Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table datanew cell-border compact stripe" id="pengajuanTable" width="100%">
                             <thead>
@@ -105,6 +144,11 @@
                     bDestroy: true,
                     ajax: {
                         url: "{{ route('rekomendasi.index') }}",
+                        data: function(d) {
+                            d.jenis = $('#filterJenis').val();
+                            d.perusahaan = $('#filterPerusahaan').val();
+                            d.status = $('#filterStatus').val();
+                        }
                     },
                     language: {
                         processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Memuat...</span>',
@@ -152,6 +196,19 @@
                     ]
                 });
             }
+
+            // Listen to filter changes
+            $('#filterJenis, #filterPerusahaan, #filterStatus').on('change', function() {
+                $('#pengajuanTable').DataTable().ajax.reload();
+            });
+
+            // Reset filter button click
+            $('#resetFilterBtn').on('click', function() {
+                $('#filterJenis').val('');
+                $('#filterPerusahaan').val('');
+                $('#filterStatus').val('');
+                $('#pengajuanTable').DataTable().ajax.reload();
+            });
 
             loadDataTable();
         });

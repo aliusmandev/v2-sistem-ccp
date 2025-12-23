@@ -52,7 +52,8 @@ Route::get('/approval/usulan-investasi/{token}/approve', [UsulanInvestasiControl
 Route::get('/approval/usulan-investasi/{token}/reject', [UsulanInvestasiController::class, 'reject'])->name('usulan-investasi.reject');
 Route::get('/approval/fisibility-studi/{token}/approve', [FeasibilityStudyController::class, 'approve'])->name('fs.approve');
 Route::get('/approval/fisibility-studi/{token}/reject', [FeasibilityStudyController::class, 'reject'])->name('fs.reject');
-
+Route::get('/validasi-approval/{id}', [MasterApprovalController::class, 'validasi'])
+    ->name('approval.validasi');
 Route::get('/approval/lembar-disposisi/{token}/approve', [LembarDisposisiController::class, 'approve'])->name('lembar-disposisi.approve');
 Route::get('/approval/lembar-disposisi/{token}/reject', [LembarDisposisiController::class, 'reject'])->name('lembar-disposisi.reject');
 Route::group(['middleware' => ['auth']], function () {

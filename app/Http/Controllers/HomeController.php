@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PengajuanPembelian;
+use App\Models\PermintaanPembelian;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -24,6 +26,8 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        return view('home');
+        $TotalPermintaan = PermintaanPembelian::count();
+        $TotalSelesai = PengajuanPembelian::where('Status', 'Selesai')->count();
+        return view('home', compact('TotalPermintaan', 'TotalSelesai'));
     }
 }
