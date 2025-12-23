@@ -200,6 +200,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', [RekomendasiController::class, 'store'])->name('rekomendasi.store');
         Route::get('/edit/{id}', [RekomendasiController::class, 'edit'])->name('rekomendasi.edit');
         Route::get('/show/{id}', [RekomendasiController::class, 'show'])->name('rekomendasi.show');
+        Route::get('/rekap/{IdPengajuan}/{barang}', [RekomendasiController::class, 'rekap'])->name('rekomendasi.rekap');
         Route::delete('/delete/{id}', [RekomendasiController::class, 'destroy'])->name('rekomendasi.destroy');
         Route::get('/cetak-review/{IdPengajuan}/{barang}', [RekomendasiController::class, 'Cetak'])->name('rekomendasi.detail-print');
         Route::get('/lihat-review/{IdPengajuan}/{barang}', [RekomendasiController::class, 'detail'])->name('rekomendasi.detail-view');

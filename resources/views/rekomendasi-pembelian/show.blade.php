@@ -404,6 +404,10 @@
                                                                 class="btn btn-info ms-2" target="_blank">
                                                                 <i class="fa fa-print"></i> Print
                                                             </a>
+                                                            <a href="{{ route('rekomendasi.rekap', [encrypt($data->id), encrypt($item->id)]) }}"
+                                                                class="btn btn-info ms-2" target="_blank">
+                                                                <i class="fa fa-print"></i> rekap
+                                                            </a>
                                                             @can('rekomendasi-show')
                                                                 <a href="{{ route('rekomendasi.detail-view', [encrypt($data->id), encrypt($item->id)]) }}"
                                                                     class="btn btn-secondary ms-2" target="_blank">
@@ -500,7 +504,7 @@
                                                         @if (!$adaRekomendasi)
                                                             <div class="alert alert-danger p-2 m-0"
                                                                 style="font-size: 90%;">
-                                                                Form Fisibility Study Akan Dibuat Oleh SMI setelah
+                                                                Form Fisibility Study Akan Dibuat Oleh Keuangan
                                                                 Rekomendasi Dikeluarkan
                                                             </div>
                                                         @else
@@ -513,7 +517,7 @@
                                                             @else
                                                                 <div class="alert alert-danger p-2 m-0"
                                                                     style="font-size: 90%;">
-                                                                    Form Fisibility Study Akan Dibuat Oleh SMI setelah
+                                                                    Form Fisibility Study Akan Dibuat Oleh Keuangan setelah
                                                                     Rekomendasi Dikeluarkan
                                                                 </div>
                                                             @endif

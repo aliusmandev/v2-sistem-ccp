@@ -161,7 +161,7 @@ class LembarDisposisiController extends Controller
 
     public function print($idPengajuan, $idPengajuanItem)
     {
-        // Ambil data lembar disposisi dengan relasi
+
         $lembarDisposisi = LembarDisposisi::with(['getDetail', 'getBarang'])
             ->where('IdPengajuan', $idPengajuan)
             ->where('PengajuanItemId', $idPengajuanItem)

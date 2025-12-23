@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DokumenApproval;
+use App\Models\LembarDisposisi;
 use App\Models\MasterBarang;
 use App\Models\MasterJenisPengajuan;
 use App\Models\MasterParameter;
@@ -10,8 +12,11 @@ use App\Models\MasterVendor;
 use App\Models\Negara;
 use App\Models\PengajuanItem;
 use App\Models\PengajuanPembelian;
+use App\Models\PermintaanPembelian;
 use App\Models\Rekomendasi;
 use App\Models\RekomendasiDetail;
+use App\Models\UsulanInvestasi;
+use App\Models\UsulanInvestasiDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -52,11 +57,13 @@ class RekomendasiController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $id = encrypt($row->id);
-                    return '
+                    $buttonReview = '
                         <a href="' . route('rekomendasi.show', $id) . '" class="btn btn-sm btn-info" title="Detail">
                             <i class="fa fa-eye"></i> Review
                         </a>
                     ';
+
+                    return $buttonReview;
                 })
                 ->addColumn('Status', function ($row) {
                     switch ($row->Status) {
@@ -196,7 +203,73 @@ class RekomendasiController extends Controller
         $masterbarang = MasterBarang::get();
         return view('rekomendasi-pembelian.show', compact('data', 'vendor', 'masterbarang'));
     }
+    public function rekap($idPengajuan, $idPengajuanItem)
+    {
+        $idPengajuan = decrypt($idPengajuan);
+        $idPengajuanItem = decrypt($idPengajuanItem);
+        $caripermintaan = PengajuanPembelian::find($idPengajuan);
 
+        $rekomendasi = Rekomendasi::with('getRekomedasiDetail.getPerusahaan', 'getRekomedasiDetail.getBarang', 'getRekomedasiDetail.getNegara')->where('PengajuanItemId', $idPengajuanItem)->first();
+
+        $lembarDisposisi = LembarDisposisi::with(['getDetail', 'getBarang'])
+            ->where('IdPengajuan', $idPengajuan)
+            ->where('PengajuanItemId', $idPengajuanItem)
+            ->first();
+
+        if (!$lembarDisposisi) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $lembarDisposisi->JenisForm)
+            ->where('DokumenId', $lembarDisposisi->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
+
+        // Siapkan data untuk PDF
+        $data = [
+            'lembarDisposisi' => $lembarDisposisi,
+            'namaBarang' => $lembarDisposisi->getBarang->Nama,
+            'harga' => $lembarDisposisi->Harga,
+            'rencanaVendor' => $lembarDisposisi->getVendor->Nama,
+            'tujuanPenempatan' => $lembarDisposisi->TujuanPenempatan,
+            'formPermintaan' => $lembarDisposisi->FormPermintaanUser,
+            'approval' => $approval,
+        ];
+        //fui
+        $usulan = UsulanInvestasi::with('getFuiDetail', 'getBarang', 'getVendor', 'getAccDirektur', 'getAccKadiv', 'getDepartemen', 'getDepartemen2', 'getNamaForm')
+            ->where('IdPengajuan', $idPengajuan)
+            ->where('PengajuanItemId', $idPengajuanItem)
+            ->first();
+        $VendorAcc = UsulanInvestasiDetail::with('getVendorDipilih')->where('idUsulan', $usulan->id)->where('Vendor', $usulan->VendorDipilih)->first();
+        $approval2 = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $usulan->JenisForm)
+            ->where('DokumenId', $usulan->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
+
+        $permintaan = PermintaanPembelian::with([
+            'getDetail.getBarang.getMerk',
+            'getDiajukanOleh',
+            'getDetail.getBarang.getSatuan'
+        ])->find($caripermintaan->IdPermintaan);
+        // dd($permintaan);
+        $approval3 = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $permintaan->JenisForm)
+            ->where('DokumenId', $permintaan->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
+        $pdf = Pdf::loadView('rekomendasi-pembelian.rekap-pdf', [
+            'rekomendasi' => $rekomendasi,
+            'data' => $data,
+            'usulan' => $usulan,
+            'VendorAcc' => $VendorAcc,
+            'approval2' => $approval2,
+            'permintaan' => $permintaan,
+            'approval3' => $approval3,
+        ]);
+        return $pdf->stream('rekap_pengajuan.pdf');
+    }
     /**
      * Show the form for editing the specified resource.
      */

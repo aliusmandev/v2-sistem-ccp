@@ -1,369 +1,331 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cetak Permintaan Barang</title>
+    <title>Permintaan Pembelian - RS Awal Bros</title>
     <style>
-        @page {
-            margin: 0cm 0cm;
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            margin-top: 4.0cm;
-            margin-bottom: 1.0cm;
-            margin-left: 2.54cm;
-            margin-right: 2.54cm;
-            font-size: 13.3px;
-            color: #000;
-            background: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            margin: 20px;
+            background: white;
         }
 
         .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .logo {
+            color: #DC143C;
+            font-size: 24pt;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .title-section {
             text-align: center;
         }
 
-        .main-title {
-            font-size: 18pt;
+        .title-section h2 {
+            margin: 0;
+            font-size: 12pt;
             font-weight: bold;
-            padding-top: 0.6cm;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #000;
         }
 
-        .document-info table {
+        .title-section p {
+            margin: 2px 0;
+            font-size: 10pt;
+            font-style: italic;
+        }
+
+        .form-info {
+            margin: 20px 0;
+        }
+
+        .form-info table {
+            border: none;
+            font-size: 11pt;
+        }
+
+        .form-info td {
+            padding: 4px 0;
+            border: none;
+        }
+
+        .form-info td:first-child {
+            width: 120px;
+            font-weight: normal;
+        }
+
+        .form-info input {
+            border: none;
+            border-bottom: 1px solid #000;
+            width: 300px;
+            padding: 2px;
+        }
+
+        .main-table {
             width: 100%;
-            margin-bottom: 18px;
             border-collapse: collapse;
-            font-size: 13px;
-            background: #fff;
-            color: #000;
+            margin: 20px 0;
+            font-size: 10pt;
         }
 
-        .document-info td {
-            padding: 6px 4px;
-        }
-
-        .document-info td.label {
-            font-weight: bold;
-            width: 26%;
-        }
-
-        .document-info td.sep {
-            width: 2%;
-        }
-
-        #tabelalat {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 18px;
-            background: #fff;
-            color: #000;
-        }
-
-        #tabelalat th,
-        #tabelalat td {
-            border: 1px solid #444;
-            padding: 5px 4px;
-            vertical-align: middle;
-        }
-
-        #tabelalat th {
-            background: #fff;
-            color: #000;
-            font-size: 13px;
+        .main-table th,
+        .main-table td {
+            border: 1px solid #000;
+            padding: 8px 5px;
             text-align: center;
         }
 
-        #tabelalat td {
-            font-size: 13px;
+        .main-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            font-size: 9pt;
         }
 
-        #tabelalat tr:nth-child(even) td {
-            background: #fff;
+        .main-table td:nth-child(2) {
+            text-align: left;
+        }
+
+        .notes {
+            margin: 10px 0;
+            font-size: 9pt;
         }
 
         .signature-section {
-            margin-top: 34px;
-            color: #000;
-        }
-
-        .signature-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 24px 10px;
-        }
-
-        .signature-table>tbody>tr>td {
-            vertical-align: top;
-            width: 33.3%;
-        }
-
-        .signature-table .bottom-sign {
-            width: 50%;
-        }
-
-        .signature-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-            letter-spacing: .5px;
-            color: #000;
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            font-size: 10pt;
         }
 
         .signature-box {
-            height: 85px;
-            padding: 4px 0 0 0;
             text-align: center;
-            vertical-align: bottom;
         }
 
-        .signature-box img {
-            max-height: 80px;
-            opacity: 1;
-        }
-
-        .no-signature {
-            color: #aaa;
-            font-style: italic;
-            font-size: 12px;
+        .signature-box p {
+            margin: 5px 0;
         }
 
         .signature-line {
-            border-bottom: 1.2px solid #666;
-            height: 18px;
-            margin: 7px 15px 0 15px;
+            border-bottom: 1px solid #000;
+            width: 180px;
+            margin: 50px auto 5px auto;
         }
 
-        .signature-name {
+        .signature-title {
+            font-weight: normal;
+            font-size: 9pt;
+        }
+
+        .footer-section {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            font-size: 10pt;
+        }
+
+        .footer-box {
             text-align: center;
-            font-weight: 600;
-            padding-top: 7px;
-            font-size: 13px;
-            color: #000;
         }
 
-        @media print {
-            body {
-                background: #fff !important;
-                color: #000 !important;
-            }
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #DC143C;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
 
-            .document-info table,
-            #tabelalat {
-                font-size: 12px;
-                background: #fff !important;
-                color: #000 !important;
-            }
+        .print-button:hover {
+            background-color: #B71C1C;
         }
     </style>
 </head>
 
 <body>
-    <div style="margin-top: 0.3cm; margin-bottom: 0.3cm;">
-        <center>
-            <span class="main-title">FORMULIR PERMINTAAN BARANG</span>
-            <br>
-            <small style="font-size:12px;letter-spacing:1px; color:#000;">Dokumen ini dicetak otomatis melalui sistem.
-                Tidak perlu tanda tangan basah.</small>
-            <br>
-            <b style="font-size:13px;display:block;margin-top:8px;">Permintaan barang ini diajukan ke bagian SMI /
-                Logistik untuk diproses lebih lanjut.</b>
-        </center>
+
+    <div class="header">
+        <div class="title-section">
+            <h2>PERMINTAAN PEMBELIAN</h2>
+            <p>PURCHASE REQUESTION</p>
+        </div>
     </div>
 
-    <div class="document-info">
+    <div class="form-info">
         <table>
             <tr>
-                <td class="label">Departemen</td>
-                <td class="sep">:</td>
-                <td>{{ optional($data->getDepartemen)->Nama ?? '-' }}</td>
+                <td>Unit</td>
+                <td>:
+                    <input type="text" value="{{ $data->getDepartemen->Nama ?? '' }}">
+                </td>
             </tr>
             <tr>
-                <td class="label">Tanggal Permintaan</td>
-                <td class="sep">:</td>
-                <td>{{ \Carbon\Carbon::parse($data->Tanggal ?? '')->format('d/m/Y') }}</td>
+                <td>Tanggal</td>
+                <td>:
+                    <input type="text"
+                        value="{{ !empty($data->Tanggal) ? \Carbon\Carbon::parse($data->Tanggal)->format('d-m-Y') : '' }}">
+                </td>
             </tr>
             <tr>
-                <td class="label">Diajukan Oleh</td>
-                <td class="sep">:</td>
-                <td>{{ optional($data->getDiajukanOleh)->name ?? '-' }}</td>
+                <td>No.</td>
+                <td>:
+                    <input type="text" value="{{ $data->NomorPermintaan ?? '' }}">
+                </td>
             </tr>
-            <tr>
-                <td class="label">Nomor Pengajuan</td>
-                <td class="sep">:</td>
-                <td>{{ $data->NomorPengajuan ?? '-' }}</td>
-            </tr>
+
         </table>
     </div>
 
-    <center>
-        <p style="font-weight:bold;margin:0 0 8px 0;letter-spacing:.5px;color:#000;">Daftar Barang Diajukan</p>
-    </center>
-    <table id="tabelalat">
+    <table class="main-table">
         <thead>
             <tr>
-                <th style="width:5%;">No</th>
-                <th style="width:20%;">Nama Barang</th>
-                <th style="width:15%;">Merek</th>
-                <th style="width:10%;">Jumlah</th>
-                <th style="width:10%;">Satuan</th>
-                <th style="width:15%;">Rencana Penempatan</th>
-                <th style="width:20%;">Keterangan</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 25%;">Nama Barang</th>
+                <th style="width: 10%;">Jumlah</th>
+                <th style="width: 10%;">Satuan</th>
+                <th style="width: 20%;">Nama dan Paraf User**</th>
+                <th style="width: 15%;">Rencana Pemanfaatan</th>
+                <th style="width: 15%;">Keterangan Pembelian</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($data->getDetail as $index => $detail)
+            @php
+                $maxRows = 10;
+                $detailCount = isset($data->getDetail) ? $data->getDetail->count() : 0;
+            @endphp
+
+            @foreach ($data->getDetail as $i => $detail)
                 <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $detail->getBarang->Nama ?? '-' }}</td>
-                    <td>{{ $detail->getBarang->getMerk->Nama ?? '-' }}</td>
-                    <td style="text-align: center;">{{ $detail->Jumlah ?? '-' }}</td>
-                    <td>{{ $detail->getBarang->getSatuan->NamaSatuan ?? '-' }}</td>
-                    <td>{{ $detail->RencanaPenempatan ?? '-' }}</td>
-                    <td>{{ $detail->Keterangan ?? '-' }}</td>
+                    <td>{{ $i + 1 }}</td>
+                    <td>
+                        {{ $detail->getBarang->Nama ?? '' }}
+                        @if (!empty($detail->getBarang->getMerk->Nama))
+                            <br><span style="font-size:8pt; font-style:italic; color:#444;">Merk:
+                                {{ $detail->getBarang->getMerk->Nama }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        {{ is_numeric($detail->Jumlah) ? number_format($detail->Jumlah, 0, ',', '.') : $detail->Jumlah }}
+                    </td>
+                    <td>
+                        {{ $detail->getBarang->getSatuan->NamaSatuan }}
+                    </td>
+                    <td>
+                        @if (isset($data->getDiajukanOleh->name))
+                            {{ $data->getDiajukanOleh->name }}
+                        @endif
+                    </td>
+                    <td>
+                        {{ $detail->RencanaPenempatan ?? '' }}
+                    </td>
+                    <td>
+                        {{ $detail->Keterangan ?? '' }}
+                    </td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="7" style="text-align: center; font-style:italic;">Tidak ada data barang</td>
-                </tr>
-            @endforelse
+            @endforeach
+
         </tbody>
     </table>
 
+    {{-- <div class="notes">
+        <p>*Diisi oleh Logistik/SMI</p>
+        <p>**Bila user adalah dokter, maka paraf dilakukan oleh KSM</p>
+    </div> --}}
+
     <div class="signature-section">
-        <table class="signature-table" id="ttd">
-            <tr>
-                <!-- Diajukan Oleh -->
-                <td>
-                    <table>
-                        <tr>
-                            <td class="signature-title">Diajukan Oleh</td>
-                        </tr>
-                        <tr>
-                            <td class="signature-box">
-                                @if (!empty($data->getDiajukanOleh->ttd))
-                                    <img src="{{ asset('storage/tandatangan/' . $data->getDiajukanOleh->ttd) }}"
-                                        alt="Tanda Tangan">
-                                @else
-                                    <span class="no-signature">Tidak ada tanda tangan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="signature-line"></td>
-                        </tr>
-                        <tr>
-                            <td class="signature-name">{{ $data->getDiajukanOleh->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                </td>
-                <!-- Kepala Divisi -->
-                <td>
-                    <table>
-                        <tr>
-                            <td class="signature-title">Kepala Divisi</td>
-                        </tr>
-                        <tr>
-                            <td class="signature-box">
-                                @if (!empty($data->getKepalaDivisi->ttd))
-                                    <img src="{{ asset('storage/tandatangan/' . $data->getKepalaDivisi->ttd) }}"
-                                        alt="Tanda Tangan">
-                                @else
-                                    <span class="no-signature">Tidak ada tanda tangan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="signature-line"></td>
-                        </tr>
-                        <tr>
-                            <td class="signature-name">{{ $data->getKepalaDivisi->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                </td>
-                <!-- Penunjang Medis/Umum -->
-                <td>
-                    <table>
-                        <tr>
-                            <td class="signature-title">Penunjang Medis/Umum</td>
-                        </tr>
-                        <tr>
-                            <td class="signature-box">
-                                @if (!empty($data->getAccPenunjangMedis->ttd))
-                                    <img src="{{ asset('storage/tandatangan/' . $data->getAccPenunjangMedis->ttd) }}"
-                                        alt="Tanda Tangan">
-                                @else
-                                    <span class="no-signature">Tidak ada tanda tangan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="signature-line"></td>
-                        </tr>
-                        <tr>
-                            <td class="signature-name">{{ $data->getAccPenunjangMedis->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <!-- Direktur -->
-                <td class="bottom-sign">
-                    <table>
-                        <tr>
-                            <td class="signature-title">Direktur</td>
-                        </tr>
-                        <tr>
-                            <td class="signature-box">
-                                @if (!empty($data->getAccDirektur->ttd))
-                                    <img src="{{ asset('storage/tandatangan/' . $data->getAccDirektur->ttd) }}"
-                                        alt="Tanda Tangan">
-                                @else
-                                    <span class="no-signature">Tidak ada tanda tangan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="signature-line"></td>
-                        </tr>
-                        <tr>
-                            <td class="signature-name">{{ $data->getAccDirektur->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                </td>
-                <!-- SMI / Logistik -->
-                <td class="bottom-sign">
-                    <table>
-                        <tr>
-                            <td class="signature-title">SMI / Logistik</td>
-                        </tr>
-                        <tr>
-                            <td class="signature-box">
-                                @if (!empty($data->getSmi->ttd))
-                                    <img src="{{ asset('storage/tandatangan/' . $data->getSmi->ttd) }}"
-                                        alt="Tanda Tangan">
-                                @else
-                                    <span class="no-signature">Tidak ada tanda tangan</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="signature-line"></td>
-                        </tr>
-                        <tr>
-                            <td class="signature-name">{{ $data->getSmi->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                </td>
-                <td></td>
-            </tr>
+        <table style="width:100%; margin: 0 auto; border:none;">
+            <colgroup>
+                @if (!empty($approval))
+                    @foreach ($approval as $item)
+                        <col style="width: {{ 100 / count($approval) }}%;">
+                    @endforeach
+                @endif
+            </colgroup>
+            <tbody>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td style="text-align:center; font-weight:600; border:none;">
+                            {{ $item->getJabatan->Nama ?? '-' }}<br>
+                            {{ $item->getDepartemen->Nama ?? '' }}
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center align-bottom" style="height: 20px; border:none;">
+                            {{-- Tempat kosong untuk tanda tangan basah di cetak PDF --}}
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td style="height: 70px; text-align:center; border:none;">
+                            @if (!empty($item->Ttd))
+                                <img src="{{ public_path('storage/upload/tandatangan/' . $item->Ttd) }}" alt="TTD"
+                                    style="max-width:110px; max-height:60px;">
+                            @else
+                                <!-- Jika tidak ada tanda tangan digital, biarkan kosong untuk tanda tangan manual -->
+                            @endif
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center" style="padding-bottom:0; border:none;">
+                            <hr style="width: 70%; margin:0 auto 3px auto;border-top:2px solid #000;">
+                        </td>
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($approval as $item)
+                        <td class="text-center align-top" style="border:none;">
+                            <span style="font-weight:600; display: block; text-align: center;">
+                                {{ $item->Nama ?? '-' }}
+                            </span>
+                            <div style="display: block; text-align: center;">
+                                <small style="display: inline-block;">{{ $item->Status ?? '-' }}</small>
+
+                            </div>
+                        </td>
+                    @endforeach
+                </tr>
+            </tbody>
         </table>
     </div>
+
 </body>
 
 </html>

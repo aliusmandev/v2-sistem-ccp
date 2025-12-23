@@ -296,15 +296,19 @@ class PermintaanPembelianController extends Controller
 
     public function print($id)
     {
-        // $id = decrypt($id);
+        $id = decrypt($id);
         $data = PermintaanPembelian::with([
             'getDetail.getBarang.getMerk',
             'getDiajukanOleh',
             'getDetail.getBarang.getSatuan'
         ])->find($id);
-
+        $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
+            ->where('JenisFormId', $data->JenisForm)
+            ->where('DokumenId', $data->id)
+            ->orderBy('Urutan', 'asc')
+            ->get();
         // dd($data);
-        $pdf = Pdf::loadView('form.permintaan-pembelian.cetak-permintaan', compact('data'));
+        $pdf = Pdf::loadView('form.permintaan-pembelian.cetak-permintaan', compact('data', 'approval'));
         // If you need to enable remote, use setOption if supported:
         if (method_exists($pdf, 'setOption')) {
             $pdf->setOption('enable_remote', true);
