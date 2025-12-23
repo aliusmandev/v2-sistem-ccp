@@ -14,8 +14,13 @@ class MasterBarangController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = MasterBarang::with('getSatuan', 'getMerk', 'getJenis')->latest();
-            return DataTables::of($data)
+            $query = MasterBarang::with('getSatuan', 'getMerk', 'getJenis')->latest();
+            $jenisId = $request->input('jenis');
+            if (!empty($jenisId)) {
+                $query->where('Jenis', $jenisId);
+            }
+
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     return '
@@ -35,8 +40,8 @@ class MasterBarangController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        return view('master.barang.index');
+        $jenis = MasterJenisPengajuan::get();
+        return view('master.barang.index', compact('jenis'));
     }
 
     public function create()
@@ -49,12 +54,13 @@ class MasterBarangController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'Nama' => 'required|string|max:255',
             'Jenis' => 'required|string|max:190',
             'Satuan' => 'required|string|max:190',
-            'Merek' => 'required|string|max:190',
-            'Tipe' => 'required',
+            'Merek' => 'nullable|string|max:190',
+            'Tipe' => 'nullable',
         ]);
 
         MasterBarang::create([
@@ -62,8 +68,8 @@ class MasterBarangController extends Controller
             'Nama' => $request->Nama,
             'Jenis' => $request->Jenis,
             'Satuan' => $request->Satuan,
-            'Merek' => $request->Merek,
-            'Tipe' => $request->Tipe,
+            'Merek' => $request->Merek ?? null,
+            'Tipe' => $request->Tipe ?? null,
             'KodePerusahaan' => auth()->user()->kodeperusahaan,
             'UserCreate' => auth()->user()->name,
         ]);
@@ -117,16 +123,16 @@ class MasterBarangController extends Controller
             'Nama' => 'required|string|max:255',
             'Jenis' => 'required|string|max:190',
             'Satuan' => 'required|string|max:190',
-            'Merek' => 'required|string|max:190',
-            'Tipe' => 'required|string|max:190',
+            'Merek' => 'nullable|string|max:190',
+            'Tipe' => 'nullable|string|max:190',
         ]);
 
         $barang->update([
             'Nama' => $request->Nama,
             'Jenis' => $request->Jenis,
             'Satuan' => $request->Satuan,
-            'Merek' => $request->Merek,
-            'Tipe' => $request->Tipe,
+            'Merek' => $request->has('Merek') ? $request->Merek : null,
+            'Tipe' => $request->has('Tipe') ? $request->Tipe : null,
             'KodePerusahaan' => $request->KodePerusahaan,
             'UserUpdate' => auth()->user()->name,
         ]);

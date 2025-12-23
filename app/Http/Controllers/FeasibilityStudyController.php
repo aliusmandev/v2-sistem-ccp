@@ -46,6 +46,7 @@ class FeasibilityStudyController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $idPengajuan = $request->input('idPengajuan');
         $idPengajuanItem = $request->input('idPengajuanItem');
         $parseRupiah = function ($value) {
@@ -162,6 +163,7 @@ class FeasibilityStudyController extends Controller
             'idPengajuanItem' => $idPengajuanItem
         ]);
     }
+
     public function cetak($idPengajuan, $idPengajuanItem)
     {
         $data = FeasibilityStudy::with('getFsDetail', 'getBarang')
@@ -187,6 +189,7 @@ class FeasibilityStudyController extends Controller
         $pdf = \PDF::loadHTML($pdfView);
         return $pdf->stream('Feasibility-Study-' . $data->id . '.pdf');
     }
+
     public function approve($token)
     {
         // dd($token);
@@ -204,6 +207,7 @@ class FeasibilityStudyController extends Controller
 
         return redirect()->back()->with('success', 'Terima kasih, persetujuan Anda berhasil dicatat.');
     }
+
     /**
      * Show the form for editing the specified resource.
      */

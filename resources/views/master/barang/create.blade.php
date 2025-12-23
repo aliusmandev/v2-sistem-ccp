@@ -28,24 +28,12 @@
                         @csrf
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="Nama" class="form-label"><strong>Nama</strong></label>
-                                <input type="text" name="Nama"
-                                    class="form-control @error('Nama') is-invalid @enderror" id="Nama"
-                                    placeholder="Nama Barang" value="{{ old('Nama') }}">
-                                @error('Nama')
-                                    <div class="text-danger mt-1">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
                                 <label for="Jenis" class="form-label"><strong>Jenis</strong></label>
                                 <select name="Jenis" id="Jenis"
                                     class="form-select @error('Jenis') is-invalid @enderror">
                                     <option value="">-- Pilih Jenis --</option>
                                     @foreach ($jenis ?? [] as $j)
-                                        <option value="{{ $j->id }}"
-                                            {{ old('Jenis') == $j->Nama ? 'selected' : '' }}>
+                                        <option value="{{ $j->id }}" {{ old('Jenis') == $j->id ? 'selected' : '' }}>
                                             {{ $j->Nama }}
                                         </option>
                                     @endforeach
@@ -56,6 +44,18 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="col-md-6">
+                                <label for="Nama" class="form-label"><strong>Nama</strong></label>
+                                <input type="text" name="Nama"
+                                    class="form-control @error('Nama') is-invalid @enderror" id="Nama"
+                                    placeholder="Nama Barang" value="{{ old('Nama') }}">
+                                @error('Nama')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
                             <div class="col-md-6">
                                 <label for="Satuan" class="form-label"><strong>Satuan</strong></label>
                                 <select name="Satuan" id="Satuan"
@@ -119,4 +119,24 @@
     </div>
 @endsection
 @push('js')
+    <script>
+        function updateMerekTipeDisable() {
+            var jenisVal = document.getElementById('Jenis').value;
+            var merek = document.getElementById('Merek');
+            var tipe = document.getElementById('Tipe');
+            if (jenisVal === '1' || jenisVal === '2') {
+                merek.disabled = false;
+                tipe.disabled = false;
+            } else {
+                merek.disabled = true;
+                tipe.disabled = true;
+
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateMerekTipeDisable();
+            document.getElementById('Jenis').addEventListener('change', updateMerekTipeDisable);
+        });
+    </script>
 @endpush

@@ -130,139 +130,142 @@
                             @endforeach
                         </ul>
                         <div class="tab-content" id="vendorTabPanes">
-                            @foreach ($data->getVendor as $vIdx => $Vendor)
-                                <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
-                                    id="vendor-pane-{{ $vIdx }}" role="tabpanel"
-                                    aria-labelledby="vendor-tab-{{ $vIdx }}">
+                            @if ($data->Jenis == 1)
+                                @foreach ($data->getVendor as $vIdx => $Vendor)
+                                    <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
+                                        id="vendor-pane-{{ $vIdx }}" role="tabpanel"
+                                        aria-labelledby="vendor-tab-{{ $vIdx }}">
 
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
-                                        value="{{ $data->id }}">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
-                                        value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
-                                    {{-- Assuming IdRekomendasi will be filled in the backend or left empty for create --}}
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
-                                        value="">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
-                                        value="{{ $Vendor->NamaVendor }}">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
-                                        value="{{ $data->getPengajuanItem[0]->getBarang->Nama ?? '' }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
+                                            value="{{ $data->id }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
+                                            value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+                                        {{-- Assuming IdRekomendasi will be filled in the backend or left empty for create --}}
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
+                                            value="">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
+                                            value="{{ $Vendor->NamaVendor }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
+                                            value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
 
-                                    <table class="table align-middle nilai-table" style="width:100%;"
-                                        data-vidx="{{ $vIdx }}">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th class="text-center" style="width:5%;">No</th>
-                                                <th class="text-center" style="width:25%;">Parameter</th>
-                                                <th class="text-center" style="width:70%;">Deskripsi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="fw-bold">Harga Awal</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][HargaAwal]"
-                                                        class="form-control rupiah-input" placeholder="Masukkan Harga Awal"
-                                                        value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : old("rekomendasi.$vIdx.HargaAwal") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">2</td>
-                                                <td class="fw-bold">Harga Nego</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][HargaNego]"
-                                                        class="form-control rupiah-input" placeholder="Masukkan Harga Nego"
-                                                        value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
-                                                </td>
-                                            </tr>
+                                        <table class="table align-middle nilai-table" style="width:100%;"
+                                            data-vidx="{{ $vIdx }}">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center" style="width:5%;">No</th>
+                                                    <th class="text-center" style="width:25%;">Parameter</th>
+                                                    <th class="text-center" style="width:70%;">Deskripsi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">1</td>
+                                                    <td class="fw-bold">Harga Awal</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaAwal]"
+                                                            class="form-control rupiah-input"
+                                                            placeholder="Masukkan Harga Awal"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : old("rekomendasi.$vIdx.HargaAwal") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">2</td>
+                                                    <td class="fw-bold">Harga Nego</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaNego]"
+                                                            class="form-control rupiah-input"
+                                                            placeholder="Masukkan Harga Nego"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
+                                                    </td>
+                                                </tr>
 
-                                            <tr>
-                                                <td class="text-center">3</td>
-                                                <td class="fw-bold">Spesifikasi</td>
-                                                <td>
-                                                    <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
-                                                        placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : old("rekomendasi.$vIdx.Spesifikasi") }}</textarea>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">4</td>
-                                                <td class="fw-bold">Negara Produksi</td>
-                                                <td>
-                                                    <select name="rekomendasi[{{ $vIdx }}][NegaraProduksi]"
-                                                        class="form-control select2" data-placeholder="Pilih Negara">
-                                                        <option value="">Pilih Negara</option>
-                                                        @foreach ($negara as $n)
-                                                            <option value="{{ $n->Kode }}"
-                                                                {{ isset($Vendor->getRekomendasi->NegaraProduksi) && $Vendor->getRekomendasi->NegaraProduksi == $n->Kode ? 'selected' : (old("rekomendasi.$vIdx.NegaraProduksi") == $n->Kode ? 'selected' : '') }}>
-                                                                {{ $n->Nama }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">5</td>
-                                                <td class="fw-bold">Garansi</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][Garansi]"
-                                                        class="form-control" placeholder="Garansi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : old("rekomendasi.$vIdx.Garansi") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">6</td>
-                                                <td class="fw-bold">Teknisi</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][Teknisi]"
-                                                        class="form-control" placeholder="Teknisi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Teknisi) ? $Vendor->getRekomendasi->Teknisi : old("rekomendasi.$vIdx.Teknisi") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">7</td>
-                                                <td class="fw-bold">Bmhp</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][Bmhp]"
-                                                        placeholder="Bahan Medis Habis Pakai (Bmhp)"
-                                                        value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : old("rekomendasi.$vIdx.Bmhp") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">8</td>
-                                                <td class="fw-bold">Spare Part</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][SparePart]"
-                                                        placeholder="Spare Part"
-                                                        value="{{ isset($Vendor->getRekomendasi->SparePart) ? $Vendor->getRekomendasi->SparePart : old("rekomendasi.$vIdx.SparePart") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">9</td>
-                                                <td class="fw-bold">Backup Unit</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][BackupUnit]"
-                                                        placeholder="Backup Unit"
-                                                        value="{{ isset($Vendor->getRekomendasi->BackupUnit) ? $Vendor->getRekomendasi->BackupUnit : old("rekomendasi.$vIdx.BackupUnit") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">10</td>
-                                                <td class="fw-bold">TOP (Term of Payment)</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][Top]"
-                                                        placeholder="Contoh: 30 hari"
-                                                        value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
-                                                </td>
-                                            </tr>
-                                            {{-- <tr>
+                                                <tr>
+                                                    <td class="text-center">3</td>
+                                                    <td class="fw-bold">Spesifikasi</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
+                                                            placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : old("rekomendasi.$vIdx.Spesifikasi") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">4</td>
+                                                    <td class="fw-bold">Negara Produksi</td>
+                                                    <td>
+                                                        <select name="rekomendasi[{{ $vIdx }}][NegaraProduksi]"
+                                                            class="form-control select2" data-placeholder="Pilih Negara">
+                                                            <option value="">Pilih Negara</option>
+                                                            @foreach ($negara as $n)
+                                                                <option value="{{ $n->Kode }}"
+                                                                    {{ isset($Vendor->getRekomendasi->NegaraProduksi) && $Vendor->getRekomendasi->NegaraProduksi == $n->Kode ? 'selected' : (old("rekomendasi.$vIdx.NegaraProduksi") == $n->Kode ? 'selected' : '') }}>
+                                                                    {{ $n->Nama }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">5</td>
+                                                    <td class="fw-bold">Garansi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Garansi]"
+                                                            class="form-control" placeholder="Garansi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : old("rekomendasi.$vIdx.Garansi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">6</td>
+                                                    <td class="fw-bold">Teknisi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Teknisi]"
+                                                            class="form-control" placeholder="Teknisi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Teknisi) ? $Vendor->getRekomendasi->Teknisi : old("rekomendasi.$vIdx.Teknisi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">7</td>
+                                                    <td class="fw-bold">Bmhp</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Bmhp]"
+                                                            placeholder="Bahan Medis Habis Pakai (Bmhp)"
+                                                            value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : old("rekomendasi.$vIdx.Bmhp") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">8</td>
+                                                    <td class="fw-bold">Spare Part</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][SparePart]"
+                                                            placeholder="Spare Part"
+                                                            value="{{ isset($Vendor->getRekomendasi->SparePart) ? $Vendor->getRekomendasi->SparePart : old("rekomendasi.$vIdx.SparePart") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">9</td>
+                                                    <td class="fw-bold">Backup Unit</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][BackupUnit]"
+                                                            placeholder="Backup Unit"
+                                                            value="{{ isset($Vendor->getRekomendasi->BackupUnit) ? $Vendor->getRekomendasi->BackupUnit : old("rekomendasi.$vIdx.BackupUnit") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">10</td>
+                                                    <td class="fw-bold">TOP (Term of Payment)</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Top]"
+                                                            placeholder="Contoh: 30 hari"
+                                                            value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
+                                                    </td>
+                                                </tr>
+                                                {{-- <tr>
                                                 <td class="text-center">11</td>
                                                 <td class="fw-bold">Rekomendasi</td>
                                                 <td>
@@ -272,68 +275,286 @@
                                                         value="{{ old("rekomendasi.$vIdx.Rekomendasi") }}">
                                                 </td>
                                             </tr> --}}
-                                            <tr>
-                                                <td class="text-center">11</td>
-                                                <td class="fw-bold">Keterangan</td>
-                                                <td>
-                                                    <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
-                                                        placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">12</td>
-                                                <td class="fw-bold">Rekomendasi Vendor</td>
-                                                <td>
-                                                    @php
-                                                        $allSelected = [];
-                                                        foreach ($data->getVendor as $_idx => $_v) {
-                                                            if (
-                                                                isset($_v->getRekomendasi->Rekomendasi) &&
-                                                                $_v->getRekomendasi->Rekomendasi != ''
-                                                            ) {
-                                                                $allSelected[$_idx] = $_v->getRekomendasi->Rekomendasi;
-                                                            } else {
-                                                                $oldVal = old("rekomendasi.$_idx.RekomendasiSelect");
-                                                                if ($oldVal) {
-                                                                    $allSelected[$_idx] = $oldVal;
+                                                <tr>
+                                                    <td class="text-center">11</td>
+                                                    <td class="fw-bold">Keterangan</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
+                                                            placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">12</td>
+                                                    <td class="fw-bold">Rekomendasi Vendor</td>
+                                                    <td>
+                                                        @php
+                                                            $allSelected = [];
+                                                            foreach ($data->getVendor as $_idx => $_v) {
+                                                                if (
+                                                                    isset($_v->getRekomendasi->Rekomendasi) &&
+                                                                    $_v->getRekomendasi->Rekomendasi != ''
+                                                                ) {
+                                                                    $allSelected[$_idx] =
+                                                                        $_v->getRekomendasi->Rekomendasi;
+                                                                } else {
+                                                                    $oldVal = old(
+                                                                        "rekomendasi.$_idx.RekomendasiSelect",
+                                                                    );
+                                                                    if ($oldVal) {
+                                                                        $allSelected[$_idx] = $oldVal;
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                        $options = [
-                                                            1 => 'Rekomendasi 1',
-                                                            2 => 'Rekomendasi 2',
-                                                            3 => 'Rekomendasi 3',
-                                                        ];
-                                                    @endphp
-                                                    <select class="form-select mb-2 rekomendasi-select"
-                                                        name="rekomendasi[{{ $vIdx }}][RekomendasiSelect]"
-                                                        data-vendor-idx="{{ $vIdx }}">
-                                                        <option value="">Pilih Rekomendasi</option>
-                                                        @foreach ($options as $optVal => $optLabel)
-                                                            @php
-                                                                $selectedInOtherTab = collect($allSelected)
-                                                                    ->except($vIdx)
-                                                                    ->contains((string) $optVal);
-                                                                $thisSelected = isset(
-                                                                    $Vendor->getRekomendasi->Rekomendasi,
-                                                                )
-                                                                    ? $Vendor->getRekomendasi->Rekomendasi
-                                                                    : old("rekomendasi.$vIdx.RekomendasiSelect");
-                                                            @endphp
-                                                            <option value="{{ $optVal }}"
-                                                                @if ($thisSelected == $optVal) selected @endif
-                                                                @if ($selectedInOtherTab && $thisSelected != $optVal) style="display:none;" @endif>
-                                                                {{ $optLabel }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                            </tr>
+                                                            $options = [
+                                                                1 => 'Rekomendasi 1',
+                                                                2 => 'Rekomendasi 2',
+                                                                3 => 'Rekomendasi 3',
+                                                            ];
+                                                        @endphp
+                                                        <select class="form-select mb-2 rekomendasi-select"
+                                                            name="rekomendasi[{{ $vIdx }}][RekomendasiSelect]"
+                                                            data-vendor-idx="{{ $vIdx }}">
+                                                            <option value="">Pilih Rekomendasi</option>
+                                                            @foreach ($options as $optVal => $optLabel)
+                                                                @php
+                                                                    $selectedInOtherTab = collect($allSelected)
+                                                                        ->except($vIdx)
+                                                                        ->contains((string) $optVal);
+                                                                    $thisSelected = isset(
+                                                                        $Vendor->getRekomendasi->Rekomendasi,
+                                                                    )
+                                                                        ? $Vendor->getRekomendasi->Rekomendasi
+                                                                        : old("rekomendasi.$vIdx.RekomendasiSelect");
+                                                                @endphp
+                                                                <option value="{{ $optVal }}"
+                                                                    @if ($thisSelected == $optVal) selected @endif
+                                                                    @if ($selectedInOtherTab && $thisSelected != $optVal) style="display:none;" @endif>
+                                                                    {{ $optLabel }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
 
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @else
+                                @if (optional($data->getRekomendasi->first())->File)
+                                    <div class="alert alert-outline-primary mb-4 d-flex align-items-center" role="alert"
+                                        style="border-width:2px;">
+                                        <i class="bi bi-file-earmark-text me-2" style="font-size: 1.7rem;"></i>
+                                        <div class="w-100">
+                                            <div class="fw-semibold mb-1">File Rekomendasi</div>
+                                            <div class="mb-2 text-secondary" style="font-size: 15px;">
+                                                File rekomendasi pembelian telah diunggah.
+                                            </div>
+                                            <a href="{{ asset('storage/rekomendasi_file/' . $data->getRekomendasi->first()->File) }}"
+                                                target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-eye me-1"></i> Lihat / Download File
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
+                                @foreach ($data->getVendor as $vIdx => $Vendor)
+                                    <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
+                                        id="vendor-pane-{{ $vIdx }}" role="tabpanel"
+                                        aria-labelledby="vendor-tab-{{ $vIdx }}">
+
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
+                                            value="{{ $data->id }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
+                                            value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+                                        {{-- Assuming IdRekomendasi will be filled in the backend or left empty for create --}}
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
+                                            value="">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
+                                            value="{{ $Vendor->NamaVendor }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
+                                            value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
+
+                                        <table class="table align-middle nilai-table" style="width:100%;"
+                                            data-vidx="{{ $vIdx }}">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center" style="width:5%;">No</th>
+                                                    <th class="text-center" style="width:25%;">Parameter</th>
+                                                    <th class="text-center" style="width:70%;">Deskripsi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">1</td>
+                                                    <td class="fw-bold">Harga Awal</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaAwal]"
+                                                            class="form-control rupiah-input"
+                                                            placeholder="Masukkan Harga Awal"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : old("rekomendasi.$vIdx.HargaAwal") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">2</td>
+                                                    <td class="fw-bold">Harga Nego</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaNego]"
+                                                            class="form-control rupiah-input"
+                                                            placeholder="Masukkan Harga Nego"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="text-center">3</td>
+                                                    <td class="fw-bold">Spesifikasi</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
+                                                            placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : old("rekomendasi.$vIdx.Spesifikasi") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">4</td>
+                                                    <td class="fw-bold">Populasi</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Populasi]"
+                                                            placeholder="Populasi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Populasi) ? $Vendor->getRekomendasi->Populasi : old("rekomendasi.$vIdx.Populasi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">5</td>
+                                                    <td class="fw-bold">Garansi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Garansi]"
+                                                            class="form-control" placeholder="Garansi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : old("rekomendasi.$vIdx.Garansi") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Section Penyesuaian Name -->
+                                                <tr>
+                                                    <td class="text-center">6</td>
+                                                    <td class="fw-bold">Time Line Pekerjaan</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][TimeLinePekerjaan]"
+                                                            placeholder="Time Line Pekerjaan"
+                                                            value="{{ isset($Vendor->getRekomendasi->TimeLinePekerjaan) ? $Vendor->getRekomendasi->TimeLinePekerjaan : old("rekomendasi.$vIdx.TimeLinePekerjaan") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">7</td>
+                                                    <td class="fw-bold">Jumlah Pekerja</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][JumlahPekerja]"
+                                                            placeholder="Jumlah Pekerja"
+                                                            value="{{ isset($Vendor->getRekomendasi->JumlahPekerja) ? $Vendor->getRekomendasi->JumlahPekerja : old("rekomendasi.$vIdx.JumlahPekerja") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="text-center">8</td>
+                                                    <td class="fw-bold">Luasan</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Luasan]"
+                                                            placeholder="Masukkan Luasan"
+                                                            value="{{ isset($Vendor->getRekomendasi->Luasan) ? $Vendor->getRekomendasi->Luasan : old("rekomendasi.$vIdx.Luasan") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">9</td>
+                                                    <td class="fw-bold">Review Vendor</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][ReviewVendor]"
+                                                            placeholder="Masukkan Review Vendor"
+                                                            value="{{ isset($Vendor->getRekomendasi->ReviewVendor) ? $Vendor->getRekomendasi->ReviewVendor : old("rekomendasi.$vIdx.ReviewVendor") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">10</td>
+                                                    <td class="fw-bold">TOP (Term of Payment)</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Top]"
+                                                            placeholder="Contoh: 30 hari"
+                                                            value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">11</td>
+                                                    <td class="fw-bold">Keterangan</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
+                                                            placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">12</td>
+                                                    <td class="fw-bold">Rekomendasi Vendor</td>
+                                                    <td>
+                                                        @php
+                                                            $allSelected = [];
+                                                            foreach ($data->getVendor as $_idx => $_v) {
+                                                                if (
+                                                                    isset($_v->getRekomendasi->Rekomendasi) &&
+                                                                    $_v->getRekomendasi->Rekomendasi != ''
+                                                                ) {
+                                                                    $allSelected[$_idx] =
+                                                                        $_v->getRekomendasi->Rekomendasi;
+                                                                } else {
+                                                                    $oldVal = old(
+                                                                        "rekomendasi.$_idx.RekomendasiSelect",
+                                                                    );
+                                                                    if ($oldVal) {
+                                                                        $allSelected[$_idx] = $oldVal;
+                                                                    }
+                                                                }
+                                                            }
+                                                            $options = [
+                                                                1 => 'Rekomendasi 1',
+                                                                2 => 'Rekomendasi 2',
+                                                                3 => 'Rekomendasi 3',
+                                                            ];
+                                                        @endphp
+                                                        <select class="form-select mb-2 rekomendasi-select"
+                                                            name="rekomendasi[{{ $vIdx }}][RekomendasiSelect]"
+                                                            data-vendor-idx="{{ $vIdx }}">
+                                                            <option value="">Pilih Rekomendasi</option>
+                                                            @foreach ($options as $optVal => $optLabel)
+                                                                @php
+                                                                    $selectedInOtherTab = collect($allSelected)
+                                                                        ->except($vIdx)
+                                                                        ->contains((string) $optVal);
+                                                                    $thisSelected = isset(
+                                                                        $Vendor->getRekomendasi->Rekomendasi,
+                                                                    )
+                                                                        ? $Vendor->getRekomendasi->Rekomendasi
+                                                                        : old("rekomendasi.$vIdx.RekomendasiSelect");
+                                                                @endphp
+                                                                <option value="{{ $optVal }}"
+                                                                    @if ($thisSelected == $optVal) selected @endif
+                                                                    @if ($selectedInOtherTab && $thisSelected != $optVal) style="display:none;" @endif>
+                                                                    {{ $optLabel }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @endif
+
 
                         </div>
                         <table class="table table-borderless" style="max-width:100%; margin: 0 auto;">

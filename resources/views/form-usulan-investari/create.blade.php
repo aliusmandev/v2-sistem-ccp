@@ -603,7 +603,7 @@
                             </div>
                         </div>
                         <div class="col-12 text-end mt-4">
-                            <a href="{{ route('rekomendasi.show', encrypt($data->id)) }}" class="btn btn-secondary me-2">
+                            <a href="{{ route('ajukan.show', encrypt($data->id)) }}" class="btn btn-secondary me-2">
                                 <i class="fa fa-arrow-left"></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">

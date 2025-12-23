@@ -203,15 +203,14 @@
 
                     <div class="row mt-4 justify-content-center">
                         <div class="col-12">
-                            <h5 class="text-center mb-4"><strong>Persetujuan Permintaan Pembelian</strong></h5>
-                            <!-- Tambah baris untuk nama jabatan di atas tabel approval -->
+                            <h5 class="text-center mb-4"><strong>Persetujuan HTA / GPA</strong></h5>
                             <div class="mb-2 text-center">
                                 @if (!empty($approval))
                                     <div class="row justify-content-center">
                                         @foreach ($approval as $item)
                                             <div class="col text-center" style="font-weight:600;">
                                                 {{ $item->getJabatan->Nama ?? '-' }}
-                                                {{ $item->getDepartemen->Nama ?? '-' }}
+                                                {{ $item->getDepartemen->Nama ?? '' }}
                                             </div>
                                         @endforeach
                                     </div>
@@ -227,14 +226,7 @@
                                         @endif
                                     </colgroup>
                                     <tbody>
-                                        <tr>
-                                            @foreach ($approval as $item)
-                                                <td class="text-center align-bottom">
-                                                    {{-- Nama jabatan sudah ditampilkan di atas, bisa dikosongi atau diisi strip --}}
-                                                    -
-                                                </td>
-                                            @endforeach
-                                        </tr>
+
                                         <tr>
                                             @foreach ($approval as $item)
                                                 <td class="text-center" style="height:70px;">

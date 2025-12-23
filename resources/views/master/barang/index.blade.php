@@ -29,6 +29,22 @@
                     </p>
                 </div>
                 <div class="card-body">
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="filterJenis" class="form-label"><strong>Filter Jenis</strong></label>
+                            <select id="filterJenis" class="form-select">
+                                <option value="">-- Semua Jenis --</option>
+                                @foreach ($jenis ?? [] as $j)
+                                    <option value="{{ $j->id }}">{{ $j->Nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" id="resetFilter" class="btn btn-secondary mt-3 mt-md-0 w-100">
+                                Reset Filter
+                            </button>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table datanew cell-border compact stripe" id="barangTable" width="100%">
                             <thead>
@@ -100,7 +116,7 @@
                 });
             });
 
-            function loadDataTable() {
+            function loadDataTable(jenis_id = '') {
                 $('#barangTable').DataTable({
                     responsive: true,
                     serverSide: true,
@@ -108,6 +124,9 @@
                     bDestroy: true,
                     ajax: {
                         url: "{{ route('barang.index') }}",
+                        data: function(d) {
+                            d.jenis = jenis_id || $('#filterJenis').val();
+                        }
                     },
                     language: {
                         processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Memuat...</span>',
@@ -153,6 +172,17 @@
             }
 
             loadDataTable();
+
+            $('#filterJenis').on('change', function() {
+                $('#barangTable').DataTable().destroy();
+                loadDataTable();
+            });
+
+            $('#resetFilter').on('click', function() {
+                $('#filterJenis').val('');
+                $('#barangTable').DataTable().destroy();
+                loadDataTable();
+            });
         });
     </script>
 @endpush

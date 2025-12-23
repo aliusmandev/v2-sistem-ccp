@@ -30,6 +30,11 @@ return new class extends Migration {
             $table->string('BackupUnit')->nullable();
             $table->string('Top')->nullable();
             $table->string('Rekomendasi')->nullable();
+            $table->string('TimeLinePekerjaan')->nullable();
+            $table->string('JumlahPekerja')->nullable();
+            $table->string('Luasan')->nullable();
+            $table->string('ReviewVendor')->nullable();
+            $table->string('File')->nullable();
             $table->string('UserNego')->nullable();
             $table->text('Keterangan')->nullable();
             $table->string('Disetujui')->nullable();

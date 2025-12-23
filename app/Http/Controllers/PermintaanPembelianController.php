@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifikasiPermintaanPembelian;
 use App\Models\DokumenApproval;
 use App\Models\MasterBarang;
 use App\Models\MasterDepartemen;
 use App\Models\MasterForm;
+use App\Models\MasterJabatan;
 use App\Models\MasterJenisPengajuan;
 use App\Models\MasterPerusahaan;
 use App\Models\MasterSatuan;
@@ -14,6 +16,7 @@ use App\Models\PermintaanPembelianDetail;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -324,7 +327,7 @@ class PermintaanPembelianController extends Controller
         $id = decrypt($id);
         $barang = MasterBarang::with('getMerk', 'getSatuan')->get();
         $departemen = MasterDepartemen::get();
-        $jabatan = MasterDepartemen::get();
+        $jabatan = MasterJabatan::get();
         $satuan = MasterSatuan::get();
         $data = PermintaanPembelian::with('getDetail.getBarang')->find($id);
         $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
@@ -397,6 +400,14 @@ class PermintaanPembelianController extends Controller
             $userId = trim($userIdParts[0] ?? '');
             $namaUser = trim($userIdParts[1] ?? '');
 
+            if ($userId === (string) (auth()->user()->id)) {
+                $status = 'Approved';
+                $tanggalApprove = now();
+            } else {
+                $status = 'Pending';
+                $tanggalApprove = now();
+            }
+
             $approval->update([
                 'JabatanId' => $request->JabatanId[$key],
                 'DepartemenId' => $request->DepartemenId[$key],
@@ -404,10 +415,17 @@ class PermintaanPembelianController extends Controller
                 'Nama' => $namaUser,
                 'Email' => $request->Email[$key],
                 'Urutan' => $approval->Urutan,
+                'Status' => $status,
+                'TanggalApprove' => $tanggalApprove,
                 'ApprovalToken' => str_replace('-', '', Str::uuid()->toString()),
                 'UserUpdate' => auth()->user()->name,
             ]);
-
+            Mail::to($request->Email[$key])->send(
+                new NotifikasiPermintaanPembelian(
+                    $permintaan,
+                    $approval
+                )
+            );
         }
         if (function_exists('activity')) {
             activity()

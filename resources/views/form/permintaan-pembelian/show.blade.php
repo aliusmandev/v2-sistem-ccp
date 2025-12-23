@@ -114,7 +114,7 @@
                                         @foreach ($approval as $item)
                                             <div class="col text-center" style="font-weight:600;">
                                                 {{ $item->getJabatan->Nama ?? '-' }}
-                                                {{ $item->getDepartemen->Nama ?? '-' }}
+                                                {{ $item->getDepartemen->Nama ?? '' }}
                                             </div>
                                         @endforeach
                                     </div>
@@ -130,17 +130,16 @@
                                         @endif
                                     </colgroup>
                                     <tbody>
-                                        <tr>
+                                        {{-- <tr>
                                             @foreach ($approval as $item)
                                                 <td class="text-center align-bottom">
-                                                    {{-- Nama jabatan sudah ditampilkan di atas, bisa dikosongi atau diisi strip --}}
-                                                    -
+
                                                 </td>
                                             @endforeach
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             @foreach ($approval as $item)
-                                                <td class="text-center" style="height:70px;">
+                                                <td class="text-center" style="height:80px;">
                                                     @if ($item->Status == 'Approved')
                                                         {!! QrCode::size(80)->generate(route('approval.validasi', $item->ApprovalToken)) !!}
                                                     @endif
@@ -190,8 +189,8 @@
                                             data-title="Konfirmasi"
                                             data-text="Apakah Anda yakin ingin menyetujui sebagai {{ $item->getJabatan->Nama ?? $item->JenisUser }}?"
                                             data-form="formApprove{{ $item->id }}">
-                                            <i class="fa {{ $item->icon ?? 'fa-user' }}"></i>
-                                            {{ $item->JabatanNama ?? $item->JenisUser }}
+                                            <i class="fa fa-check"></i>
+                                            Setujui
                                         </button>
                                     @endif
                                 </form>

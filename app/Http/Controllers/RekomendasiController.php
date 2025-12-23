@@ -41,7 +41,8 @@ class RekomendasiController extends Controller
                 }, function ($query) {
                     // Default: Tampilkan Diajukan atau Selesai jika tidak ada filter status
                     $query->where(function ($q) {
-                        $q->where('Status', 'Diajukan')
+                        $q
+                            ->where('Status', 'Diajukan')
                             ->orWhere('Status', 'Selesai');
                     });
                 })
@@ -70,27 +71,27 @@ class RekomendasiController extends Controller
                         case 'Draft':
                             return '<span class="badge" style="background-color:#6c757d;color:#fff;">
                                 <i class="fa fa-pencil-alt"></i> Draft
-                            </span>'; // abu
+                            </span>';  // abu
                         case 'Diajukan':
                             return '<span class="badge" style="background-color:#007bff;color:#fff;">
                                 <i class="fa fa-paper-plane"></i> Diajukan
-                            </span>'; // biru
+                            </span>';  // biru
                         case 'Dalam Review':
                             return '<span class="badge" style="background-color:#ffc107;color:#212529;">
                                 <i class="fa fa-search"></i> Dalam Review
-                            </span>'; // kuning
+                            </span>';  // kuning
                         case 'Selesai':
                             return '<span class="badge" style="background-color:#198754;color:#fff;">
                                 <i class="fa fa-check-circle"></i> Selesai
-                            </span>'; // hijau tua
+                            </span>';  // hijau tua
                         case 'Disetujui':
                             return '<span class="badge" style="background-color:#28a745;color:#fff;">
                                 <i class="fa fa-thumbs-up"></i> Disetujui
-                            </span>'; // hijau
+                            </span>';  // hijau
                         case 'Ditolak':
                             return '<span class="badge" style="background-color:#dc3545;color:#fff;">
                                 <i class="fa fa-times-circle"></i> Ditolak
-                            </span>'; // merah
+                            </span>';  // merah
                         default:
                             return '<span class="badge" style="background-color:#f8f9fa;color:#212529;">
                                 <i class="fa fa-question-circle"></i> ' . e($row->Status ?? '-') . '
@@ -118,6 +119,7 @@ class RekomendasiController extends Controller
     {
         $idPengajuan = decrypt($idPengajuan);
         $idPengajuanItem = decrypt($idPengajuanItem);
+        // dd($idPengajuanItem);
         $data = PengajuanPembelian::with([
             'getVendor.getVendorDetail',
             'getHtaGpa' => function ($query) use ($idPengajuanItem) {
@@ -137,7 +139,12 @@ class RekomendasiController extends Controller
         // dd($data);
         $negara = Negara::get();
         $parameter = MasterParameter::get();
+        // if ($data->Jenis == 1) {
         return view('rekomendasi-pembelian.create', compact('data', 'parameter', 'negara'));
+        // } else {
+        // dd('umum');
+        // return view('rekomendasi-pembelian.umum.create', compact('data', 'parameter', 'negara'));
+        // }
     }
 
     /**
@@ -145,7 +152,19 @@ class RekomendasiController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        $fileName = null;
+        if ($request->hasFile('upload_file')) {
+            $file = $request->file('upload_file');
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('rekomendasi_file', $fileName, 'public');
+        }
+
+        // Ambil data lama dulu (jika ada) untuk mengambil File jika tidak di-request (update)
+        $existingRekomendasi = Rekomendasi::where([
+            'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
+            'PengajuanItemId' => $request->rekomendasi[0]['PengajuanItemId'],
+        ])->first();
+
         $header = Rekomendasi::updateOrCreate(
             [
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
@@ -155,6 +174,9 @@ class RekomendasiController extends Controller
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
                 'PengajuanItemId' => $request->rekomendasi[0]['PengajuanItemId'],
                 'UserNego' => auth()->user()->id,
+                'File' => $fileName !== null
+                    ? $fileName
+                    : ($existingRekomendasi ? $existingRekomendasi->File : null),
             ]
         );
 
@@ -180,10 +202,13 @@ class RekomendasiController extends Controller
                         'BackupUnit' => $value['BackupUnit'] ?? null,
                         'Top' => $value['Top'] ?? null,
                         'Populasi' => $value['Populasi'] ?? null,
+                        'TimeLinePekerjaan' => $value['TimeLinePekerjaan'] ?? null,
+                        'JumlahPekerja' => $value['JumlahPekerja'] ?? null,
+                        'Luasan' => $value['Luasan'] ?? null,
+                        'ReviewVendor' => $value['ReviewVendor'] ?? null,
+                        'File' => $value['File'] ?? null,
                         'UserNego' => auth()->user()->id,
-                        // 'Rekomendasi' dihilangkan, karena tidak ada di input sesuai contoh yang diberikan
                         'Keterangan' => $value['Keterangan'] ?? null,
-                        // 'Disetujui' dihilangkan, karena tidak ada di input sesuai contoh yang diberikan
                         'KodePerusahaan' => auth()->user()->kodeperusahaan ?? null,
                     ]
                 );
@@ -203,6 +228,7 @@ class RekomendasiController extends Controller
         $masterbarang = MasterBarang::get();
         return view('rekomendasi-pembelian.show', compact('data', 'vendor', 'masterbarang'));
     }
+
     public function rekap($idPengajuan, $idPengajuanItem)
     {
         $idPengajuan = decrypt($idPengajuan);
@@ -236,7 +262,7 @@ class RekomendasiController extends Controller
             'formPermintaan' => $lembarDisposisi->FormPermintaanUser,
             'approval' => $approval,
         ];
-        //fui
+        // fui
         $usulan = UsulanInvestasi::with('getFuiDetail', 'getBarang', 'getVendor', 'getAccDirektur', 'getAccKadiv', 'getDepartemen', 'getDepartemen2', 'getNamaForm')
             ->where('IdPengajuan', $idPengajuan)
             ->where('PengajuanItemId', $idPengajuanItem)
@@ -270,6 +296,7 @@ class RekomendasiController extends Controller
         ]);
         return $pdf->stream('rekap_pengajuan.pdf');
     }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -284,10 +311,18 @@ class RekomendasiController extends Controller
         $idPengajuanItem = decrypt($idPengajuanItem);
 
         $rekomendasi = Rekomendasi::with('getRekomedasiDetail.getPerusahaan', 'getRekomedasiDetail.getBarang', 'getRekomedasiDetail.getNegara')->where('PengajuanItemId', $idPengajuanItem)->first();
-        $pdf = Pdf::loadView('rekomendasi-pembelian.cetak-review', [
-            'rekomendasi' => $rekomendasi,
-        ]);
-        return $pdf->stream('cetak_rekomendasi_' . $idPengajuan . '_' . $idPengajuanItem . '.pdf');
+        $jenis = PengajuanPembelian::find($rekomendasi->IdPengajuan);
+        if ($jenis->Jenis == 1) {
+            $pdf = Pdf::loadView('rekomendasi-pembelian.cetak-review', [
+                'rekomendasi' => $rekomendasi,
+            ]);
+            return $pdf->stream('cetak_rekomendasi_' . $idPengajuan . '_' . $idPengajuanItem . '.pdf');
+        } else {
+            $pdf = Pdf::loadView('rekomendasi-pembelian.cetak-review-umum', [
+                'rekomendasi' => $rekomendasi,
+            ]);
+            return $pdf->stream('cetak_rekomendasi_' . $idPengajuan . '_' . $idPengajuanItem . '.pdf');
+        }
     }
 
     public function detail($idPengajuan, $idPengajuanItem)
@@ -323,6 +358,7 @@ class RekomendasiController extends Controller
 
     public function UpdateRekomendasi(Request $request)
     {
+        // dd($request->all());
         $header = Rekomendasi::updateOrCreate(
             [
                 'IdPengajuan' => $request->rekomendasi[0]['IdPengajuan'],
@@ -351,8 +387,8 @@ class RekomendasiController extends Controller
                     ],
                     [
                         'NamaPermintaan' => $value['NamaPermintaan'] ?? null,
-                        'HargaAwal' => $value['HargaAwal'] ?? null,
-                        'HargaNego' => $value['HargaNego'] ?? null,
+                        'HargaAwal' => isset($value['HargaAwal']) ? preg_replace('/\D/', '', $value['HargaAwal']) : null,
+                        'HargaNego' => isset($value['HargaNego']) ? preg_replace('/\D/', '', $value['HargaNego']) : null,
                         'Spesifikasi' => $value['Spesifikasi'] ?? null,
                         'NegaraProduksi' => $value['NegaraProduksi'] ?? null,
                         'Garansi' => $value['Garansi'] ?? null,
@@ -361,9 +397,16 @@ class RekomendasiController extends Controller
                         'SparePart' => $value['SparePart'] ?? null,
                         'BackupUnit' => $value['BackupUnit'] ?? null,
                         'Top' => $value['Top'] ?? null,
-                        'DistujuiOleh' => auth()->user()->id,
-                        'Rekomendasi' => $value['RekomendasiSelect'] ?? null,
+                        'Populasi' => $value['Populasi'] ?? null,
+                        'TimeLinePekerjaan' => $value['TimeLinePekerjaan'] ?? null,
+                        'JumlahPekerja' => $value['JumlahPekerja'] ?? null,
+                        'Luasan' => $value['Luasan'] ?? null,
+                        'ReviewVendor' => $value['ReviewVendor'] ?? null,
+                        'File' => $value['File'] ?? null,
+                        'UserNego' => auth()->user()->id,
                         'Keterangan' => $value['Keterangan'] ?? null,
+                        'KodePerusahaan' => auth()->user()->kodeperusahaan ?? null,
+                        'Rekomendasi' => $value['RekomendasiSelect'] ?? null,
                     ]
                 );
                 if (($value['RekomendasiSelect'] ?? null) == 1) {

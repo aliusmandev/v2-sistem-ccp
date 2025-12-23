@@ -260,8 +260,6 @@
 
 @push('js')
     <script>
-        // Fungsi duplikasi baris dan hapus baris
-
         function updateTotalJumlah() {
             let total = 0;
             $('#table-detail-pembelian tbody .jumlah-input').each(function() {

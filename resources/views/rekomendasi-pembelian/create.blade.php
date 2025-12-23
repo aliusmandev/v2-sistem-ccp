@@ -65,7 +65,7 @@
                         <ul class="nav nav-tabs tab-style-1 d-sm-flex d-block" role="tablist" id="vendorTabs">
                             @foreach ($data->getVendor as $vIdx => $Vendor)
                                 @php
-                                    // The tab is enabled if it is the first, or if all previous have nilai fields (HargaAwal & HargaNego) terisi.
+
                                     $enabled = $vIdx === 0;
                                     if ($vIdx > 0) {
                                         $enabled = true;
@@ -94,162 +94,203 @@
                             @endforeach
                         </ul>
                         <div class="tab-content" id="vendorTabPanes">
-                            @foreach ($data->getVendor as $vIdx => $Vendor)
-                                @php
-                                    $paramHarga = 11 - 1;
-                                    $paramSpek = 2 - 1;
-                                    $paramGaransi = 13 - 1;
-                                    $paramBmhp = 12 - 1;
-                                @endphp
-                                <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
-                                    id="vendor-pane-{{ $vIdx }}" role="tabpanel"
-                                    aria-labelledby="vendor-tab-{{ $vIdx }}">
+                            <div class="mb-4">
+                                <label for="fileUpload" class="form-label fw-bold mb-2">Lampirkan File (Optional)</label>
+                                <div class="card border-0 shadow-sm upload-container position-relative mb-1 p-0">
+                                    <div id="custom-file-drop-area-{{ uniqid() }}"
+                                        class="upload-area d-flex flex-column flex-md-row align-items-center justify-content-between px-4 py-4 gap-3"
+                                        style="background: linear-gradient(90deg, #f6f8fc 60%, #e3ebf8 100%); min-height: 120px; border-radius: 12px; cursor: pointer; border: 2px dashed #b6c2d1; transition: border-color 0.2s;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                style="width: 48px; height: 48px; font-size: 1.8rem;">
+                                                <i class="fa fa-file-upload"></i>
+                                            </span>
+                                            <div>
+                                                <div class="fw-semibold mb-1 text-dark">Drag &amp; Drop file di sini</div>
+                                                <div class="small text-muted">atau <span
+                                                        class="text-primary fw-bold text-decoration-underline"
+                                                        style="cursor:pointer;">klik untuk memilih file</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column text-end">
+                                            <input type="file" name="upload_file" id="fileUpload" style="display: none;">
+                                            <span id="file-selected-name" class="fw-semibold text-success"
+                                                style="min-height: 22px;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text mt-1 small">
+                                    Format file: <span class="fw-bold">pdf</span>
+                                </div>
+                                @error('upload_file')
+                                    <div class="text-danger mt-1 small">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                                    {{-- {{ dd($Vendor->getHtaGpa->Deskripsi) }} --}}
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
-                                        value="{{ $data->id }}">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
-                                        value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
-                                        value="">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
-                                        value="{{ $Vendor->NamaVendor }}">
-                                    <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
-                                        value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
+                            <style>
+                                .upload-area:hover,
+                                .upload-area.active {
+                                    border-color: #2563eb !important;
+                                }
+                            </style>
+                            @if ($data->Jenis == 1)
+                                @foreach ($data->getVendor as $vIdx => $Vendor)
+                                    @php
+                                        $paramHarga = 11 - 1;
+                                        $paramSpek = 2 - 1;
+                                        $paramGaransi = 13 - 1;
+                                        $paramBmhp = 12 - 1;
+                                    @endphp
+                                    <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
+                                        id="vendor-pane-{{ $vIdx }}" role="tabpanel"
+                                        aria-labelledby="vendor-tab-{{ $vIdx }}">
 
-                                    <table class="table align-middle nilai-table" style="width:100%;"
-                                        data-vidx="{{ $vIdx }}">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th class="text-center" style="width:5%;">No</th>
-                                                <th class="text-center" style="width:25%;">Parameter</th>
-                                                <th class="text-center" style="width:70%;">Deskripsi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center">1</td>
-                                                <td class="fw-bold">Harga Awal
-                                                    <br>
-                                                    <small class="text-muted" style="font-weight: normal;">
-                                                        Harga sudah termasuk PPN dari pengajuan
-                                                    </small>
-                                                </td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][HargaAwal]"
-                                                        class="form-control currency-input-global"
-                                                        placeholder="Masukkan Harga Awal"
-                                                        value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : (isset($Vendor->getHtaGpa->Deskripsi[$paramHarga]) ? $Vendor->getHtaGpa->Deskripsi[$paramHarga] : (old("rekomendasi.$vIdx.HargaAwal") ? preg_replace('/[^0-9]/', '', old("rekomendasi.$vIdx.HargaAwal")) : '')) }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">2</td>
-                                                <td class="fw-bold">Harga Nego</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][HargaNego]"
-                                                        class="form-control currency-input-global"
-                                                        placeholder="Masukkan Harga Nego"
-                                                        value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">3</td>
-                                                <td class="fw-bold">Spesifikasi</td>
-                                                <td>
-                                                    <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
-                                                        placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : (isset($Vendor->getHtaGpa->Deskripsi[$paramSpek]) ? $Vendor->getHtaGpa->Deskripsi[$paramSpek] : old("rekomendasi.$vIdx.Spesifikasi")) }}</textarea>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">4</td>
-                                                <td class="fw-bold">Negara Produksi</td>
-                                                <td>
-                                                    <select name="rekomendasi[{{ $vIdx }}][NegaraProduksi]"
-                                                        class="form-control select2" data-placeholder="Pilih Negara">
-                                                        <option value="">Pilih Negara</option>
-                                                        @foreach ($negara as $n)
-                                                            <option value="{{ $n->Kode }}"
-                                                                {{ isset($Vendor->getRekomendasi->NegaraProduksi) && $Vendor->getRekomendasi->NegaraProduksi == $n->Kode ? 'selected' : (old("rekomendasi.$vIdx.NegaraProduksi") == $n->Kode ? 'selected' : '') }}>
-                                                                {{ $n->Nama }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">5</td>
-                                                <td class="fw-bold">Garansi</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][Garansi]"
-                                                        class="form-control" placeholder="Garansi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : (isset($Vendor->getHtaGpa->Deskripsi[$paramGaransi]) ? $Vendor->getHtaGpa->Deskripsi[$paramGaransi] : old("rekomendasi.$vIdx.Garansi")) }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">6</td>
-                                                <td class="fw-bold">Teknisi</td>
-                                                <td>
-                                                    <input type="text"
-                                                        name="rekomendasi[{{ $vIdx }}][Teknisi]"
-                                                        class="form-control" placeholder="Teknisi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Teknisi) ? $Vendor->getRekomendasi->Teknisi : old("rekomendasi.$vIdx.Teknisi") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">7</td>
-                                                <td class="fw-bold">Bmhp</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][Bmhp]"
-                                                        placeholder="Bahan Medis Habis Pakai (Bmhp)"
-                                                        value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : (isset($Vendor->getHtaGpa->Deskripsi[$paramBmhp]) ? $Vendor->getHtaGpa->Deskripsi[$paramBmhp] : old("rekomendasi.$vIdx.Bmhp")) }}">
-                                                </td>
-                                            </tr>
-                                            <!-- POPULASI Setelah Bmhp -->
-                                            <tr>
-                                                <td class="text-center">8</td>
-                                                <td class="fw-bold">Populasi</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][Populasi]"
-                                                        placeholder="Populasi"
-                                                        value="{{ isset($Vendor->getRekomendasi->Populasi) ? $Vendor->getRekomendasi->Populasi : old("rekomendasi.$vIdx.Populasi") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">9</td>
-                                                <td class="fw-bold">Spare Part</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][SparePart]"
-                                                        placeholder="Spare Part"
-                                                        value="{{ isset($Vendor->getRekomendasi->SparePart) ? $Vendor->getRekomendasi->SparePart : old("rekomendasi.$vIdx.SparePart") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">10</td>
-                                                <td class="fw-bold">Backup Unit</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][BackupUnit]"
-                                                        placeholder="Backup Unit"
-                                                        value="{{ isset($Vendor->getRekomendasi->BackupUnit) ? $Vendor->getRekomendasi->BackupUnit : old("rekomendasi.$vIdx.BackupUnit") }}">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">11</td>
-                                                <td class="fw-bold">TOP (Term of Payment)</td>
-                                                <td>
-                                                    <input type="text" class="form-control"
-                                                        name="rekomendasi[{{ $vIdx }}][Top]"
-                                                        placeholder="Contoh: 30 hari"
-                                                        value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
-                                                </td>
-                                            </tr>
-                                            {{-- <tr>
+                                        {{-- {{ dd($Vendor->getHtaGpa->Deskripsi) }} --}}
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
+                                            value="{{ $data->id }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
+                                            value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
+                                            value="">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
+                                            value="{{ $Vendor->NamaVendor }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
+                                            value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
+
+                                        <table class="table align-middle nilai-table" style="width:100%;"
+                                            data-vidx="{{ $vIdx }}">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center" style="width:5%;">No</th>
+                                                    <th class="text-center" style="width:25%;">Parameter</th>
+                                                    <th class="text-center" style="width:70%;">Deskripsi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">1</td>
+                                                    <td class="fw-bold">Harga Awal
+                                                        <br>
+                                                        <small class="text-muted" style="font-weight: normal;">
+                                                            Harga sudah termasuk PPN dari pengajuan
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaAwal]"
+                                                            class="form-control currency-input-global"
+                                                            placeholder="Masukkan Harga Awal"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : (isset($Vendor->getHtaGpa->Deskripsi[$paramHarga]) ? $Vendor->getHtaGpa->Deskripsi[$paramHarga] : (old("rekomendasi.$vIdx.HargaAwal") ? preg_replace('/[^0-9]/', '', old("rekomendasi.$vIdx.HargaAwal")) : '')) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">2</td>
+                                                    <td class="fw-bold">Harga Nego</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaNego]"
+                                                            class="form-control currency-input-global"
+                                                            placeholder="Masukkan Harga Nego"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">3</td>
+                                                    <td class="fw-bold">Spesifikasi</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
+                                                            placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : (isset($Vendor->getHtaGpa->Deskripsi[$paramSpek]) ? $Vendor->getHtaGpa->Deskripsi[$paramSpek] : old("rekomendasi.$vIdx.Spesifikasi")) }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">4</td>
+                                                    <td class="fw-bold">Negara Produksi</td>
+                                                    <td>
+                                                        <select name="rekomendasi[{{ $vIdx }}][NegaraProduksi]"
+                                                            class="form-control select2" data-placeholder="Pilih Negara">
+                                                            <option value="">Pilih Negara</option>
+                                                            @foreach ($negara as $n)
+                                                                <option value="{{ $n->Kode }}"
+                                                                    {{ isset($Vendor->getRekomendasi->NegaraProduksi) && $Vendor->getRekomendasi->NegaraProduksi == $n->Kode ? 'selected' : (old("rekomendasi.$vIdx.NegaraProduksi") == $n->Kode ? 'selected' : '') }}>
+                                                                    {{ $n->Nama }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">5</td>
+                                                    <td class="fw-bold">Garansi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Garansi]"
+                                                            class="form-control" placeholder="Garansi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : (isset($Vendor->getHtaGpa->Deskripsi[$paramGaransi]) ? $Vendor->getHtaGpa->Deskripsi[$paramGaransi] : old("rekomendasi.$vIdx.Garansi")) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">6</td>
+                                                    <td class="fw-bold">Teknisi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Teknisi]"
+                                                            class="form-control" placeholder="Teknisi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Teknisi) ? $Vendor->getRekomendasi->Teknisi : old("rekomendasi.$vIdx.Teknisi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">7</td>
+                                                    <td class="fw-bold">Bmhp</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Bmhp]"
+                                                            placeholder="Bahan Medis Habis Pakai (Bmhp)"
+                                                            value="{{ isset($Vendor->getRekomendasi->Bmhp) ? $Vendor->getRekomendasi->Bmhp : (isset($Vendor->getHtaGpa->Deskripsi[$paramBmhp]) ? $Vendor->getHtaGpa->Deskripsi[$paramBmhp] : old("rekomendasi.$vIdx.Bmhp")) }}">
+                                                    </td>
+                                                </tr>
+                                                <!-- POPULASI Setelah Bmhp -->
+                                                <tr>
+                                                    <td class="text-center">8</td>
+                                                    <td class="fw-bold">Populasi</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Populasi]"
+                                                            placeholder="Populasi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Populasi) ? $Vendor->getRekomendasi->Populasi : old("rekomendasi.$vIdx.Populasi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">9</td>
+                                                    <td class="fw-bold">Spare Part</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][SparePart]"
+                                                            placeholder="Spare Part"
+                                                            value="{{ isset($Vendor->getRekomendasi->SparePart) ? $Vendor->getRekomendasi->SparePart : old("rekomendasi.$vIdx.SparePart") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">10</td>
+                                                    <td class="fw-bold">Backup Unit</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][BackupUnit]"
+                                                            placeholder="Backup Unit"
+                                                            value="{{ isset($Vendor->getRekomendasi->BackupUnit) ? $Vendor->getRekomendasi->BackupUnit : old("rekomendasi.$vIdx.BackupUnit") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">11</td>
+                                                    <td class="fw-bold">TOP (Term of Payment)</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Top]"
+                                                            placeholder="Contoh: 30 hari"
+                                                            value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
+                                                    </td>
+                                                </tr>
+                                                {{-- <tr>
                                                 <td class="text-center">12</td>
                                                 <td class="fw-bold">Rekomendasi</td>
                                                 <td>
@@ -259,18 +300,167 @@
                                                         value="{{ old("rekomendasi.$vIdx.Rekomendasi") }}">
                                                 </td>
                                             </tr> --}}
-                                            <tr>
-                                                <td class="text-center">12</td>
-                                                <td class="fw-bold">Keterangan</td>
-                                                <td>
-                                                    <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
-                                                        placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endforeach
+                                                <tr>
+                                                    <td class="text-center">12</td>
+                                                    <td class="fw-bold">Keterangan</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
+                                                            placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @else
+                                @foreach ($data->getVendor as $vIdx => $Vendor)
+                                    <div class="tab-pane fade {{ $vIdx === 0 ? 'show active' : '' }}"
+                                        id="vendor-pane-{{ $vIdx }}" role="tabpanel"
+                                        aria-labelledby="vendor-tab-{{ $vIdx }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdPengajuan]"
+                                            value="{{ $data->id }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][PengajuanItemId]"
+                                            value="{{ $data->getPengajuanItem[0]->id ?? '' }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdRekomendasi]"
+                                            value="">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][IdVendor]"
+                                            value="{{ $Vendor->NamaVendor }}">
+                                        <input type="hidden" name="rekomendasi[{{ $vIdx }}][NamaPermintaan]"
+                                            value="{{ $data->getPengajuanItem[0]->getBarang->id ?? '' }}">
+
+                                        <table class="table align-middle nilai-table" style="width:100%;"
+                                            data-vidx="{{ $vIdx }}">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center" style="width:5%;">No</th>
+                                                    <th class="text-center" style="width:25%;">Parameter</th>
+                                                    <th class="text-center" style="width:70%;">Deskripsi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">1</td>
+                                                    <td class="fw-bold">Harga Awal
+                                                        <br>
+                                                        <small class="text-muted" style="font-weight: normal;">
+                                                            Harga sudah termasuk PPN dari pengajuan
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaAwal]"
+                                                            class="form-control currency-input-global"
+                                                            placeholder="Masukkan Harga Awal"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaAwal) ? $Vendor->getRekomendasi->HargaAwal : (old("rekomendasi.$vIdx.HargaAwal") ? preg_replace('/[^0-9]/', '', old("rekomendasi.$vIdx.HargaAwal")) : '') }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">2</td>
+                                                    <td class="fw-bold">Harga Nego</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][HargaNego]"
+                                                            class="form-control currency-input-global"
+                                                            placeholder="Masukkan Harga Nego"
+                                                            value="{{ isset($Vendor->getRekomendasi->HargaNego) ? $Vendor->getRekomendasi->HargaNego : old("rekomendasi.$vIdx.HargaNego") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="text-center">3</td>
+                                                    <td class="fw-bold">Spesifikasi</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Spesifikasi]" rows="10"
+                                                            placeholder="Masukkan Spesifikasi">{{ isset($Vendor->getRekomendasi->Spesifikasi) ? $Vendor->getRekomendasi->Spesifikasi : old("rekomendasi.$vIdx.Spesifikasi") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">4</td>
+                                                    <td class="fw-bold">Populasi</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Populasi]"
+                                                            placeholder="Populasi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Populasi) ? $Vendor->getRekomendasi->Populasi : old("rekomendasi.$vIdx.Populasi") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">5</td>
+                                                    <td class="fw-bold">Garansi</td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="rekomendasi[{{ $vIdx }}][Garansi]"
+                                                            class="form-control" placeholder="Garansi"
+                                                            value="{{ isset($Vendor->getRekomendasi->Garansi) ? $Vendor->getRekomendasi->Garansi : old("rekomendasi.$vIdx.Garansi") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Section Penyesuaian Name -->
+                                                <tr>
+                                                    <td class="text-center">6</td>
+                                                    <td class="fw-bold">Time Line Pekerjaan</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][TimeLinePekerjaan]"
+                                                            placeholder="Time Line Pekerjaan"
+                                                            value="{{ isset($Vendor->getRekomendasi->TimeLinePekerjaan) ? $Vendor->getRekomendasi->TimeLinePekerjaan : old("rekomendasi.$vIdx.TimeLinePekerjaan") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">7</td>
+                                                    <td class="fw-bold">Jumlah Pekerja</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][JumlahPekerja]"
+                                                            placeholder="Jumlah Pekerja"
+                                                            value="{{ isset($Vendor->getRekomendasi->JumlahPekerja) ? $Vendor->getRekomendasi->JumlahPekerja : old("rekomendasi.$vIdx.JumlahPekerja") }}">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="text-center">8</td>
+                                                    <td class="fw-bold">Luasan</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Luasan]"
+                                                            placeholder="Masukkan Luasan"
+                                                            value="{{ isset($Vendor->getRekomendasi->Luasan) ? $Vendor->getRekomendasi->Luasan : old("rekomendasi.$vIdx.Luasan") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">9</td>
+                                                    <td class="fw-bold">Review Vendor</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][ReviewVendor]"
+                                                            placeholder="Masukkan Review Vendor"
+                                                            value="{{ isset($Vendor->getRekomendasi->ReviewVendor) ? $Vendor->getRekomendasi->ReviewVendor : old("rekomendasi.$vIdx.ReviewVendor") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">10</td>
+                                                    <td class="fw-bold">TOP (Term of Payment)</td>
+                                                    <td>
+                                                        <input type="text" class="form-control"
+                                                            name="rekomendasi[{{ $vIdx }}][Top]"
+                                                            placeholder="Contoh: 30 hari"
+                                                            value="{{ isset($Vendor->getRekomendasi->Top) ? $Vendor->getRekomendasi->Top : old("rekomendasi.$vIdx.Top") }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">11</td>
+                                                    <td class="fw-bold">Keterangan</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="rekomendasi[{{ $vIdx }}][Keterangan]" rows="3"
+                                                            placeholder="Masukkan Keterangan">{{ isset($Vendor->getRekomendasi->Keterangan) ? $Vendor->getRekomendasi->Keterangan : old("rekomendasi.$vIdx.Keterangan") }}</textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endforeach
+                            @endif
+
                         </div>
                         <div class="mt-3 d-flex justify-content-end">
                             <button type="submit" name="action" value="draft" class="btn btn-warning me-2">Simpan
@@ -392,6 +582,63 @@
             // Event format otomatis saat mengetik atau blur (untuk perubahan manual)
             $(document).on('keyup blur', '.currency-input-global, .harga-nego-input', function() {
                 formatRupiahInput(this);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropArea = document.querySelector('[id^="custom-file-drop-area-"]');
+            var fileInput = dropArea.querySelector('input[type="file"]');
+            var fileNameDisplay = dropArea.querySelector('#file-selected-name');
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false)
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.style.borderColor = '#2563eb';
+                    dropArea.style.backgroundColor = '#e0e7ff';
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.style.borderColor = '#b6c2d1';
+                    dropArea.style.backgroundColor = '';
+                }, false);
+            });
+
+            dropArea.addEventListener('click', function(e) {
+                // Only trigger file input if clicking main area, not on file name text
+                if (!e.target.closest('#file-selected-name')) {
+                    fileInput.click();
+                }
+            });
+
+            dropArea.addEventListener('drop', function(e) {
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    fileNameDisplay.textContent = files[0].name;
+                    fileNameDisplay.classList.add('text-success');
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = fileInput.files[0].name;
+                    fileNameDisplay.classList.add('text-success');
+                } else {
+                    fileNameDisplay.textContent = '';
+                    fileNameDisplay.classList.remove('text-success');
+                }
             });
         });
     </script>

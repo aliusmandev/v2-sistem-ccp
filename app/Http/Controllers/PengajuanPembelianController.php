@@ -106,9 +106,7 @@ class PengajuanPembelianController extends Controller
         return view('form.pengajuan-pembelian.create', compact('JenisPengajuan', 'masterbarang', 'permintaan', 'vendor', 'departemen'));
     }
 
-    public function SimpanDraft($id)
-    {
-    }
+    public function SimpanDraft($id) {}
 
     /**
      * Store a newly created resource in storage.
@@ -439,6 +437,7 @@ class PengajuanPembelianController extends Controller
     public function UpdatePengajuan(Request $request, $id)
     {
         $data = PengajuanPembelian::with('getVendor.getVendorDetail', 'getJenisPermintaan', 'getPengajuanItem.getBarang', 'getPengajuanItem.getHtaGpa', 'getPengajuanItem.getRekomendasi', 'getPengajuanItem.getFui', 'getPengajuanItem.getDisposisi', 'getDepartemen', 'getPengajuanItem.getFs', 'getHtaGpa')->find($id);
+        // dd($data);
         $approval = DokumenApproval::with('getUser', 'getJabatan', 'getDepartemen')
             ->where('JenisFormId', $data->getHtaGpa->JenisForm)
             ->where('DokumenId', $data->getHtaGpa->id)
@@ -485,7 +484,6 @@ class PengajuanPembelianController extends Controller
         } else {
             return back()->with('error', 'HTA / GPA, Belum Disetujui. Proses Tidak Dapat Diteruskan.');
         }
-
     }
 
     /**

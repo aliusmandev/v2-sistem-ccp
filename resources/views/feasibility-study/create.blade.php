@@ -222,10 +222,12 @@
                                                     <td>Tarif Umum</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[TarifUmum][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.TarifUmum.$i") }}"
-                                                                placeholder="Masukan tarif umum">
+                                                                value="{{ old("rugi_laba.TarifUmum.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.TarifUmum.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan tarif umum"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -233,10 +235,12 @@
                                                     <td>Tarif BPJS</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[TarifBpjs][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.TarifBpjs.$i") }}"
-                                                                placeholder="Masukan tarif BPJS">
+                                                                value="{{ old("rugi_laba.TarifBpjs.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.TarifBpjs.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan tarif BPJS"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -244,10 +248,12 @@
                                                     <td>Revenue</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[Revenue][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.Revenue.$i") }}"
-                                                                placeholder="Masukan revenue">
+                                                                value="{{ old("rugi_laba.Revenue.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.Revenue.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan revenue"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -255,10 +261,12 @@
                                                     <td>Biaya Tetap</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[BiayaTetap][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.BiayaTetap.$i") }}"
-                                                                placeholder="Masukan biaya tetap">
+                                                                value="{{ old("rugi_laba.BiayaTetap.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.BiayaTetap.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan biaya tetap"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -266,10 +274,12 @@
                                                     <td>Biaya Variable</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[BiayaVariable][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.BiayaVariable.$i") }}"
-                                                                placeholder="Masukan biaya variable">
+                                                                value="{{ old("rugi_laba.BiayaVariable.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.BiayaVariable.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan biaya variable"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -277,10 +287,12 @@
                                                     <td>Net Profit</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[NetProfit][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.NetProfit.$i") }}"
-                                                                placeholder="Masukan net profit">
+                                                                value="{{ old("rugi_laba.NetProfit.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.NetProfit.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan net profit"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -288,10 +300,12 @@
                                                     <td>EBITDA</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[Ebitda][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.Ebitda.$i") }}"
-                                                                placeholder="Masukan EBITDA">
+                                                                value="{{ old("rugi_laba.Ebitda.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.Ebitda.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan EBITDA"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -299,10 +313,12 @@
                                                     <td>Akumulasi EBITDA</td>
                                                     @for ($i = 1; $i <= 7; $i++)
                                                         <td>
-                                                            <input type="text" class="form-control form-control-sm"
+                                                            <input type="text"
+                                                                class="form-control form-control-sm rupiah-input"
                                                                 name="rugi_laba[AkumEbitda][{{ $i }}]"
-                                                                value="{{ old("rugi_laba.AkumEbitda.$i") }}"
-                                                                placeholder="Masukan akumulasi EBITDA">
+                                                                value="{{ old("rugi_laba.AkumEbitda.$i") ? 'Rp ' . number_format((int) preg_replace('/\D/', '', old("rugi_laba.AkumEbitda.$i")), 0, ',', '.') : '' }}"
+                                                                placeholder="Masukan akumulasi EBITDA"
+                                                                oninput="formatRupiahInput(this)">
                                                         </td>
                                                     @endfor
                                                 </tr>
@@ -344,16 +360,16 @@
 @endsection
 @push('js')
     @if (Session::get('success'))
-        < script>
+        <script>
             Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ Session::get('success') }}',
-            iconColor: '#4BCC1F',
-            confirmButtonText: 'Oke',
-            confirmButtonColor: '#4BCC1F',
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ Session::get('success') }}',
+                iconColor: '#4BCC1F',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#4BCC1F',
             });
-            </script>
+        </script>
     @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -483,10 +499,21 @@
             return parseInt(String(str).replace(/[^0-9]/g, '')) || 0;
         }
 
+        // Format rupiah saat ketik untuk semua input .rupiah-input di tabel rugi laba
         function formatRupiahInput(input) {
-            let value = input.value.replace(/[^0-9]/g, '');
+            // Remove "Rp","." on the left and keep only numbers and comma
+            let value = input.value.replace(/[^,\d]/g, '');
             if (value) {
-                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                // Add thousand separator and Rp prefix
+                let split = value.split(',');
+                let sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                if (ribuan) {
+                    rupiah += (sisa ? '.' : '') + ribuan.join('.');
+                }
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                input.value = rupiah ? 'Rp ' + rupiah : '';
             } else {
                 input.value = '';
             }
@@ -514,7 +541,7 @@
                 let valTarifBpjs = tarifBpjs ? parseRupiah(tarifBpjs.value) : 0;
                 let valRevenue = valJumlahPasien * valTarifUmum;
                 if (revenue) {
-                    revenue.value = valRevenue ? valRevenue.toLocaleString('id-ID') : '';
+                    revenue.value = valRevenue ? 'Rp ' + valRevenue.toLocaleString('id-ID') : '';
                 }
 
                 // NetProfit = Revenue - (Biaya Tetap + Biaya Variable)
@@ -522,12 +549,12 @@
                 let valBiayaVariable = biayaVariable ? parseRupiah(biayaVariable.value) : 0;
                 let valNetProfit = valRevenue - (valBiayaTetap + valBiayaVariable);
                 if (netProfit) {
-                    netProfit.value = valNetProfit ? valNetProfit.toLocaleString('id-ID') : '';
+                    netProfit.value = valNetProfit ? 'Rp ' + valNetProfit.toLocaleString('id-ID') : '';
                 }
 
                 // EBITDA = NetProfit (bisa sesuaikan rumus jika ada komponen tambahan)
                 if (ebitda) {
-                    ebitda.value = valNetProfit ? valNetProfit.toLocaleString('id-ID') : '';
+                    ebitda.value = valNetProfit ? 'Rp ' + valNetProfit.toLocaleString('id-ID') : '';
                 }
 
                 // Akumulasi EBITDA (AkumEbitda) = AkumEbitda sebelumnya + EBITDA tahun ini
@@ -538,7 +565,7 @@
                         akumPrev = prev ? parseRupiah(prev.value) : 0;
                     }
                     let valAkum = akumPrev + (ebitda ? parseRupiah(ebitda.value) : 0);
-                    akumEbitda.value = valAkum ? valAkum.toLocaleString('id-ID') : '';
+                    akumEbitda.value = valAkum ? 'Rp ' + valAkum.toLocaleString('id-ID') : '';
                 }
 
                 // ROI Tahun Ke = (Revenue/Investasi)

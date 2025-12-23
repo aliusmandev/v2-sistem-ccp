@@ -271,7 +271,7 @@
                                                                     <span>{{ $barangMaster ? $barangMaster->Nama : '-' }}</span>
                                                                 </td>
                                                                 <td>
-                                                                    <span>{{ $barangMaster ? $barangMaster->getMerk->Nama : '-' }}</span>
+                                                                    <span>{{ optional($barangMaster?->getMerk)->Nama ?? '-' }}</span>
                                                                 </td>
                                                                 <td>
                                                                     <span>{{ $jumlah }}</span>

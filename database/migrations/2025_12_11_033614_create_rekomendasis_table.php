@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('DisetujuiOleh')->nullable();
             $table->timestamp('DisetujuiPada')->nullable();
             $table->enum('Status', ['Draft', 'Disetujui'])->nullable();
+            $table->string('File')->nullable();
             $table->string('KodePerusahaan')->nullable();
             $table->softDeletes();
             $table->timestamps();
