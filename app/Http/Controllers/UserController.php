@@ -241,7 +241,6 @@ class UserController extends Controller
 
         $input['UserUpdate'] = auth()->user()->name;
 
-        // Update field kecuali email diverifikasi ulang
         $user->update($input);
 
         return redirect()

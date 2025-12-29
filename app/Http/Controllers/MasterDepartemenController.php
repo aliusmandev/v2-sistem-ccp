@@ -53,15 +53,26 @@ class MasterDepartemenController extends Controller
         $request->validate([
             'Nama' => 'required|string|max:255',
         ]);
-        MasterDepartemen::create([
+
+        do {
+            $count = MasterDepartemen::count() + 1;
+            $kodeDepartemen = 'DEP' . str_pad($count, 3, '0', STR_PAD_LEFT);
+            $exists = MasterDepartemen::where('KodeDepartemen', $kodeDepartemen)->exists();
+            if ($exists) {
+                MasterDepartemen::whereRaw('1=1')->update(['id' => \DB::raw('id')]); // force reload
+            }
+        } while ($exists);
+
+        $departemen = MasterDepartemen::create([
+            'KodeDepartemen' => $kodeDepartemen,
             'Nama' => $request->Nama,
             // 'KodePerusahaan' => auth()->user()->kodeperusahaan,
             'UserCreate' => auth()->user()->name,
         ]);
-        return redirect()->route('departemen.index')->with('success', 'Departemen berhasil ditambahkan.');
+
         if (function_exists('activity')) {
             activity()
-                ->causedBy(auth()->user()->id)
+                ->causedBy(auth()->user())
                 ->withProperties(['ip' => request()->ip()])
                 ->log('Menambah master departemen baru: ' . $request->Nama);
         }
