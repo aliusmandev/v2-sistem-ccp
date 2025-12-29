@@ -89,7 +89,13 @@
                         <span class="user-info">
                             <span class="user-letter">
                                 <span class="user-icon">
-                                    <i class="fas fa-user-circle fa-2x"></i>
+                                    @if (auth()->user()->foto && file_exists(public_path('storage/upload/foto/' . auth()->user()->foto)))
+                                        <img src="{{ asset('storage/upload/foto/' . auth()->user()->foto) }}"
+                                            alt="Profile Photo" class="rounded-circle" width="40" height="40"
+                                            style="object-fit: cover;">
+                                    @else
+                                        <i class="fas fa-user-circle fa-2x"></i>
+                                    @endif
                                 </span>
                             </span>
                             <span class="user-detail">

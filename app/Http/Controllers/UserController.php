@@ -14,6 +14,7 @@ use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -186,32 +187,62 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'departemen' => 'required',
+            'departemen' => 'nullable',
             'jabatan' => 'required',
-            'email' => 'required',
-            'foto' => 'nullable',
-            'tandatangan' => 'nullable',
+            'email' => 'required|email',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tandatangan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'nullable|min:6|confirmed',
         ]);
 
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->back()->with('error', 'User tidak ditemukan');
+        }
+
         $input = $request->all();
+
+        // Upload foto jika ada
         if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($user->foto && Storage::disk('public')->exists('upload/foto/' . $user->foto)) {
+                Storage::disk('public')->delete('upload/foto/' . $user->foto);
+            }
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('upload/foto', $filename, 'public');
+            $file->storeAs('upload/foto', $filename, 'public');
             $input['foto'] = $filename;
+        } else {
+            // Supaya tidak mengosongkan foto jika tidak ada upload baru
+            unset($input['foto']);
         }
+
+        // Upload tandatangan jika ada
         if ($request->hasFile('tandatangan')) {
+            // Hapus tandatangan lama jika ada
+            if ($user->tandatangan && Storage::disk('public')->exists('upload/tandatangan/' . $user->tandatangan)) {
+                Storage::disk('public')->delete('upload/tandatangan/' . $user->tandatangan);
+            }
             $file = $request->file('tandatangan');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('upload/tandatangan', $filename, 'public');
+            $file->storeAs('upload/tandatangan', $filename, 'public');
             $input['tandatangan'] = $filename;
-        }
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
         } else {
-            $input = Arr::except($input, array('password'));
+            // Supaya tidak mengosongkan jika tidak ada upload baru
+            unset($input['tandatangan']);
         }
+
+        // Update password jika ada input password
+        if (!empty($input['password'])) {
+            $input['password'] = \Hash::make($input['password']);
+        } else {
+            unset($input['password']);
+        }
+
         $input['UserUpdate'] = auth()->user()->name;
+
+        // Update field kecuali email diverifikasi ulang
+        $user->update($input);
 
         return redirect()
             ->back()

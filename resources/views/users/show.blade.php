@@ -45,8 +45,6 @@
                         <small class="text-muted">Kosongkan jika tidak ingin mengubah password.</small>
                     </div>
 
-
-
                     <div class="col-md-3">
                         <label for="departemen" class="form-label"><strong>Departemen</strong></label>
                         <select name="departemen" class="select2 form-control @error('departemen') is-invalid @enderror"
@@ -65,12 +63,12 @@
                             </div>
                         @enderror
                     </div>
+
                     <div class="col-md-3">
                         <label for="jabatan" class="form-label"><strong>Jabatan</strong></label>
                         <select name="jabatan" id="jabatan"
-                            class="select2 form-control @error('jabatan') is-invalid @enderror"
-                            style="background-color: #e9ecef; color: #495057;">
-                            <option>Pilih Jabatan</option>
+                            class="select2 form-control @error('jabatan') is-invalid @enderror">
+                            <option value="">Pilih Jabatan</option>
                             @foreach ($jabatan as $jbt)
                                 <option value="{{ $jbt->id }}"
                                     {{ old('jabatan', $user->jabatan) == $jbt->id ? 'selected' : '' }}>
@@ -86,35 +84,34 @@
                     </div>
 
                     <div class="row mt-3">
+                        <!-- FOTO -->
                         <div class="col-md-6 mb-4">
-                            <label for="foto" class="form-label"><strong>Foto</strong> <span
-                                    class="badge bg-secondary ms-1" style="font-weight:normal;">Opsional</span></label>
-                            <div class="custom-upload-area border rounded-4 shadow-sm p-3 d-flex flex-column align-items-center justify-content-center mb-2 position-relative"
-                                id="foto-drop-area"
-                                style="min-height: 130px; cursor: pointer; background: linear-gradient(135deg, #f7fafc 40%, #f0f4ff 100%); transition: box-shadow .2s;"
-                                onclick="document.getElementById('foto').click()" ondrop="handleDrop(event, 'foto')"
-                                ondragover="event.preventDefault()" onmouseenter="this.style.boxShadow='0 0 8px #e3ebff'"
-                                onmouseleave="this.style.boxShadow='none'">
-                                <i class="fa fa-camera fa-2x mb-2 text-primary" aria-hidden="true"></i>
-                                <span id="foto-preview-text" class="text-secondary" style="font-size: 1em;">
-                                    <span class="fw-bold">Klik</span> atau <span class="fw-bold">drag & drop</span>
-                                    file
-                                    di sini
-                                </span>
-                                <img id="foto-preview" src="{{ $user->foto ? asset('uploads/foto/' . $user->foto) : '#' }}"
-                                    alt="Preview Foto" class="rounded-circle border mt-2"
-                                    style="{{ $user->foto ? 'display:block;' : 'display:none;' }} max-width: 100px; max-height: 100px; object-fit: cover;">
+                            <label for="foto" class="form-label"><strong>Foto</strong>
+                                <span class="badge bg-secondary ms-1" style="font-weight:normal;">Opsional</span>
+                            </label>
+
+                            <!-- Preview Area Foto -->
+                            <div class="mb-3" id="foto-preview-container"
+                                style="display: {{ $user->foto ? 'block' : 'none' }};">
+                                <div class="text-center p-3 border rounded bg-light">
+                                    <img id="foto-preview"
+                                        src="{{ $user->foto ? asset('storage/upload/foto/' . $user->foto) : '' }}"
+                                        alt="Preview Foto" class="rounded-circle shadow border border-2"
+                                        style="width: 150px; height: 150px; object-fit: cover;">
+                                    <div class="mt-2">
+                                        <small class="text-muted" id="foto-filename">
+                                            {{ $user->foto ? $user->foto : '' }}
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
-                            @if ($user->foto)
-                                <small class="form-text text-muted ms-1">Foto saat ini ditampilkan di atas. Upload file
-                                    baru jika ingin mengganti.</small>
-                            @else
-                                <small class="form-text text-muted ms-1">Gunakan foto wajah (jpg/png, max 2MB).</small>
-                            @endif
-                            <br>
-                            <small class="text-muted ms-1"><em>Opsional: Anda tidak wajib mengunggah foto.</em></small>
-                            <input type="file" name="foto" class="form-control @error('foto') is-invalid @enderror"
-                                id="foto" style="display: none;" accept="image/*" onchange="previewFile('foto')">
+
+                            <input type="file" name="foto" id="foto"
+                                class="form-control @error('foto') is-invalid @enderror" accept="image/*">
+
+                            <small class="text-muted ms-1 d-block mt-1">
+                                <em>Format: JPG/PNG, Maksimal 2MB. Opsional, tidak wajib mengunggah foto.</em>
+                            </small>
                             @error('foto')
                                 <div class="text-danger mt-1">
                                     <i class="fa fa-exclamation-circle me-1"></i>{{ $message }}
@@ -122,39 +119,34 @@
                             @enderror
                         </div>
 
+                        <!-- TANDA TANGAN -->
                         <div class="col-md-6 mb-4">
-                            <label for="tandatangan" class="form-label"><strong>Tanda Tangan</strong> <span
-                                    class="badge bg-secondary ms-1" style="font-weight:normal;">Opsional</span></label>
-                            <div class="custom-upload-area border rounded-4 shadow-sm p-3 d-flex flex-column align-items-center justify-content-center mb-2 position-relative"
-                                id="tandatangan-drop-area"
-                                style="min-height: 130px; cursor: pointer; background: linear-gradient(135deg,#f0f6fa 40%,#eef5fb 100%); transition: box-shadow .2s;"
-                                onclick="document.getElementById('tandatangan').click()"
-                                ondrop="handleDrop(event, 'tandatangan')" ondragover="event.preventDefault()"
-                                onmouseenter="this.style.boxShadow='0 0 8px #e3ebff'"
-                                onmouseleave="this.style.boxShadow='none'">
-                                <i class="fa fa-pen-fancy fa-2x mb-2 text-primary" aria-hidden="true"></i>
-                                <span id="tandatangan-preview-text" class="text-secondary" style="font-size: 1em;">
-                                    <span class="fw-bold">Klik</span> atau <span class="fw-bold">drag & drop</span>
-                                    file di sini
-                                </span>
-                                <img id="tandatangan-preview"
-                                    src="{{ $user->tandatangan ? asset('uploads/tandatangan/' . $user->tandatangan) : '#' }}"
-                                    alt="Preview Tanda Tangan" class="rounded border mt-2"
-                                    style="{{ $user->tandatangan ? 'display:block;' : 'display:none;' }} max-width: 140px; max-height: 60px; object-fit: contain;">
+                            <label for="tandatangan" class="form-label"><strong>Tanda Tangan</strong>
+                                <span class="badge bg-secondary ms-1" style="font-weight:normal;">Opsional</span>
+                            </label>
+
+                            <!-- Preview Area Tanda Tangan -->
+                            <div class="mb-3" id="tandatangan-preview-container"
+                                style="display: {{ $user->tandatangan ? 'block' : 'none' }};">
+                                <div class="text-center p-3 border rounded bg-light">
+                                    <img id="tandatangan-preview"
+                                        src="{{ $user->tandatangan ? asset('storage/upload/tandatangan/' . $user->tandatangan) : '' }}"
+                                        alt="Preview Tanda Tangan" class="rounded border shadow-sm"
+                                        style="max-width: 300px; max-height: 100px; object-fit: contain;">
+                                    <div class="mt-2">
+                                        <small class="text-muted" id="tandatangan-filename">
+                                            {{ $user->tandatangan ? $user->tandatangan : '' }}
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
-                            @if ($user->tandatangan)
-                                <small class="form-text text-muted ms-1">Tanda tangan saat ini ditampilkan di atas.
-                                    Upload file baru jika ingin mengganti.</small>
-                            @else
-                                <small class="form-text text-muted ms-1">Unggah tanda tangan sesuai dokumen resmi
-                                    (jpg/png, max 2MB).</small>
-                            @endif
-                            <br>
-                            <small class="text-muted ms-1"><em>Opsional: Anda tidak wajib mengunggah tanda
-                                    tangan.</em></small>
-                            <input type="file" name="tandatangan"
-                                class="form-control @error('tandatangan') is-invalid @enderror" id="tandatangan"
-                                style="display: none;" accept="image/*" onchange="previewFile('tandatangan')">
+
+                            <input type="file" name="tandatangan" id="tandatangan"
+                                class="form-control @error('tandatangan') is-invalid @enderror" accept="image/*">
+
+                            <small class="text-muted ms-1 d-block mt-1">
+                                <em>Format: JPG/PNG, Maksimal 2MB. Opsional, tidak wajib mengunggah tanda tangan.</em>
+                            </small>
                             @error('tandatangan')
                                 <div class="text-danger mt-1">
                                     <i class="fa fa-exclamation-circle me-1"></i>{{ $message }}
@@ -164,36 +156,90 @@
                     </div>
 
                     <div class="col-12 text-end mt-4">
-                        <button type="submit" class="btn btn-primary">Update Profil</button>
-                        <a href="{{ route('users.index') }}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save me-1"></i> Update Profil
+                        </button>
+                        <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                            <i class="fa fa-times me-1"></i> Batal
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+@endsection
 
-    @push('scripts')
+@push('js')
+    @if ($message = Session::get('success'))
         <script>
-            window.previewFile = function(field) {
-                var preview = document.getElementById(field + '-preview');
-                var file = document.getElementById(field).files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onloadend = function() {
-                        preview.src = reader.result;
-                        preview.style.display = 'block';
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ $message }}',
+                iconColor: '#4BCC1F',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#4BCC1F',
+            });
+        </script>
+    @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup preview untuk Foto
+            const fotoInput = document.getElementById('foto');
+            const fotoPreview = document.getElementById('foto-preview');
+            const fotoContainer = document.getElementById('foto-preview-container');
+            const fotoFilename = document.getElementById('foto-filename');
+
+            // Setup preview untuk Tanda Tangan
+            const ttdInput = document.getElementById('tandatangan');
+            const ttdPreview = document.getElementById('tandatangan-preview');
+            const ttdContainer = document.getElementById('tandatangan-preview-container');
+            const ttdFilename = document.getElementById('tandatangan-filename');
+
+            // Function untuk preview image
+            function previewImage(input, preview, container, filenameElement) {
+                if (input.files && input.files[0]) {
+                    const file = input.files[0];
+
+                    // Validasi tipe file
+                    if (!file.type.match('image.*')) {
+                        alert('File harus berupa gambar (JPG/PNG)');
+                        input.value = '';
+                        return;
                     }
+
+                    // Validasi ukuran file (2MB = 2097152 bytes)
+                    if (file.size > 2097152) {
+                        alert('Ukuran file maksimal 2MB');
+                        input.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        container.style.display = 'block';
+                        filenameElement.textContent = file.name;
+                    };
+
                     reader.readAsDataURL(file);
                 }
-            };
+            }
 
-            window.handleDrop = function(event, field) {
-                event.preventDefault();
-                let dt = event.dataTransfer;
-                let files = dt.files;
-                document.getElementById(field).files = files;
-                previewFile(field);
-            };
-        </script>
-    @endpush
-@endsection
+            // Event listener untuk Foto
+            if (fotoInput) {
+                fotoInput.addEventListener('change', function() {
+                    previewImage(this, fotoPreview, fotoContainer, fotoFilename);
+                });
+            }
+
+            // Event listener untuk Tanda Tangan
+            if (ttdInput) {
+                ttdInput.addEventListener('change', function() {
+                    previewImage(this, ttdPreview, ttdContainer, ttdFilename);
+                });
+            }
+        });
+    </script>
+@endpush
