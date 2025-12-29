@@ -55,7 +55,7 @@ class MasterDepartemenController extends Controller
         ]);
         MasterDepartemen::create([
             'Nama' => $request->Nama,
-            'KodePerusahaan' => auth()->user()->kodeperusahaan,
+            // 'KodePerusahaan' => auth()->user()->kodeperusahaan,
             'UserCreate' => auth()->user()->name,
         ]);
         return redirect()->route('departemen.index')->with('success', 'Departemen berhasil ditambahkan.');

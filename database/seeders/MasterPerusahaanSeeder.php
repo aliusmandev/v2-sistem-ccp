@@ -13,7 +13,6 @@ class MasterPerusahaanSeeder extends Seeder
         $now = Carbon::now();
 
         $data = [
-            // --- RS AWAL BROS (RSAB) SESUAI GAMBAR ---
             [
                 'Kode' => 'RSAB-GMD',
                 'Nama' => 'RSAB Gajah Mada',
@@ -133,6 +132,14 @@ class MasterPerusahaanSeeder extends Seeder
                 'NamaLengkap' => 'Awal Bros Training Center',
                 'Deskripsi' => 'Pusat pelatihan SDM kesehatan.',
                 'Kategori' => 'CISCO',
+                'Koneksi' => 'Pekanbaru',
+            ],
+            [
+                'Kode' => 'UAB',
+                'Nama' => 'Universitas Awal Bros',
+                'NamaLengkap' => 'Universitas Awal Bros',
+                'Deskripsi' => 'Perguruan tinggi bidang kesehatan dan manajemen rumah sakit.',
+                'Kategori' => 'ABGROUP',
                 'Koneksi' => 'Pekanbaru',
             ],
         ];
