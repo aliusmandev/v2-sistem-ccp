@@ -69,8 +69,8 @@
                         <label for="jabatan" class="form-label"><strong>Jabatan</strong></label>
                         <select name="jabatan" id="jabatan"
                             class="select2 form-control @error('jabatan') is-invalid @enderror"
-                            style="background-color: #e9ecef; color: #495057;" disabled>
-                            <option value="">Pilih Jabatan</option>
+                            style="background-color: #e9ecef; color: #495057;">
+                            <option>Pilih Jabatan</option>
                             @foreach ($jabatan as $jbt)
                                 <option value="{{ $jbt->id }}"
                                     {{ old('jabatan', $user->jabatan) == $jbt->id ? 'selected' : '' }}>
