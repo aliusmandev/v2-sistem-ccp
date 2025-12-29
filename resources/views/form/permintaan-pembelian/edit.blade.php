@@ -82,6 +82,9 @@
                                     <option value="Perbaikan"
                                         {{ old('Tujuan', $data->Tujuan) == 'Perbaikan' ? 'selected' : '' }}>Perbaikan
                                     </option>
+                                    <option value="Adendum"
+                                        {{ old('Tujuan', $data->Tujuan) == 'Adendum' ? 'selected' : '' }}>Adendum
+                                    </option>
                                 </select>
                                 @error('Tujuan')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -246,7 +249,7 @@
                             </button> --}}
                             <button type="button" class="btn btn-info ms-2" data-bs-toggle="modal"
                                 data-bs-target="#modalPenilai">
-                                <i class="fa fa-eye"></i> Lihat Preview
+                                <i class="fa fa-eye"></i> Kirim dan Ajukan
                             </button>
                         </div>
                     </div>

@@ -94,6 +94,9 @@
                                     <option value="Perbaikan"
                                         {{ old('pengajuan.tujuan', $permintaan->Tujuan ?? '') == 'Perbaikan' ? 'selected' : '' }}>
                                         Perbaikan</option>
+                                    <option value="Adendum"
+                                        {{ old('pengajuan.tujuan', $permintaan->Tujuan ?? '') == 'Adendum' ? 'selected' : '' }}>
+                                        Adendum</option>
                                 </select>
                                 @error('pengajuan.tujuan')
                                     <div class="text-danger mt-1">{{ $message }}</div>

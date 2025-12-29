@@ -49,13 +49,16 @@
             <!-- Logo -->
             <div class="header-left active">
                 <a href="{{ route('home') }}" class="logo logo-normal">
-                    <img src="{{ asset('assets/img/logo/lumina.png') }}" alt="">
+                    <img src="{{ asset('assets/img/ccp/icon/mainlogo2.png') }}" alt=""
+                        style="height: 80px; width: auto;">
                 </a>
                 <a href="{{ route('home') }}" class="logo logo-white">
-                    <img src="{{ asset('assets/img/logo/lumina.png') }}" alt="">
+                    <img src="{{ asset('assets/img/ccp/icon/mainlogo2.png') }}" alt=""
+                        style="height: 80px; width: auto;">
                 </a>
                 <a href="{{ route('home') }}" class="logo-small">
-                    <img src="{{ asset('assets/img/logo/lumina.png') }}" alt="">
+                    <img src="{{ asset('assets/img/ccp/icon/mainlogo2.png') }}" alt=""
+                        style="height: 70px; width: auto;">
                 </a>
                 <a id="toggle_btn" href="javascript:void(0);">
                     <i data-feather="chevrons-left" class="feather-16"></i>
@@ -80,8 +83,9 @@
                 </li>
 
 
-                <li class="nav-item">
-                    <a href="" class="nav-link userset" title="Edit Profil">
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0);" class="nav-link userset dropdown-toggle" title="Profil"
+                        id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="user-info">
                             <span class="user-letter">
                                 <span class="user-icon">
@@ -96,7 +100,20 @@
                             </span>
                         </span>
                     </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('users.show', encrypt(auth()->id())) }}">
+                                <i class="fas fa-user me-2"></i> Profil Saya
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                    </ul>
                 </li>
+
                 <li class="nav-item">
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf

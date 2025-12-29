@@ -78,6 +78,9 @@
                                         Penggantian</option>
                                     <option value="Perbaikan" {{ old('Tujuan') == 'Perbaikan' ? 'selected' : '' }}>
                                         Perbaikan</option>
+                                    <option value="Adendum" {{ old('Tujuan') == 'Adendum' ? 'selected' : '' }}>
+                                        Adendum</option>
+
                                 </select>
                                 @error('Tujuan')
                                     <div class="text-danger mt-1">{{ $message }}</div>

@@ -100,8 +100,12 @@ class UserController extends Controller
      */
     public function show($id): View
     {
+        $id = decrypt($id);
         $user = User::find($id);
-        return view('users.show', compact('user'));
+        $jabatan = MasterJabatan::get();
+        $departemen = MasterDepartemen::get();
+        $perusahaan = MasterPerusahaan::get();
+        return view('users.show', compact('user', 'jabatan', 'departemen', 'perusahaan'));
     }
 
     /**
@@ -170,7 +174,41 @@ class UserController extends Controller
             ->route('users.index')
             ->with('success', 'User updated successfully');
     }
+    public function Profile(Request $request, $id): RedirectResponse
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'departemen' => 'required',
+            'jabatan' => 'required',
+            'email' => 'required',
+            'foto' => 'nullable',
+            'tandatangan' => 'nullable',
+        ]);
 
+        $input = $request->all();
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('upload/foto', $filename, 'public');
+            $input['foto'] = $filename;
+        }
+        if ($request->hasFile('tandatangan')) {
+            $file = $request->file('tandatangan');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('upload/tandatangan', $filename, 'public');
+            $input['tandatangan'] = $filename;
+        }
+        if (!empty($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input = Arr::except($input, array('password'));
+        }
+        $input['UserUpdate'] = auth()->user()->name;
+
+        return redirect()
+            ->back()
+            ->with('success', 'Data Berhasil Di Update');
+    }
     /**
      * Remove the specified resource from storage.
      *

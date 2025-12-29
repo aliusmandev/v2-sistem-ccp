@@ -54,10 +54,10 @@
             </div>
         </div>
     </div>
+    @include('users.alert-profile')
 @endsection
 @push('js')
     <script>
-        // Array kata-kata random
         const quotes = [
             "Yuk, produktif hari ini! 💪",
             "Santai, tapi tetap berkarya ya 😎☕",
@@ -78,7 +78,35 @@
             "Jangan terburu-buru, hasil bagus datang dari proses 🍀",
             "Senyum dulu, biar urusan kerjaan ikut menyenangkan 😊",
             "Waktunya upgrade skill, take action sekarang! 🏆",
-            "Ingat: Lebih baik selesai daripada sempurna tapi tertunda!"
+            "Ingat: Lebih baik selesai daripada sempurna tapi tertunda!",
+            "Mulai hari dengan niat, akhiri dengan hasil. You got this! ✨",
+            "Skill dan kopi, dua-duanya penting buat hari Senin ☕💻",
+            "Tugas numpuk? Santai, ingat ada Shopee 7.7 😆",
+            "Bekerja keras boleh, burnout jangan. Jaga mental health! 🧠🌈",
+            "Multitasking kayak Avenger, tapi jangan lupa istirahat ya! 🦸‍♂️",
+            "Habis zoom, rebahan sejenak. Recharge mode ON ⚡",
+            "Masalah datang dan pergi, gaji tetap tanggal tua 😅",
+            "Challenge accepted! Hari ini harus lebih baik dari kemarin 💯",
+            "No drama, hanya solusi dan sedikit curhat di grup WA 🤭",
+            "Swipe left masalah, swipe right peluang! 🔀",
+            "Sibuk itu berproses, jangan lupa nikmati progress 🛣️",
+            "Goals bukan sekadar wishlist, yuk mulai dari langkah kecil 📝✨",
+            "Work-life balance itu hak, bukan privilege! ⚖️",
+            "Scroll TikTok dikit, terus balik kerja lagi ya 😏📱",
+            "Kadang butuh meme biar semangat kerja bareng tim 😂",
+            "Jangan takut gagal, tiap error itu step closer ke lulus probation 👨‍💼",
+            "Geng kerja remote, co-working space dan kopi adalah lifestyle ☕🏢",
+            "Ngejar target sambil denger playlist happy: vibes only! 🎧😇",
+            "Bulan depan libur nasional lagi, semangat dulu yuk! 🗓️",
+            "Mouse, keyboard, dan semangat: weapon pekerja digital ☑️",
+            "Kerja keras bareng, rayakan hasil barengan juga 🥳🎂",
+            "Deadline boleh mepet, attitude tetap on point 👌",
+            "Tips: Jangan cuma buka email, buka juga bekal cemilan 😋",
+            "Kalo capek, virtual meeting sambil nyemil aja. Pura-pura serius 😜",
+            "Keluar dari zona nyaman, masuk ke zona upgrading 🚀",
+            "Mentor bilang: 'Jangan kerja sendirian, teamwork itu kunci!' 🗝️",
+            "Take your time, me time, kita tim yang saling dukung 🤗",
+            "Jangan cuma mikirin kerjaan doang, hidup juga dinikmati! 🌻"
         ];
         document.addEventListener('DOMContentLoaded', function() {
             const randomText = quotes[Math.floor(Math.random() * quotes.length)];

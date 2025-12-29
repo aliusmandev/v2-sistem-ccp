@@ -54,7 +54,7 @@
                                 @endforeach
                             </select>
                         </div> --}}
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <label for="filter-departemen" class="form-label">Filter Departemen</label>
                             <select class="form-select select2" id="filter-departemen">
                                 <option value="">-- Semua Departemen --</option>
@@ -62,7 +62,7 @@
                                     <option value="{{ $item->id }}">{{ $item->Nama }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="table-responsive">

@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('permission', PermissionController::class);
     Route::resource('users', UserController::class);
+    Route::put('/update-profile/{id}', [UserController::class, 'Profile'])->name('users.profile');
     Route::prefix('users')->group(function () {
         Route::get('/getDd', [MasterPerusahaanController::class, 'index'])->name('perusahaan.index');
     });

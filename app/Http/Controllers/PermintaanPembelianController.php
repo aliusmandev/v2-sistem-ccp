@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotifikasiApproval;
 use App\Mail\NotifikasiPermintaanPembelian;
 use App\Models\DokumenApproval;
 use App\Models\MasterBarang;
@@ -32,12 +33,13 @@ class PermintaanPembelianController extends Controller
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
                     ->where('Jenis', 1)
                     ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } elseif (auth()->user()->hasRole('LOGUM')) {
-                // LOGUM: tampilkan semua kecuali Jenis = 1
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
                     ->where('Jenis', '!=', 1)
                     ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } else {
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
@@ -255,14 +257,16 @@ class PermintaanPembelianController extends Controller
         if (!$userId || !$dokumenId || !$jenisFormId) {
             return back()->with('error', 'Parameter approval tidak lengkap.');
         }
+
         $data = PermintaanPembelian::find($dokumenId);
         if (!$data) {
             return back()->with('error', 'Data Permintaan Pembelian tidak ditemukan.');
         }
-        $dokumenApproval = DokumenApproval::where('DokumenId', $dokumenId)
-            ->where('UserId', $userId)
+        $approvalList = DokumenApproval::where('DokumenId', $dokumenId)
             ->where('JenisFormId', $jenisFormId)
-            ->first();
+            ->orderBy('Urutan', 'asc')
+            ->get();
+        $dokumenApproval = $approvalList->where('UserId', $userId)->first();
 
         if (!$dokumenApproval) {
             return back()->with('error', 'Persetujuan tidak tersedia untuk pengguna yang dipilih.');
@@ -272,16 +276,27 @@ class PermintaanPembelianController extends Controller
             return back()->with('error', 'Anda tidak memiliki izin untuk menyetujui dokumen ini.');
         }
 
+        $myUrutan = $dokumenApproval->Urutan;
+        $cekApproveSebelumnya = $approvalList->where('Urutan', '<', $myUrutan)->where('Status', '!=', 'Approved')->count();
+        if ($cekApproveSebelumnya > 0) {
+            return back()->with('error', 'Anda belum bisa menyetujui dokumen ini. Approval pada urutan sebelumnya harus dilakukan terlebih dahulu.');
+        }
         $user = User::find($dokumenApproval->UserId);
         if ($user && !empty($user->tandatangan)) {
             $dokumenApproval->Ttd = $user->tandatangan;
         }
-
         $dokumenApproval->Status = 'Approved';
         $dokumenApproval->TanggalApprove = now();
         $dokumenApproval->save();
 
-        if ($dokumenApproval->Urutan == 4) {
+        $nextApproval = $approvalList->where('Urutan', '>', $myUrutan)->sortBy('Urutan')->first();
+        if ($nextApproval) {
+            if (!empty($nextApproval->Email)) {
+                Mail::to($nextApproval->Email)
+                    ->send(new NotifikasiApproval($data, $nextApproval));
+            }
+        } else {
+
             $data->Status = 'Telah Disetujui';
             $data->save();
         }

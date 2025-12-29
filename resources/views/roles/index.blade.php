@@ -15,7 +15,8 @@
     </div>
 
     @if ($message = Session::get('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert" style="font-size: 1.1rem;">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert"
+            style="font-size: 1.1rem;">
             <div class="d-flex align-items-center">
                 <i class="fa fa-check-circle me-2" style="font-size: 1.5rem; color: #198754;"></i>
                 <div>
@@ -78,9 +79,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="d-flex justify-content-end">
-                            {!! $roles->links() !!}
-                        </div>
+
                     </div>
                 </div>
             </div>
