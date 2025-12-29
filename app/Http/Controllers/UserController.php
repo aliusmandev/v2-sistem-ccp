@@ -24,7 +24,15 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $data = User::with('getPerusahaan')->orderBy('id', 'DESC')->get();
+        if (auth()->user()->hasRole('Admin')) {
+            $data = User::with('getPerusahaan')->orderBy('id', 'DESC')->get();
+        } else {
+            $userPerusahaan = auth()->user()->kodeperusahaan;
+            $data = User::with('getPerusahaan')
+                ->where('kodeperusahaan', $userPerusahaan)
+                ->orderBy('id', 'DESC')
+                ->get();
+        }
         $perusahaan = MasterPerusahaan::get();
         return view('users.index', compact('data', 'perusahaan'));
     }
