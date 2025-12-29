@@ -14,7 +14,12 @@
     </div>
 
     {{-- Filter Nama RS --}}
+    <div class="row mb-3">
 
+        <div class="col text-end">
+            <a class="btn btn-primary" href="{{ route('users.create') }}">Buat Akun Baru</a>
+        </div>
+    </div>
     <div class="row">
 
         <div class="col-sm-12">
@@ -31,7 +36,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th>Nama</th>
+                                    <th>Name</th>
                                     <th>Email</th>
                                     <th>Perusahaan / RS</th>
                                     <th>Roles</th>
