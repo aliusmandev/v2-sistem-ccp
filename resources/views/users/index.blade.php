@@ -14,33 +14,7 @@
     </div>
 
     {{-- Filter Nama RS --}}
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form action="{{ route('users.index') }}" method="GET" class="row g-2 align-items-center">
-                <div class="col-auto">
-                    <label for="perusahaan_id" class="col-form-label">Filter Nama Perusahaan:</label>
-                </div>
-                <div class="col">
-                    <select class="form-select" id="perusahaan_id" name="perusahaan_id" onchange="this.form.submit()">
-                        <option value="">-- Semua Perusahaan --</option>
-                        @foreach ($perusahaan as $rs)
-                            <option value="{{ $rs->id }}" {{ request('perusahaan_id') == $rs->id ? 'selected' : '' }}>
-                                {{ $rs->Nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                @if (request('perusahaan_id'))
-                    <div class="col-auto">
-                        <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">Reset</a>
-                    </div>
-                @endif
-            </form>
-        </div>
-        <div class="col text-end">
-            <a class="btn btn-primary" href="{{ route('users.create') }}">Buat Akun Baru</a>
-        </div>
-    </div>
+
     <div class="row">
 
         <div class="col-sm-12">
@@ -57,7 +31,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th>Name</th>
+                                    <th>Nama</th>
                                     <th>Email</th>
                                     <th>Perusahaan / RS</th>
                                     <th>Roles</th>
