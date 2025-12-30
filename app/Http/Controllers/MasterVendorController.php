@@ -13,7 +13,14 @@ class MasterVendorController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = MasterVendor::latest();
+            $data = MasterVendor::query();
+
+            if ($request->has('jenis') && $request->jenis !== null && $request->jenis !== '') {
+                $data->where('Jenis', $request->jenis);
+            }
+
+            $data = $data->latest();
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
