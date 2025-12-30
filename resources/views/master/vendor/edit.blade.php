@@ -116,12 +116,40 @@
                                 @enderror
                             </div>
 
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label for="npwp" class="form-label"><strong>NPWP <span class="text-muted"
+                                                style="font-weight:normal;font-size:90%;">(Jika ada)</span></strong></label>
+                                    <input type="text" name="Npwp"
+                                        class="form-control @error('Npwp') is-invalid @enderror" id="npwp"
+                                        placeholder="NPWP Vendor" value="{{ old('Npwp') }}">
+                                    @error('Npwp')
+                                        <div class="text-danger mt-1">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="nib" class="form-label"><strong>NIB <span class="text-muted"
+                                                style="font-weight:normal;font-size:90%;">(Jika
+                                                ada)</span></strong></label>
+                                    <input type="text" name="Nib"
+                                        class="form-control @error('Nib') is-invalid @enderror" id="nib"
+                                        placeholder="NIB Vendor" value="{{ old('Nib') }}">
+                                    @error('Nib')
+                                        <div class="text-danger mt-1">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="col-12 text-end mt-3">
                                 <a href="{{ route('vendor.index') }}" class="btn btn-secondary me-2">
                                     <i class="fa fa-arrow-left"></i> Kembali
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-save"></i> Update
+                                    <i class="fa fa-save"></i> Simpan
                                 </button>
                             </div>
 

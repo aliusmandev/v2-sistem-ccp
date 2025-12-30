@@ -50,10 +50,12 @@ class MasterVendorController extends Controller
         $request->validate([
             'Nama' => 'required|string|max:255',
             'Alamat' => 'nullable|string|max:255',
-            'NoHp' => 'nullable|string|max:100',
-            'Email' => 'nullable|string|max:150',
-            'NamaPic' => 'required|string|max:150',
-            'NoHpPic' => 'required|string|max:100'
+            'NoHp' => 'nullable|string|max:15',
+            'Email' => 'nullable|string|max:255',
+            'Npwp' => 'nullable|string|max:255',
+            'Nib' => 'nullable|string|max:255',
+            'NamaPic' => 'required|string|max:255',
+            'NoHpPic' => 'required|string|max:15'
         ]);
 
         MasterVendor::create([
@@ -61,6 +63,8 @@ class MasterVendorController extends Controller
             'Alamat' => $request->Alamat,
             'NoHp' => $request->NoHp,
             'Email' => $request->Email,
+            'Npwp' => $request->Npwp,
+            'Nib' => $request->Nib,
             'NamaPic' => $request->NamaPic,
             'NoHpPic' => $request->NoHpPic,
             'UserCreate' => auth()->user()->name,
@@ -92,6 +96,8 @@ class MasterVendorController extends Controller
             'NoHp' => 'nullable|string|max:100',
             'Email' => 'nullable|string|max:150',
             'NamaPic' => 'required|string|max:150',
+            'Npwp' => 'nullable|string|max:255',
+            'Nib' => 'nullable|string|max:255',
             'NoHpPic' => 'required|string|max:100',
             'Status' => 'required|string|max:100',
         ]);
@@ -103,6 +109,8 @@ class MasterVendorController extends Controller
             'NoHp' => $request->NoHp,
             'Email' => $request->Email,
             'NamaPic' => $request->NamaPic,
+            'Npwp' => $request->Npwp,
+            'Nib' => $request->Nib,
             'NoHpPic' => $request->NoHpPic,
             'UserUpdate' => auth()->user()->name,
             'Status' => $request->Status,

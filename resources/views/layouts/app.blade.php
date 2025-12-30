@@ -88,13 +88,17 @@
                         id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="user-info">
                             <span class="user-letter">
-                                <span class="user-icon">
+                                <span class="user-icon"
+                                    style="display: inline-flex; justify-content: center; align-items: center; width: 44px; height: 44px; border-radius: 50%; background: #f1f5fa; overflow: hidden;">
                                     @if (auth()->user()->foto && file_exists(public_path('storage/upload/foto/' . auth()->user()->foto)))
                                         <img src="{{ asset('storage/upload/foto/' . auth()->user()->foto) }}"
-                                            alt="Profile Photo" class="rounded-circle" width="40" height="40"
-                                            style="object-fit: cover;">
+                                            alt="Profile Photo"
+                                            style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #dee2e6;">
                                     @else
-                                        <i class="fas fa-user-circle fa-2x"></i>
+                                        <span
+                                            style="display:flex;justify-content:center;align-items:center;width:44px;height:44px;border-radius:50%;background:#e5e6eb;">
+                                            <i class="fas fa-user" style="font-size:24px;color:#adb5bd;"></i>
+                                        </span>
                                     @endif
                                 </span>
                             </span>
