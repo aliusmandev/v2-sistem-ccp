@@ -27,7 +27,8 @@
                             <thead>
                                 <tr>
                                     <th style="width: 5%">No</th>
-                                    <th>Nama Formulir</th>
+                                    <th>Nama Form</th>
+                                    <th>Disetujui Oleh</th>
                                     <th style="width: 20%">Aksi</th>
                                 </tr>
                             </thead>
@@ -36,6 +37,24 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $item->Nama }}</td>
+                                        <td>
+                                            @if ($item->getApproval->count())
+                                                <ol class="mb-0 ps-3">
+                                                    @foreach ($item->getApproval->sortBy('Urutan') as $approval)
+                                                        <li>
+                                                            <span class="fw-bold">{{ $approval->Urutan }}.</span>
+                                                            {{ $approval->getUser->name ?? 'Diatur Saat Pengajuan' }}
+                                                            @if ($approval->getJabatan)
+                                                                - <span
+                                                                    class="text-muted">{{ $approval->getJabatan->Nama }}</span>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ol>
+                                            @else
+                                                <span class="text-danger">Belum diatur</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             <a href="{{ route('master-approval.ttd', [encrypt($item->id), encrypt($perusahaan->Kode)]) }}"
                                                 class="btn btn-primary btn-sm">
@@ -52,3 +71,17 @@
         </div>
     </div>
 @endsection
+@push('js')
+    @if (Session::get('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ Session::get('success') }}',
+                iconColor: '#4BCC1F',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#4BCC1F',
+            });
+        </script>
+    @endif
+@endpush

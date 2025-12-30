@@ -160,6 +160,18 @@
     </div>
 @endsection
 @push('js')
+    @if (Session::get('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ Session::get('success') }}',
+                iconColor: '#4BCC1F',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#4BCC1F',
+            });
+        </script>
+    @endif
     <script>
         $(document).ready(function() {
             $('.select2').select2({
@@ -175,7 +187,6 @@
                 var $departemenInput = $tr.find('.departemen-input');
                 var $departemenIdSelect = $tr.find('.departemenid-select');
 
-                // Jabatan otomatis
                 if (jabatanId) {
                     var $match = $jabatanSelect.find('option').filter(function() {
                         return $(this).val() == jabatanId;
@@ -197,7 +208,6 @@
                 }
             });
 
-            // Menambah baris baru
             $('#addRowBtn').on('click', function() {
                 var rowCount = $('#ttdTable tbody tr').length + 1;
                 var namaOptions = '';
@@ -280,9 +290,6 @@
                     $(row).find('.btn-remove-row').prop('disabled', $('#ttdTable tbody tr').length === 1);
                 });
             }
-
-            // Optional: Auto fill jabatan & departemen for the initial row if user selects nama
-            // (Handled by delegated event above)
         });
     </script>
 @endpush

@@ -41,13 +41,18 @@ class MasterApprovalController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($id)
+    public function create(Request $request, $id)
     {
         $id = decrypt($id);
-
+        // dd($id);
         $perusahaan = MasterPerusahaan::where('Kode', $id)->first();
-        // dd($perusahaan);
-        $form = MasterForm::get();
+        $form = MasterForm::with([
+            'getApproval' => function ($query) use ($id) {
+                $query->where('KodePerusahaan', $id)->orderBy('Urutan', 'asc');
+
+            }
+        ])->get();
+        // dd($form);
         return view('master.pengaturan-ttd.create', compact('form', 'perusahaan'));
     }
 
@@ -55,7 +60,14 @@ class MasterApprovalController extends Controller
     {
         $id = decrypt($id);
         $KodePerusahaan = decrypt($KodePerusahaan);
-        $form = MasterForm::with('getApproval')->where('id', $id)->first();
+        // dd($KodePerusahaan);
+        $form = MasterForm::with([
+            'getApproval' => function ($query) use ($KodePerusahaan) {
+                $query->where('KodePerusahaan', $KodePerusahaan)->orderBy('Urutan', 'asc');
+
+            }
+        ])->where('id', $id)->first();
+        // dd($form);
         $user = User::with('getJabatan', 'getDepartemen')->get();
         $jabatan = MasterJabatan::get();
         $departemen = MasterDepartemen::get();
@@ -67,33 +79,33 @@ class MasterApprovalController extends Controller
      */
     public function store(Request $request)
     {
-        // Hapus semua approval yang ada sesuai KodePerusahaan & JenisForm
-        MasterApproval::where('KodePerusahaan', $request->KodePerusahaan)
+        // dd($request->all());
+        $request->validate([
+            'KodePerusahaan' => 'required',
+            'JenisForm' => 'required',
+            'Urutan' => 'required',
+        ]);
+
+        $data = MasterApproval::where('KodePerusahaan', $request->KodePerusahaan)
             ->where('JenisForm', $request->JenisForm)
             ->delete();
+        // dd($data);
 
-        if (is_array($request->Urutan)) {
-            foreach ($request->Urutan as $key => $urutan) {
-                MasterApproval::create([
-                    'Urutan' => $urutan,
-                    'KodePerusahaan' => $request->KodePerusahaan,
-                    'JenisForm' => $request->JenisForm,
-                    'UserId' => $request->UserId[$key] ?? null,
-                    'JabatanId' => $request->JabatanId[$key] ?? null,
-                    'DepartemenId' => $request->DepartemenId[$key] ?? null,
-                    'Wajib' => $request->Wajib[$key] ?? null,
-                    'UserCreate' => auth()->id(),
-                ]);
-            }
-        } else {
+        $urutanList = is_array($request->Urutan) ? $request->Urutan : [$request->Urutan];
+        $userIdList = is_array($request->UserId) ? $request->UserId : [$request->UserId];
+        $jabatanIdList = is_array($request->JabatanId) ? $request->JabatanId : [$request->JabatanId ?? null];
+        $departemenIdList = is_array($request->DepartemenId) ? $request->DepartemenId : [$request->DepartemenId ?? null];
+        $wajibList = is_array($request->Wajib) ? $request->Wajib : [$request->Wajib ?? null];
+
+        foreach ($urutanList as $key => $urutan) {
             MasterApproval::create([
-                'Urutan' => $request->Urutan ?? null,
+                'Urutan' => $urutan,
                 'KodePerusahaan' => $request->KodePerusahaan,
                 'JenisForm' => $request->JenisForm,
-                'UserId' => $request->UserId,
-                'JabatanId' => $request->JabatanId ?? null,
-                'DepartemenId' => $request->DepartemenId ?? null,
-                'Wajib' => $request->Wajib ?? null,
+                'UserId' => $userIdList[$key] ?? null,
+                'JabatanId' => $jabatanIdList[$key] ?? null,
+                'DepartemenId' => $departemenIdList[$key] ?? null,
+                'Wajib' => $wajibList[$key] ?? null,
                 'UserCreate' => auth()->id(),
             ]);
         }

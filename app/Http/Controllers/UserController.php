@@ -192,7 +192,7 @@ class UserController extends Controller
             'email' => 'required|email',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tandatangan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'nullable|min:6',
         ]);
 
         $user = User::find($id);
