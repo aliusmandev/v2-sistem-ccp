@@ -181,7 +181,7 @@
                                         di sini
                                     </span>
                                     <img id="foto-preview"
-                                        src="{{ $user->foto ? asset('uploads/foto/' . $user->foto) : '#' }}"
+                                        src="{{ $user->foto ? asset('storage/upload/foto/' . $user->foto) : '#' }}"
                                         alt="Preview Foto" class="rounded-circle border mt-2"
                                         style="{{ $user->foto ? 'display:block;' : 'display:none;' }} max-width: 100px; max-height: 100px; object-fit: cover;">
                                 </div>
@@ -216,7 +216,7 @@
                                         file di sini
                                     </span>
                                     <img id="tandatangan-preview"
-                                        src="{{ $user->tandatangan ? asset('uploads/tandatangan/' . $user->tandatangan) : '#' }}"
+                                        src="{{ $user->tandatangan ? asset('storage/upload/tandatangan/' . $user->tandatangan) : '#' }}"
                                         alt="Preview Tanda Tangan" class="rounded border mt-2"
                                         style="{{ $user->tandatangan ? 'display:block;' : 'display:none;' }} max-width: 140px; max-height: 60px; object-fit: contain;">
                                 </div>
