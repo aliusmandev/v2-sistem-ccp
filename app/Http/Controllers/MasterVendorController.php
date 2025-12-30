@@ -41,7 +41,16 @@ class MasterVendorController extends Controller
                         : '<span class="badge bg-danger"><i class="fa fa-times"></i> ' . $label . '</span>';
                     return $icon;
                 })
-                ->rawColumns(['action', 'Status'])
+                ->addColumn('Jenis', function ($row) {
+                    if ($row->Jenis === 'Umum') {
+                        return '<span class="badge border border-primary text-primary bg-white"><i class="fa fa-users me-1"></i> Umum</span>';
+                    } elseif ($row->Jenis === 'Medis') {
+                        return '<span class="badge border border-info text-info bg-white"><i class="fa fa-stethoscope me-1"></i> Medis</span>';
+                    } else {
+                        return '<span class="badge border border-secondary text-secondary bg-white"><i class="fa fa-question-circle me-1"></i> -</span>';
+                    }
+                })
+                ->rawColumns(['action', 'Status', 'Jenis'])
                 ->make(true);
         }
         return view('master.vendor.index');

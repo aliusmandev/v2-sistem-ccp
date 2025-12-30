@@ -870,13 +870,13 @@
         </div>
     </div>
     <footer class="footer bg-white border-top shadow-sm"
-        style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 999; margin-top: 0; padding-top: 18px; padding-bottom: 18px;">
+        style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 999; margin-top: 0; padding-top: 8px; padding-bottom: 8px; font-size: 0.88rem;">
         <div class="container text-center">
-            <span class="fw-semibold text-secondary small">
+            <span class="fw-semibold text-secondary" style="font-size: 0.92em;">
                 &copy; {{ date('Y') }} {{ env('APP_NAME', 'CCP') }}
             </span>
             <br>
-            <span class="text-muted small">
+            <span class="text-muted" style="font-size: 0.9em;">
                 Dikembangkan dengan <i class="fas fa-heart text-danger"></i> oleh
                 <a href="https://dih-digital.com/" target="_blank" rel="noopener">PT DIGITAL INDONESIA HEBAT</a>
             </span>

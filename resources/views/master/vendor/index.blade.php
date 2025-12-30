@@ -62,7 +62,7 @@
                                     <th width="5%">No</th>
                                     <th>Nama</th>
                                     <th>Alamat</th>
-                                    <th>No HP</th>
+                                    {{-- <th>No HP</th> --}}
                                     <th>Email</th>
                                     <th>Nama PIC</th>
                                     <th>No HP PIC</th>
@@ -151,10 +151,10 @@
                             data: 'Alamat',
                             name: 'Alamat'
                         },
-                        {
-                            data: 'NoHp',
-                            name: 'NoHp'
-                        },
+                        // {
+                        //     data: 'NoHp',
+                        //     name: 'NoHp'
+                        // },
                         {
                             data: 'Email',
                             name: 'Email'
