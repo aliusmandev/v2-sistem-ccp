@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string('NamaPic', 150)->nullable();
             $table->string('NoHpPic', 100)->nullable();
             $table->enum('Status', ['Y', 'N'])->nullable();
+            $table->string('Npwp')->nullable();
+            $table->string('Nib')->nullable();
             $table->string('UserCreate', 255)->nullable();
             $table->string('UserUpdate', 255)->nullable();
             $table->string('UserDelete', 255)->nullable();
