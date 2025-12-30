@@ -158,14 +158,18 @@
                     <li class="submenu-open d-flex flex-column align-items-center py-4 mb-3"
                         style="background: #f8f9fa; border-radius: 14px;">
                         <div class="position-relative mb-2">
+                            @php
+                                $imgSize = 90;
+                            @endphp
                             @if (Auth::user() && Auth::user()->foto)
                                 <img src="{{ asset('storage/upload/foto/' . Auth::user()->foto) }}" alt="Foto Profil"
-                                    width="120" height="120" class="shadow"
-                                    style="object-fit: cover; border-radius: 10px; border: 3px solid #e0e0e0;">
+                                    width="{{ $imgSize }}" height="{{ $imgSize }}" class="shadow"
+                                    style="width: {{ $imgSize }}px !important; height: {{ $imgSize }}px !important; object-fit: cover; border-radius: 8px; border: 3px solid #e0e0e0;">
                             @else
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=6c757d&color=fff"
-                                    alt="Foto Profil Default" width="120" height="120" class="shadow"
-                                    style="object-fit: cover; border-radius: 10px; border: 3px solid #e0e0e0;">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=6c757d&color=fff&size={{ $imgSize }}"
+                                    alt="Foto Profil Default" width="{{ $imgSize }}"
+                                    height="{{ $imgSize }}" class="shadow"
+                                    style="width: {{ $imgSize }}px !important; height: {{ $imgSize }}px !important; object-fit: cover; border-radius: 8px; border: 3px solid #e0e0e0;">
                             @endif
                             <span class="position-absolute bottom-0 end-0 p-1 bg-white rounded-circle border"
                                 style="box-shadow: 0 1px 5px rgba(0,0,0,0.08);">
