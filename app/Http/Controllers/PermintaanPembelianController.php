@@ -33,13 +33,13 @@ class PermintaanPembelianController extends Controller
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
                     ->where('Jenis', 1)
                     ->where('KodePerusahaan', $request->perusahaan)
-                    ->where('Departemen', auth()->user()->departemen)
+                    // ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } elseif (auth()->user()->hasRole('LOGUM')) {
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
                     ->where('Jenis', '!=', 1)
                     ->where('KodePerusahaan', $request->perusahaan)
-                    ->where('Departemen', auth()->user()->departemen)
+                    // ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } else {
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
