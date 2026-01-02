@@ -29,7 +29,6 @@ class PermintaanPembelianController extends Controller
      */
     public function index(Request $request)
     {
-        // dd(Auth::user()->kodeperusahaan);
         if ($request->ajax()) {
             if (auth()->user()->hasRole('SMI')) {
 
