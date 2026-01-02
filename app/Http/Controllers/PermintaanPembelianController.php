@@ -17,6 +17,7 @@ use App\Models\PermintaanPembelianDetail;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -28,17 +29,19 @@ class PermintaanPembelianController extends Controller
      */
     public function index(Request $request)
     {
+        // dd(Auth::user()->kodeperusahaan);
         if ($request->ajax()) {
             if (auth()->user()->hasRole('SMI')) {
+
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
-                    ->where('Jenis', 1)
-                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('Jenis', '1')
+                    ->where('KodePerusahaan', Auth::user()->kodeperusahaan)
                     // ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } elseif (auth()->user()->hasRole('LOGUM')) {
                 $query = PermintaanPembelian::with('getJenisPermintaan', 'getPerusahaan', 'getDepartemen', 'getDiajukanOleh')
                     ->where('Jenis', '!=', 1)
-                    ->where('KodePerusahaan', $request->perusahaan)
+                    ->where('KodePerusahaan', Auth::user()->kodeperusahaan)
                     // ->where('Departemen', auth()->user()->departemen)
                     ->orderBy('id', 'desc');
             } else {
